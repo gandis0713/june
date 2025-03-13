@@ -9,6 +9,4 @@ project(
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(june
-  ${CMAKE_SOURCE_DIR}/src/main.cpp
-)
+add_subdirectory(june/example)
