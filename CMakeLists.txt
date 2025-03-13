@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(
-  synchronizer
+  june
   VERSION 0.0.1
   DESCRIPTION "External Resource Synchronizer"
   LANGUAGES CXX
@@ -9,6 +9,6 @@ project(
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(synchronizer
+add_executable(june
   ${CMAKE_SOURCE_DIR}/src/main.cpp
 )
