@@ -1,0 +1,22 @@
+{
+  "name": "synchronizer",
+  "version-string": "0.0.1",
+  "dependencies": [
+    "gtest",
+    "glm",
+    "spdlog",
+    "vulkan-headers",
+    {
+      "name": "hwcpipe",
+      "platform": "android"
+    },
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
