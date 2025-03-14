@@ -2,6 +2,7 @@
 
 #include "base/june_api.h"
 #include "june/common/dylib.h"
+#include "june/common/vulkan_api.h"
 
 #include <string>
 
@@ -9,28 +10,50 @@ int main(int argc, char* argv[])
 {
     using namespace june;
 
-    DyLib libs{};
-    JuneAPI api{};
+    DyLib juneLibs{};
+    JuneAPI juneApi{};
 
-    std::string libName;
+    std::string juneLibName;
 #if defined(__ANDROID__) || defined(ANDROID)
-    libName = "libjune.so";
+    juneLibName = "libjune.so";
 #elif defined(__linux__)
-    libName = "libjune.so";
+    juneLibName = "libjune.so";
 #elif defined(__APPLE__)
-    libName = "libjune.dylib";
+    juneLibName = "libjune.dylib";
 #elif defined(WIN32)
-    libName = "june.dll";
+    juneLibName = "june.dll";
 #endif
-    if(!libs.open(libName.c_str()))
+    if (!juneLibs.open(juneLibName.c_str()))
     {
         throw std::runtime_error("Failed to open library");
     }
-    if (!api.loadProcs(&libs))
+    if (!juneApi.loadProcs(&juneLibs))
     {
         throw std::runtime_error("Failed to load procs");
     }
 
+    DyLib vulkanLibs{};
+    VulkanAPI vulkanApi{};
+
+    std::string vulkanLibName;
+#if defined(__ANDROID__) || defined(ANDROID)
+    vulkanLibName = "libvulkan.so";
+#elif defined(__linux__)
+    vulkanLibName = "libvulkan.so.1";
+#elif defined(__APPLE__)
+    vulkanLibName = "libvulkan.dylib";
+#elif defined(WIN32)
+    vulkanLibName = "vulkan-1.dll";
+#endif
+
+    if (!vulkanLibs.open(vulkanLibName.c_str()))
+    {
+        throw std::runtime_error("Failed to open library");
+    }
+    if (!vulkanApi.loadInstanceProcs(&vulkanLibs))
+    {
+        throw std::runtime_error("Failed to load procs");
+    }
 
     std::cout << "Hello, june!. Succeed." << std::endl;
 
