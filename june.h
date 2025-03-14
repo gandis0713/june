@@ -234,35 +234,35 @@ typedef struct JuneVulkanApiContextDescriptor
     void* vkInstance;
     void* vkPhysicalDevice;
     void* vkDevice;
-} JuneApiContextDescriptor;
+} JuneVulkanApiContextDescriptor;
 
 typedef struct JuneD3D12ApiContextDescriptor
 {
     JuneChainedStruct const* nextInChain;
     void* dxgiAdapter;
     void* d3d12Device;
-} JuneApiContextDescriptor;
+} JuneD3D12ApiContextDescriptor;
 
 typedef struct JuneD3D11ApiContextDescriptor
 {
     JuneChainedStruct const* nextInChain;
     void* dxgiAdapter;
     void* d3d11Device;
-} JuneApiContextDescriptor;
+} JuneD3D11ApiContextDescriptor;
 
 typedef struct JuneOpenGLApiContextDescriptor
 {
     JuneChainedStruct const* nextInChain;
     void* display;
     void* context;
-} JuneApiContextDescriptor;
+} JuneOpenGLApiContextDescriptor;
 
 typedef struct JuneGLESApiContextDescriptor
 {
     JuneChainedStruct const* nextInChain;
     void* display;
     void* context;
-} JuneApiContextDescriptor;
+} JuneGLESApiContextDescriptor;
 
 typedef struct JuneBufferDescriptor
 {
@@ -289,6 +289,7 @@ extern "C"
 {
 #endif
 
+    typedef void (*JuneProc)(void);
     typedef void (*JuneProcCreateInstance)(JuneInstanceDescriptor const* desc);
     typedef void (*JuneProcDestroyInstance)(JuneInstance instance);
     typedef void (*JuneProcCreateApiContext)(JuneInstance instance, JuneApiContextDescriptor const* desc);
