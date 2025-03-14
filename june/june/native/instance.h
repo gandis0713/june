@@ -7,19 +7,20 @@
 namespace june
 {
 
-class Instance
+class Instance final
 {
 public:
-    static std::unique_ptr<Instance> create(JuneInstanceDescriptor const* descriptor);
+    static Instance* create(JuneInstanceDescriptor const* descriptor);
 
 public:
-    virtual ~Instance() = default;
+    Instance() = delete;
+    ~Instance() = default;
 
     Instance(const Instance&) = delete;
     Instance& operator=(const Instance&) = delete;
 
-protected:
-    Instance() = default;
+public:
+    JuneApiContext createApiContext(JuneApiContextDescriptor const* descriptor);
 
 private:
     Instance(JuneInstanceDescriptor const* descriptor);

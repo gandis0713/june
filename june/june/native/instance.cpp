@@ -1,11 +1,18 @@
 #include "instance.h"
+#include <iostream>
 
 namespace june
 {
 
-std::unique_ptr<Instance> Instance::create(JuneInstanceDescriptor const* descriptor)
+Instance* Instance::create(JuneInstanceDescriptor const* descriptor)
 {
-    return std::unique_ptr<Instance>(new Instance(descriptor));
+    return new Instance(descriptor);
+}
+
+JuneApiContext Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
+{
+    std::cout << "test" << std::endl;
+    return nullptr;
 }
 
 } // namespace june

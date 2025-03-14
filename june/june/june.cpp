@@ -19,47 +19,47 @@ extern "C"
 {
     using namespace june;
 
-    JUNE_EXPORT JuneProc wgpuGetProcAddress(char const* procName)
+    JUNE_EXPORT JuneProc juneGetProcAddress(char const* procName)
     {
         return procGetProcAddress(procName);
     }
 
-    JUNE_EXPORT JuneInstance JuneCreateInstance(JuneInstanceDescriptor const* desc)
+    JUNE_EXPORT JuneInstance juneCreateInstance(JuneInstanceDescriptor const* desc)
     {
         return procCreateInstance(desc);
     }
 
-    JUNE_EXPORT JuneApiContext JuneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc)
+    JUNE_EXPORT JuneApiContext juneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc)
     {
         return procCreateApiContext(innstance, desc);
     }
 
-    JUNE_EXPORT void JuneDestroyInstance(JuneInstance instance)
+    JUNE_EXPORT void juneDestroyInstance(JuneInstance instance)
     {
         return procDestroyInstance(instance);
     }
 
-    JUNE_EXPORT void JuneDestroyApiContext(JuneApiContext context)
+    JUNE_EXPORT void juneDestroyApiContext(JuneApiContext context)
     {
         return procDestroyApiContext(context);
     }
 
-    JUNE_EXPORT JuneBuffer JuneCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
+    JUNE_EXPORT JuneBuffer juneCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
     {
         return procCreateBuffer(context, descriptor);
     }
 
-    JUNE_EXPORT JuneTexture JuneCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
+    JUNE_EXPORT JuneTexture juneCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
     {
         return procCreateTexture(context, descriptor);
     }
 
-    JUNE_EXPORT void JuneDestroyBuffer(JuneBuffer buffer)
+    JUNE_EXPORT void juneDestroyBuffer(JuneBuffer buffer)
     {
         return procDestroyBuffer(buffer);
     }
 
-    JUNE_EXPORT void JuneDestroyTexture(JuneTexture texture)
+    JUNE_EXPORT void juneDestroyTexture(JuneTexture texture)
     {
         return procDestroyTexture(texture);
     }

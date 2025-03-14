@@ -1,21 +1,23 @@
 #include "june/june.h"
 
+#include "june/native/instance.h"
+
 #include <unordered_map>
 #include <string>
 
 namespace june
 {
 
-JuneInstance procCreateInstance(JuneInstanceDescriptor const* wgpuDescriptor)
+JuneInstance procCreateInstance(JuneInstanceDescriptor const* descriptor)
 {
-    return nullptr;
+    return reinterpret_cast<JuneInstance>(Instance::create(descriptor));
 }
 
 namespace
 {
 
 std::unordered_map<std::string, JuneProc> sProcMap{
-    { "wgpuCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
+    { "juneCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
 };
 
 } // namespace

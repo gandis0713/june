@@ -290,6 +290,7 @@ extern "C"
 #endif
 
     typedef void (*JuneProc)(void);
+    typedef JuneProc (*JuneProcGetProcAddress)(char const* name);
     typedef void (*JuneProcCreateInstance)(JuneInstanceDescriptor const* desc);
     typedef void (*JuneProcDestroyInstance)(JuneInstance instance);
     typedef void (*JuneProcCreateApiContext)(JuneInstance instance, JuneApiContextDescriptor const* desc);
@@ -301,14 +302,15 @@ extern "C"
 
 #if !defined(JUNE_SKIP_DECLARATIONS)
 
-    JUNE_EXPORT JuneInstance JuneCreateInstance(JuneInstanceDescriptor const* desc);
-    JUNE_EXPORT JuneApiContext JuneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc);
-    JUNE_EXPORT void JuneDestroyInstance(JuneInstance instance);
-    JUNE_EXPORT void JuneDestroyApiContext(JuneApiContext context);
-    JUNE_EXPORT JuneBuffer JuneCreateBuffer(JuneApiContext context, JuneBufferDescriptor const * descriptor);
-    JUNE_EXPORT JuneTexture JuneCreateTexture(JuneApiContext context, JuneTextureDescriptor const * descriptor);
-    JUNE_EXPORT void JuneDestroyBuffer(JuneBuffer buffer);
-    JUNE_EXPORT void JuneDestroyTexture(JuneTexture texture);
+    JUNE_EXPORT JuneProc juneGetProcAddress(char const* name);
+    JUNE_EXPORT JuneInstance juneCreateInstance(JuneInstanceDescriptor const* desc);
+    JUNE_EXPORT JuneApiContext juneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc);
+    JUNE_EXPORT void juneDestroyInstance(JuneInstance instance);
+    JUNE_EXPORT void juneDestroyApiContext(JuneApiContext context);
+    JUNE_EXPORT JuneBuffer juneCreateBuffer(JuneApiContext context, JuneBufferDescriptor const * descriptor);
+    JUNE_EXPORT JuneTexture juneCreateTexture(JuneApiContext context, JuneTextureDescriptor const * descriptor);
+    JUNE_EXPORT void juneDestroyBuffer(JuneBuffer buffer);
+    JUNE_EXPORT void juneDestroyTexture(JuneTexture texture);
 
 #endif // !defined(JUNE_SKIP_DECLARATIONS)
 

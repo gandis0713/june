@@ -9,8 +9,6 @@ project(
 
 find_package(VulkanHeaders CONFIG)
 
-
-
 set(JUNE_COMMON_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.h
