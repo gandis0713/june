@@ -15,7 +15,8 @@ JuneInstance procCreateInstance(JuneInstanceDescriptor const* descriptor)
 
 JuneApiContext procCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc)
 {
-    return reinterpret_cast<JuneApiContext>(reinterpret_cast<Instance*>(innstance)->createApiContext(desc));
+    return nullptr;
+    // return reinterpret_cast<JuneApiContext>(reinterpret_cast<Instance*>(innstance)->createApiContext(desc));
 }
 
 namespace

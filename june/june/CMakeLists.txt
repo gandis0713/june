@@ -8,6 +8,7 @@ project(
 )
 
 find_package(VulkanHeaders CONFIG)
+find_package(spdlog REQUIRED)
 
 set(JUNE_COMMON_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.cpp
@@ -29,7 +30,7 @@ set(JUNE_SRC_FILES
 )
 
 add_library(june
-  STATIC # or SHARED
+  SHARED # or SHARED
   ${JUNE_NATIVE_FILES}
   ${JUNE_COMMON_FILES}
   ${JUNE_SRC_FILES}
@@ -37,11 +38,12 @@ add_library(june
 add_library(june::june ALIAS june)
 
 target_include_directories(june
-    PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+  PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
 )
 
 target_link_libraries(june
   PRIVATE
   Vulkan::Headers
+  spdlog::spdlog_header_only
 )
