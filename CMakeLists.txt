@@ -10,3 +10,4 @@ project(
 set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(june/example)
+add_subdirectory(june/june)
