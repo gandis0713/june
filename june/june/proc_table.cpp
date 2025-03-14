@@ -13,11 +13,17 @@ JuneInstance procCreateInstance(JuneInstanceDescriptor const* descriptor)
     return reinterpret_cast<JuneInstance>(Instance::create(descriptor));
 }
 
+JuneApiContext procCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc)
+{
+    return reinterpret_cast<JuneApiContext>(reinterpret_cast<Instance*>(innstance)->createApiContext(desc));
+}
+
 namespace
 {
 
 std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
+    { "juneCreateApiContext", reinterpret_cast<JuneProc>(procCreateApiContext) },
 };
 
 } // namespace
