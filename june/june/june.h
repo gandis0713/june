@@ -60,6 +60,11 @@ typedef enum JuneApiType
 
 typedef enum JuneSType
 {
+    JuneSType_VulkanApiContext = 0x00000000,
+    JuneSType_D3D11ApiContext = 0x00000001,
+    JuneSType_D3D12ApiContext = 0x00000002,
+    JuneSType_OpenGLApiContext = 0x00000003,
+    JuneSType_OpenGLESApiContext = 0x00000004
 } JuneSType;
 
 typedef enum JuneTextureDimension
@@ -230,7 +235,7 @@ typedef struct JuneApiContextDescriptor
 
 typedef struct JuneVulkanApiContextDescriptor
 {
-    JuneChainedStruct const* nextInChain;
+    JuneChainedStruct chain;
     void* vkInstance;
     void* vkPhysicalDevice;
     void* vkDevice;
@@ -238,28 +243,28 @@ typedef struct JuneVulkanApiContextDescriptor
 
 typedef struct JuneD3D12ApiContextDescriptor
 {
-    JuneChainedStruct const* nextInChain;
+    JuneChainedStruct chain;
     void* dxgiAdapter;
     void* d3d12Device;
 } JuneD3D12ApiContextDescriptor;
 
 typedef struct JuneD3D11ApiContextDescriptor
 {
-    JuneChainedStruct const* nextInChain;
+    JuneChainedStruct chain;
     void* dxgiAdapter;
     void* d3d11Device;
 } JuneD3D11ApiContextDescriptor;
 
 typedef struct JuneOpenGLApiContextDescriptor
 {
-    JuneChainedStruct const* nextInChain;
+    JuneChainedStruct chain;
     void* display;
     void* context;
 } JuneOpenGLApiContextDescriptor;
 
 typedef struct JuneGLESApiContextDescriptor
 {
-    JuneChainedStruct const* nextInChain;
+    JuneChainedStruct chain;
     void* display;
     void* context;
 } JuneGLESApiContextDescriptor;
