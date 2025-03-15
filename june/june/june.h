@@ -291,12 +291,12 @@ extern "C"
 
     typedef void (*JuneProc)(void);
     typedef JuneProc (*JuneProcGetProcAddress)(char const* name);
-    typedef void (*JuneProcCreateInstance)(JuneInstanceDescriptor const* desc);
+    typedef JuneInstance (*JuneProcCreateInstance)(JuneInstanceDescriptor const* desc);
     typedef void (*JuneProcDestroyInstance)(JuneInstance instance);
-    typedef void (*JuneProcCreateApiContext)(JuneInstance instance, JuneApiContextDescriptor const* desc);
+    typedef JuneApiContext (*JuneProcCreateApiContext)(JuneInstance instance, JuneApiContextDescriptor const* desc);
     typedef void (*JuneProcDestroyApiContext)(JuneApiContext context);
-    typedef JuneBuffer (*JuneProcCreateBuffer)(JuneApiContext context, JuneBufferDescriptor const * descriptor);
-    typedef JuneTexture (*JuneProcCreateTexture)(JuneApiContext context, JuneTextureDescriptor const * descriptor);
+    typedef JuneBuffer (*JuneProcCreateBuffer)(JuneApiContext context, JuneBufferDescriptor const* descriptor);
+    typedef JuneTexture (*JuneProcCreateTexture)(JuneApiContext context, JuneTextureDescriptor const* descriptor);
     typedef void (*JuneProcDestroyBuffer)(JuneBuffer buffer);
     typedef void (*JuneProcDestroyTexture)(JuneTexture texture);
 
@@ -307,8 +307,8 @@ extern "C"
     JUNE_EXPORT JuneApiContext juneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc);
     JUNE_EXPORT void juneDestroyInstance(JuneInstance instance);
     JUNE_EXPORT void juneDestroyApiContext(JuneApiContext context);
-    JUNE_EXPORT JuneBuffer juneCreateBuffer(JuneApiContext context, JuneBufferDescriptor const * descriptor);
-    JUNE_EXPORT JuneTexture juneCreateTexture(JuneApiContext context, JuneTextureDescriptor const * descriptor);
+    JUNE_EXPORT JuneBuffer juneCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor);
+    JUNE_EXPORT JuneTexture juneCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor);
     JUNE_EXPORT void juneDestroyBuffer(JuneBuffer buffer);
     JUNE_EXPORT void juneDestroyTexture(JuneTexture texture);
 

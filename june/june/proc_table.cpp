@@ -21,13 +21,13 @@ void procDestroyInstance(JuneInstance instance)
 
 JuneApiContext procCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc)
 {
-    return nullptr;
-    // return reinterpret_cast<JuneApiContext>(reinterpret_cast<Instance*>(innstance)->createApiContext(desc));
+    return reinterpret_cast<JuneApiContext>(reinterpret_cast<Instance*>(innstance)->createApiContext(desc));
 }
 
 void procDestroyApiContext(JuneApiContext context)
 {
-    // reinterpret_cast<ApiContext*>(context)->destroy();
+    if (context)
+        delete reinterpret_cast<JuneApiContext*>(context);
 }
 
 JuneBuffer procCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
@@ -57,7 +57,13 @@ namespace
 
 std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
+    { "juneDestroyInstance", reinterpret_cast<JuneProc>(procDestroyInstance) },
     { "juneCreateApiContext", reinterpret_cast<JuneProc>(procCreateApiContext) },
+    { "juneDestroyApiContext", reinterpret_cast<JuneProc>(procDestroyApiContext) },
+    { "juneCreateBuffer", reinterpret_cast<JuneProc>(procCreateBuffer) },
+    { "juneDestroyBuffer", reinterpret_cast<JuneProc>(procDestroyBuffer) },
+    { "juneCreateTexture", reinterpret_cast<JuneProc>(procCreateTexture) },
+    { "juneDestroyTexture", reinterpret_cast<JuneProc>(procDestroyTexture) },
 };
 
 } // namespace
