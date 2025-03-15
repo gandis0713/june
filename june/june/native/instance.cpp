@@ -1,5 +1,5 @@
 #include "instance.h"
-#include <iostream>
+#include "vulkan/vulkan_context.h"
 
 namespace june
 {
@@ -13,9 +13,25 @@ Instance::Instance(JuneInstanceDescriptor const* descriptor)
 {
 }
 
-JuneApiContext Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
+Context* Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
 {
-    std::cout << "test" << std::endl;
+    const JuneChainedStruct* current = descriptor->nextInChain;
+    while (current)
+    {
+        switch (current->sType)
+        {
+        case JuneSType_VulkanApiContext: {
+            JuneVulkanApiContextDescriptor const* vulkanDescriptor = reinterpret_cast<JuneVulkanApiContextDescriptor const*>(current);
+            return VulkanContext::create(this, vulkanDescriptor);
+        }
+        break;
+        default:
+            throw std::runtime_error("Unsupported type");
+        }
+
+        current = current->next;
+    }
+
     return nullptr;
 }
 

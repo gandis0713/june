@@ -2,11 +2,10 @@
 
 #include "june/june.h"
 
-#include <memory>
-
 namespace june
 {
 
+class Context;
 class Instance final
 {
 public:
@@ -20,7 +19,7 @@ public:
     Instance& operator=(const Instance&) = delete;
 
 public:
-    JuneApiContext createApiContext(JuneApiContextDescriptor const* descriptor);
+    Context* createApiContext(JuneApiContextDescriptor const* descriptor);
 
 private:
     Instance(JuneInstanceDescriptor const* descriptor);

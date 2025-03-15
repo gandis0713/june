@@ -22,9 +22,9 @@ const char kExtensionNameKhrSwapchain[] = "VK_KHR_swapchain";
 namespace june
 {
 
-std::unique_ptr<Context> VulkanContext::create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
+Context* VulkanContext::create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
 {
-    return std::unique_ptr<VulkanContext>(new VulkanContext(instance, descriptor));
+    return new VulkanContext(instance, descriptor);
 }
 
 VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
@@ -49,6 +49,8 @@ VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor 
     {
         throw std::runtime_error(fmt::format("Failed to load instance prosc in vulkan library: {}", vulkanLibraryName));
     }
+
+    gatherInfo();
 
     spdlog::info("Required Vulkan API Version in Application: {}.{}.{}",
                  VK_API_VERSION_MAJOR(m_info.apiVersion),

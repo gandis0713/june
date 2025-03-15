@@ -22,7 +22,7 @@ class Instance;
 class VulkanContext : public Context
 {
 public:
-    static std::unique_ptr<Context> create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
+    static Context* create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
 
 public:
     VulkanContext() = delete;
