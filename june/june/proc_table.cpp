@@ -1,9 +1,11 @@
 #include "june/june.h"
 
 #include "june/native/buffer.h"
+#include "june/native/buffer_memory.h"
 #include "june/native/context.h"
 #include "june/native/instance.h"
 #include "june/native/texture.h"
+#include "june/native/texture_memory.h"
 
 #include <string>
 #include <unordered_map>
@@ -33,9 +35,31 @@ void procDestroyApiContext(JuneApiContext context)
         delete reinterpret_cast<JuneApiContext*>(context);
 }
 
-JuneBuffer procCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
+JuneBufferMemory procCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor)
 {
-    return reinterpret_cast<JuneBuffer>(reinterpret_cast<Context*>(context)->createBuffer(descriptor));
+    return reinterpret_cast<JuneBufferMemory>(reinterpret_cast<Context*>(context)->createBufferMemory(descriptor));
+}
+
+JuneTextureMemory procCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor)
+{
+    return reinterpret_cast<JuneTextureMemory>(reinterpret_cast<Context*>(context)->createTextureMemory(descriptor));
+}
+
+void procDestroyBufferMemory(JuneBufferMemory bufferMemory)
+{
+    if (bufferMemory)
+        delete reinterpret_cast<BufferMemory*>(bufferMemory);
+}
+
+void procDestroyTextureMemory(JuneTextureMemory textureMemory)
+{
+    if (textureMemory)
+        delete reinterpret_cast<TextureMemory*>(textureMemory);
+}
+
+JuneBuffer procCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor)
+{
+    return reinterpret_cast<JuneBuffer>(reinterpret_cast<BufferMemory*>(memory)->createBuffer(descriptor));
 }
 
 void procDestroyBuffer(JuneBuffer buffer)
@@ -44,9 +68,9 @@ void procDestroyBuffer(JuneBuffer buffer)
         delete reinterpret_cast<Buffer*>(buffer);
 }
 
-JuneTexture procCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
+JuneTexture procCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor)
 {
-    return reinterpret_cast<JuneTexture>(reinterpret_cast<Context*>(context)->createTexture(descriptor));
+    return reinterpret_cast<JuneTexture>(reinterpret_cast<TextureMemory*>(memory)->createTexture(descriptor));
 }
 
 void procDestroyTexture(JuneTexture texture)
@@ -63,6 +87,10 @@ std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneDestroyInstance", reinterpret_cast<JuneProc>(procDestroyInstance) },
     { "juneCreateApiContext", reinterpret_cast<JuneProc>(procCreateApiContext) },
     { "juneDestroyApiContext", reinterpret_cast<JuneProc>(procDestroyApiContext) },
+    { "juneCreateBufferMemory", reinterpret_cast<JuneProc>(procCreateBufferMemory) },
+    { "juneDestroyBufferMemory", reinterpret_cast<JuneProc>(procDestroyBufferMemory) },
+    { "juneCreateTextureMemory", reinterpret_cast<JuneProc>(procCreateTextureMemory) },
+    { "juneDestroyTextureMemory", reinterpret_cast<JuneProc>(procDestroyTextureMemory) },
     { "juneCreateBuffer", reinterpret_cast<JuneProc>(procCreateBuffer) },
     { "juneDestroyBuffer", reinterpret_cast<JuneProc>(procDestroyBuffer) },
     { "juneCreateTexture", reinterpret_cast<JuneProc>(procCreateTexture) },

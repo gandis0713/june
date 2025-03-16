@@ -34,8 +34,8 @@ public:
     VulkanContext& operator=(const VulkanContext&) = delete;
 
 public: // June APi
-    Buffer* createBuffer(JuneBufferDescriptor const* descriptor) override;
-    Texture* createTexture(JuneTextureDescriptor const* descriptor) override;
+    BufferMemory* createBufferMemory(JuneBufferMemoryDescriptor const* descriptor) override;
+    TextureMemory* createTextureMemory(JuneTextureMemoryDescriptor const* descriptor) override;
 
 public:
     Instance* getInstance() const override;

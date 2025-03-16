@@ -1,7 +1,7 @@
 #include "gles_context.h"
 
-#include "gles_buffer.h"
-#include "gles_texture.h"
+#include "gles_buffer_memory.h"
+#include "gles_texture_memory.h"
 #include "june/common/assert.h"
 
 #include <fmt/format.h>
@@ -50,14 +50,14 @@ GLESContext::~GLESContext()
     // do not destroy instance for gles.
 }
 
-Buffer* GLESContext::createBuffer(JuneBufferDescriptor const* descriptor)
+BufferMemory* GLESContext::createBufferMemory(JuneBufferMemoryDescriptor const* descriptor)
 {
-    return GLESBuffer::create(this, descriptor);
+    return GLESBufferMemory::create(this, descriptor);
 }
 
-Texture* GLESContext::createTexture(JuneTextureDescriptor const* descriptor)
+TextureMemory* GLESContext::createTextureMemory(JuneTextureMemoryDescriptor const* descriptor)
 {
-    return GLESTexture::create(this, descriptor);
+    return GLESTextureMemory::create(this, descriptor);
 }
 
 Instance* GLESContext::getInstance() const

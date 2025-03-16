@@ -1,23 +1,31 @@
 #include "vulkan_buffer.h"
+
+#include "vulkan_buffer.h"
+#include "vulkan_buffer_memory.h"
 #include "vulkan_context.h"
 
 namespace june
 {
 
-VulkanBuffer* VulkanBuffer::create(VulkanContext* context, JuneBufferDescriptor const* descriptor)
+VulkanBuffer* VulkanBuffer::create(VulkanBufferMemory* memory, JuneBufferDescriptor const* descriptor)
 {
-    return new VulkanBuffer(context, descriptor);
+    return new VulkanBuffer(memory, descriptor);
 }
 
-VulkanBuffer::VulkanBuffer(VulkanContext* context, JuneBufferDescriptor const* descriptor)
-    : m_context(context)
+VulkanBuffer::VulkanBuffer(VulkanBufferMemory* memory, JuneBufferDescriptor const* descriptor)
+    : m_memory(memory)
     , m_descriptor(*descriptor)
 {
 }
 
 Context* VulkanBuffer::getContext() const
 {
-    return m_context;
+    return m_memory->getContext();
+}
+
+BufferMemory* VulkanBuffer::getMemory() const
+{
+    return m_memory;
 }
 
 } // namespace june

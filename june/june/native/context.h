@@ -5,8 +5,8 @@
 namespace june
 {
 
-class Texture;
-class Buffer;
+class TextureMemory;
+class BufferMemory;
 class Instance;
 class Context
 {
@@ -17,8 +17,8 @@ public:
     Context& operator=(const Context&) = delete;
 
 public: // June API
-    virtual Buffer* createBuffer(JuneBufferDescriptor const* descriptor) = 0;
-    virtual Texture* createTexture(JuneTextureDescriptor const* descriptor) = 0;
+    virtual BufferMemory* createBufferMemory(JuneBufferMemoryDescriptor const* descriptor) = 0;
+    virtual TextureMemory* createTextureMemory(JuneTextureMemoryDescriptor const* descriptor) = 0;
 
 public:
     virtual Instance* getInstance() const = 0;
