@@ -29,6 +29,9 @@ Context* VulkanContext::create(Instance* instance, JuneVulkanApiContextDescripto
 
 VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
     : m_instance(instance)
+    , m_vkInstance(static_cast<VkInstance>(descriptor->vkInstance))
+    , m_vkPhysicalDevice(static_cast<VkPhysicalDevice>(descriptor->vkPhysicalDevice))
+    , m_vkDevice(static_cast<VkDevice>(descriptor->vkDevice))
 {
 #if defined(__ANDROID__) || defined(ANDROID)
     const char vulkanLibraryName[] = "libvulkan.so";
