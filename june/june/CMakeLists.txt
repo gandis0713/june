@@ -20,6 +20,10 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_buffer.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_buffer.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_texture.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_texture.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
 )

@@ -1,6 +1,9 @@
 #include "june/june.h"
 
+#include "june/native/buffer.h"
+#include "june/native/context.h"
 #include "june/native/instance.h"
+#include "june/native/texture.h"
 
 #include <string>
 #include <unordered_map>
@@ -32,24 +35,24 @@ void procDestroyApiContext(JuneApiContext context)
 
 JuneBuffer procCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
 {
-    return nullptr;
-    // return reinterpret_cast<JuneBuffer>(reinterpret_cast<ApiContext*>(context)->createBuffer(descriptor));
+    return reinterpret_cast<JuneBuffer>(reinterpret_cast<Context*>(context)->createBuffer(descriptor));
 }
 
 void procDestroyBuffer(JuneBuffer buffer)
 {
-    // reinterpret_cast<Buffer*>(buffer)->destroy();
+    if (buffer)
+        delete reinterpret_cast<Buffer*>(buffer);
 }
 
 JuneTexture procCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
 {
-    return nullptr;
-    // return reinterpret_cast<JuneTexture>(reinterpret_cast<ApiContext*>(context)->createTexture(descriptor));
+    return reinterpret_cast<JuneTexture>(reinterpret_cast<Context*>(context)->createTexture(descriptor));
 }
 
 void procDestroyTexture(JuneTexture texture)
 {
-    // reinterpret_cast<Texture*>(texture)->destroy();
+    if (texture)
+        delete reinterpret_cast<Texture*>(texture);
 }
 
 namespace
