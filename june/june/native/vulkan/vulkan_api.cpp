@@ -137,50 +137,6 @@ bool VulkanAPI::loadInstanceProcs(VkInstance instance, const VulkanInstanceKnobs
     //     GET_INSTANCE_PROC(GetPhysicalDeviceSparseImageFormatProperties2KHR);
     // }
 
-    if (instanceKnobs.surface)
-    {
-        GET_INSTANCE_PROC(DestroySurfaceKHR);
-        GET_INSTANCE_PROC(GetPhysicalDeviceSurfaceSupportKHR);
-        GET_INSTANCE_PROC(GetPhysicalDeviceSurfaceCapabilitiesKHR);
-        GET_INSTANCE_PROC(GetPhysicalDeviceSurfaceFormatsKHR);
-        GET_INSTANCE_PROC(GetPhysicalDeviceSurfacePresentModesKHR);
-    }
-
-#if defined(VK_USE_PLATFORM_ANDROID_KHR)
-    if (instanceKnobs.androidSurface)
-    {
-        GET_INSTANCE_PROC(CreateAndroidSurfaceKHR);
-    }
-#endif
-
-#if defined(VK_USE_PLATFORM_MACOS_MVK)
-    if (instanceKnobs.macosSurface)
-    {
-        GET_INSTANCE_PROC(CreateMacOSSurfaceMVK);
-    }
-#endif
-
-#if defined(VK_USE_PLATFORM_METAL_EXT)
-    if (instanceKnobs.metalSurface)
-    {
-        GET_INSTANCE_PROC(CreateMetalSurfaceEXT);
-    }
-#endif
-
-#if defined(VK_USE_PLATFORM_WIN32_KHR)
-    if (instanceKnobs.win32Surface)
-    {
-        GET_INSTANCE_PROC(CreateWin32SurfaceKHR);
-    }
-#endif
-
-    // #ifdef VK_USE_PLATFORM_FUCHSIA
-    //     if (instanceKnobs.fuchsiaImagePipeSurface)
-    //     {
-    //         GET_INSTANCE_PROC(CreateImagePipeSurfaceFUCHSIA);
-    //     }
-    // #endif
-
     return true;
 }
 
@@ -390,14 +346,6 @@ bool VulkanAPI::loadDeviceProcs(VkDevice device, const VulkanDeviceKnobs& device
     // GET_DEVICE_PROC(SetPrivateData);
 #endif /* defined(VK_VERSION_1_3) */
 
-    if (deviceKnobs.swapchain)
-    {
-        GET_DEVICE_PROC(CreateSwapchainKHR);
-        GET_DEVICE_PROC(DestroySwapchainKHR);
-        GET_DEVICE_PROC(GetSwapchainImagesKHR);
-        GET_DEVICE_PROC(AcquireNextImageKHR);
-        GET_DEVICE_PROC(QueuePresentKHR);
-    }
     // if (deviceKnobs.debugMarker)
     // {
     //     GET_DEVICE_PROC(CmdDebugMarkerBeginEXT);

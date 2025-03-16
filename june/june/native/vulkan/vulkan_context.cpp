@@ -8,18 +8,8 @@
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 
-// surface
-const char kExtensionNameKhrSurface[] = "VK_KHR_surface";
-const char kExtensionNameMvkMacosSurface[] = "VK_MVK_macos_surface";
-const char kExtensionNameExtMetalSurface[] = "VK_EXT_metal_surface";
-const char kExtensionNameKhrWin32Surface[] = "VK_KHR_win32_surface";
-const char kExtensionNameKhrAndroidSurface[] = "VK_KHR_android_surface";
-const char kExtensionNameKhrXcbSurface[] = "VK_KHR_xcb_surface";
-// const char kExtensionNameKhrWaylandSurface[] = "VK_KHR_wayland_surface";
-// const char kExtensionNameKhrXlibSurface[] = "VK_KHR_xlib_surface";
-
-// swapchain
-const char kExtensionNameKhrSwapchain[] = "VK_KHR_swapchain";
+// memory
+const char kExtensionNameKhrExternalMemory[] = "VK_KHR_external_memory";
 
 namespace june
 {
@@ -182,27 +172,13 @@ void VulkanContext::gatherInfo()
             // TODO: set instance knobs for extension
             spdlog::info("Instance Extension Name: {}, SpecVersion: {}", extensionProperty.extensionName, extensionProperty.specVersion);
 
-            if (strncmp(extensionProperty.extensionName, kExtensionNameKhrSurface, VK_MAX_EXTENSION_NAME_SIZE) == 0)
+#if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__) || defined(WIN32)
+            if (strncmp(extensionProperty.extensionName, kExtensionNameKhrExternalMemory, VK_MAX_EXTENSION_NAME_SIZE) == 0)
             {
-                m_info.surface = true;
+                m_info.externalMemory = true;
             }
+#endif
 
-            if (strncmp(extensionProperty.extensionName, kExtensionNameKhrAndroidSurface, VK_MAX_EXTENSION_NAME_SIZE) == 0)
-            {
-                m_info.androidSurface = true;
-            }
-            if (strncmp(extensionProperty.extensionName, kExtensionNameExtMetalSurface, VK_MAX_EXTENSION_NAME_SIZE) == 0)
-            {
-                m_info.metalSurface = true;
-            }
-            if (strncmp(extensionProperty.extensionName, kExtensionNameMvkMacosSurface, VK_MAX_EXTENSION_NAME_SIZE) == 0)
-            {
-                m_info.macosSurface = true;
-            }
-            if (strncmp(extensionProperty.extensionName, kExtensionNameKhrWin32Surface, VK_MAX_EXTENSION_NAME_SIZE) == 0)
-            {
-                m_info.win32Surface = true;
-            }
 #if VK_HEADER_VERSION >= 216
             if (strncmp(extensionProperty.extensionName, VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_MAX_EXTENSION_NAME_SIZE) == 0)
             {
@@ -241,20 +217,8 @@ const std::vector<const char*> VulkanContext::getRequiredInstanceExtensions()
 {
     std::vector<const char*> requiredInstanceExtensions{};
 
-    requiredInstanceExtensions.push_back(kExtensionNameKhrSurface);
-
-#if defined(__ANDROID__) || defined(ANDROID)
-    requiredInstanceExtensions.push_back(kExtensionNameKhrAndroidSurface);
-#elif defined(__linux__)
-    requiredInstanceExtensions.push_back(kExtensionNameKhrXcbSurface);
-#elif defined(_WIN32)
-    requiredInstanceExtensions.push_back(kExtensionNameKhrWin32Surface);
-#elif defined(__APPLE__)
-#if defined(VK_USE_PLATFORM_MACOS_MVK)
-    requiredInstanceExtensions.push_back(kExtensionNameMvkMacosSurface);
-#elif defined(VK_USE_PLATFORM_METAL_EXT)
-    requiredInstanceExtensions.push_back(kExtensionNameExtMetalSurface);
-#endif
+#if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__) || defined(WIN32)
+    requiredInstanceExtensions.push_back(kExtensionNameKhrExternalMemory);
 #endif
 
 #if VK_HEADER_VERSION >= 216

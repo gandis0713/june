@@ -30,18 +30,13 @@ struct VulkanInstanceKnobs
     // extension
     bool debugReport = false;
     bool debugUtils = false;
-    bool surface = false;
-    bool androidSurface = false;
-    bool macosSurface = false;
-    bool metalSurface = false;
-    bool win32Surface = false;
+    bool externalMemory = false;
 
     bool portabilityEnum = false;
 };
 
 struct VulkanDeviceKnobs
 {
-    bool swapchain = false;
     bool portabilitySubset = false;
 };
 
