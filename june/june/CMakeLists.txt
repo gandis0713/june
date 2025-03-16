@@ -13,13 +13,13 @@ find_package(spdlog REQUIRED)
 set(JUNE_COMMON_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/common/vulkan_api.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/common/vulkan_api.h
 )
 
 set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
 )

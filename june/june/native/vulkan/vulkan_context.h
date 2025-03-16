@@ -2,10 +2,12 @@
 
 #include "june/common/cast.h"
 #include "june/common/dylib.h"
-#include "june/common/vulkan_api.h"
 #include "june/native/context.h"
 
 #include "june/june.h"
+
+#include "vulkan_api.h"
+
 #include <memory>
 #include <vector>
 
