@@ -40,12 +40,14 @@
 
 typedef uint64_t JuneFlags;
 
-typedef struct JuneInstance_T* JuneInstance;     // Opaque handle for an API instance
-typedef struct JuneApiContext_T* JuneApiContext; // Opaque handle for an API context
-typedef struct JuneBuffer_T* JuneBuffer;         // Opaque handle for a shared buffer
-typedef struct JuneTexture_T* JuneTexture;       // Opaque handle for a shared texture
-typedef struct JuneSemaphore_T* JuneSemaphore;   // Opaque cross-API semaphore
-typedef struct JuneFence_T* JuneFence;           // Opaque cross-API fence
+typedef struct JuneInstance_T* JuneInstance;           // Opaque handle for an API instance
+typedef struct JuneApiContext_T* JuneApiContext;       // Opaque handle for an API context
+typedef struct JuneBufferMemory_T* JuneBufferMemory;   // Opaque handle for a shared buffer memory
+typedef struct JuneTextureMemory_T* JuneTextureMemory; // Opaque handle for a shared texture memory
+typedef struct JuneBuffer_T* JuneBuffer;               // Opaque handle for a buffer with shared buffer memory
+typedef struct JuneTexture_T* JuneTexture;             // Opaque handle for a texture with shared texture memory
+typedef struct JuneSemaphore_T* JuneSemaphore;         // Opaque cross-API semaphore
+typedef struct JuneFence_T* JuneFence;                 // Opaque cross-API fence
 
 struct JuneApiContextDescriptor;
 
@@ -64,7 +66,9 @@ typedef enum JuneSType
     JuneSType_D3D11ApiContext = 0x00000001,
     JuneSType_D3D12ApiContext = 0x00000002,
     JuneSType_OpenGLApiContext = 0x00000003,
-    JuneSType_OpenGLESApiContext = 0x00000004
+    JuneSType_OpenGLESApiContext = 0x00000004,
+    JuneSType_EGLImageTextureMemory = 0x00000005,
+    JuneSType_AHardwareBufferTextureMemory = 0x00000006,
 } JuneSType;
 
 typedef enum JuneTextureDimension
@@ -276,6 +280,32 @@ typedef struct JuneBufferDescriptor
     size_t size;
     JuneBufferUsage usage;
 } JuneBufferDescriptor;
+
+typedef struct JuneTextureMemoryDXGISharedHandleDescriptor
+{
+    JuneChainedStruct chain;
+    void* handle;
+    // bool useKeyedMutex;
+} JuneTextureMemoryDXGISharedHandleDescriptor;
+
+typedef struct JuneTextureMemoeyEGLImageDescriptor
+{
+    JuneChainedStruct chain;
+    void* eglImage;
+} JuneTextureMemoeyEGLDescriptor;
+
+typedef struct JuneTextureMemoryAHardwareBufferDescriptor
+{
+    JuneChainedStruct chain;
+    void* ahardwareBuffer;
+    // bool useExternalFormat;
+} JuneTextureMemoryAhardwareBufferDescriptor;
+
+typedef struct JuneTextureMemoryDescriptor
+{
+    JuneChainedStruct const* nextInChain;
+    char const* label;
+} JuneTextureMemoryDescriptor;
 
 typedef struct JuneTextureDescriptor
 {
