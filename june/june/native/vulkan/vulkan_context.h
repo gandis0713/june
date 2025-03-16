@@ -39,6 +39,7 @@ public: // June APi
 
 public:
     Instance* getInstance() const override;
+    JuneApiType getApiType() const override;
 
 public: // vulkan
     VkInstance getVkInstance() const;

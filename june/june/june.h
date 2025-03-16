@@ -57,7 +57,7 @@ typedef enum JuneApiType
     JUNE_D3D11,
     JUNE_D3D12,
     JUNE_OPENGL,
-    JUNE_OPENGL_ES
+    JUNE_GLES
 } JuneApiType;
 
 typedef enum JuneSType
@@ -66,7 +66,7 @@ typedef enum JuneSType
     JuneSType_D3D11ApiContext = 0x00000001,
     JuneSType_D3D12ApiContext = 0x00000002,
     JuneSType_OpenGLApiContext = 0x00000003,
-    JuneSType_OpenGLESApiContext = 0x00000004,
+    JuneSType_GLESApiContext = 0x00000004,
     JuneSType_EGLImageTextureMemory = 0x00000005,
     JuneSType_AHardwareBufferTextureMemory = 0x00000006,
 } JuneSType;

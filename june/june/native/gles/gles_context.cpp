@@ -65,4 +65,9 @@ Instance* GLESContext::getInstance() const
     return m_instance;
 }
 
+JuneApiType GLESContext::getApiType() const
+{
+    return JuneApiType::JUNE_GLES;
+}
+
 } // namespace june

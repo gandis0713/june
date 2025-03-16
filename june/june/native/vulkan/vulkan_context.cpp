@@ -91,6 +91,11 @@ Instance* VulkanContext::getInstance() const
     return m_instance;
 }
 
+JuneApiType VulkanContext::getApiType() const
+{
+    return JuneApiType::JUNE_VULKAN;
+}
+
 VkInstance VulkanContext::getVkInstance() const
 {
     return m_vkInstance;
