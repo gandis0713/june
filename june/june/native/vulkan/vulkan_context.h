@@ -14,10 +14,24 @@
 namespace june
 {
 
-struct VulkanInfo : VulkanInstanceKnobs
+struct VulkanInstanceInfo : VulkanInstanceKnobs
 {
     std::vector<VkLayerProperties> layerProperties;
     std::vector<VkExtensionProperties> extensionProperties;
+};
+
+struct VulkanPhysicalDeviceInfo : VulkanDeviceKnobs
+{
+    VkPhysicalDeviceFeatures physicalDeviceFeatures{};
+    VkPhysicalDeviceProperties physicalDeviceProperties{};
+
+    std::vector<VkQueueFamilyProperties> queueFamilyProperties{};
+
+    std::vector<VkLayerProperties> layerProperties;
+    std::vector<VkExtensionProperties> extensionProperties;
+
+    std::vector<VkMemoryType> memoryTypes;
+    std::vector<VkMemoryHeap> memoryHeaps;
 };
 
 class Instance;
@@ -46,13 +60,15 @@ public: // vulkan
     VkPhysicalDevice getVkPhysicalDevice() const;
     VkDevice getVkDevice() const;
 
-    const VulkanInfo& getInfo() const;
+    const VulkanInstanceInfo& getInstanceInfo() const;
+    const VulkanPhysicalDeviceInfo& getPhysicalDeviceInfo() const;
 
 public:
     VulkanAPI vkAPI{};
 
 private:
-    void gatherInfo();
+    void gatherInstanceInfo();
+    void gatherPhysicalDeviceInfo();
     bool checkInstanceExtensionSupport(const std::vector<const char*> requiredInstanceExtensions);
     const std::vector<const char*> getRequiredInstanceExtensions();
     bool checkInstanceLayerSupport(const std::vector<const char*> requiredInstanceLayers);
@@ -67,7 +83,8 @@ private:
     VkDevice m_vkDevice = VK_NULL_HANDLE;
 
     DyLib m_vulkanLib{};
-    VulkanInfo m_info{};
+    VulkanInstanceInfo m_instanceInfo{};
+    VulkanPhysicalDeviceInfo m_physicalDeviceInfo{};
 
 private:
     VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);

@@ -45,12 +45,12 @@ VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor 
         throw std::runtime_error(fmt::format("Failed to load instance prosc in vulkan library: {}", vulkanLibraryName));
     }
 
-    gatherInfo();
+    gatherInstanceInfo();
 
     spdlog::info("Required Vulkan API Version in Application: {}.{}.{}",
-                 VK_API_VERSION_MAJOR(m_info.apiVersion),
-                 VK_API_VERSION_MINOR(m_info.apiVersion),
-                 VK_API_VERSION_PATCH(m_info.apiVersion));
+                 VK_API_VERSION_MAJOR(m_instanceInfo.apiVersion),
+                 VK_API_VERSION_MINOR(m_instanceInfo.apiVersion),
+                 VK_API_VERSION_PATCH(m_instanceInfo.apiVersion));
 
     const std::vector<const char*> requiredInstanceLayers = getRequiredInstanceLayers();
     if (!checkInstanceLayerSupport(requiredInstanceLayers))
@@ -64,10 +64,15 @@ VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor 
         throw std::runtime_error("instance extensions requested, but not available!");
     }
 
-    const VulkanInstanceKnobs& instanceKnobs = static_cast<const VulkanInstanceKnobs&>(m_info);
+    const VulkanInstanceKnobs& instanceKnobs = static_cast<const VulkanInstanceKnobs&>(m_instanceInfo);
     if (!vkAPI.loadInstanceProcs(m_vkInstance, instanceKnobs))
     {
         throw std::runtime_error(fmt::format("Failed to load instance prosc."));
+    }
+
+    if (!vkAPI.loadDeviceProcs(m_vkDevice, static_cast<const VulkanDeviceKnobs&>(m_physicalDeviceInfo)))
+    {
+        throw std::runtime_error(fmt::format("Failed to load device procs."));
     }
 }
 
@@ -111,12 +116,17 @@ VkDevice VulkanContext::getVkDevice() const
     return m_vkDevice;
 }
 
-const VulkanInfo& VulkanContext::getInfo() const
+const VulkanInstanceInfo& VulkanContext::getInstanceInfo() const
 {
-    return m_info;
+    return m_instanceInfo;
 }
 
-void VulkanContext::gatherInfo()
+const VulkanPhysicalDeviceInfo& VulkanContext::getPhysicalDeviceInfo() const
+{
+    return m_physicalDeviceInfo;
+}
+
+void VulkanContext::gatherInstanceInfo()
 {
     uint32_t apiVersion = 0u;
     if (vkAPI.EnumerateInstanceVersion != nullptr)
@@ -139,15 +149,15 @@ void VulkanContext::gatherInfo()
             return;
         }
 
-        m_info.layerProperties.resize(instanceLayerCount);
-        result = vkAPI.EnumerateInstanceLayerProperties(&instanceLayerCount, m_info.layerProperties.data());
+        m_instanceInfo.layerProperties.resize(instanceLayerCount);
+        result = vkAPI.EnumerateInstanceLayerProperties(&instanceLayerCount, m_instanceInfo.layerProperties.data());
         if (result != VK_SUCCESS)
         {
             spdlog::error("Failed to enumerate instance layer properties. {}", static_cast<int32_t>(result));
             return;
         }
 
-        for (const auto& layerProperty : m_info.layerProperties)
+        for (const auto& layerProperty : m_instanceInfo.layerProperties)
         {
             // TODO: set instance knobs for layer
             spdlog::info("Instance Layer Name: {}", layerProperty.layerName);
@@ -164,32 +174,133 @@ void VulkanContext::gatherInfo()
             return;
         }
 
-        m_info.extensionProperties.resize(instanceExtensionCount);
-        result = vkAPI.EnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, m_info.extensionProperties.data());
+        m_instanceInfo.extensionProperties.resize(instanceExtensionCount);
+        result = vkAPI.EnumerateInstanceExtensionProperties(nullptr, &instanceExtensionCount, m_instanceInfo.extensionProperties.data());
         if (result != VK_SUCCESS)
         {
             spdlog::error("Failed to enumerate instance extension properties.");
             return;
         }
 
-        for (const auto& extensionProperty : m_info.extensionProperties)
+        for (const auto& extensionProperty : m_instanceInfo.extensionProperties)
         {
             // TODO: set instance knobs for extension
             spdlog::info("Instance Extension Name: {}, SpecVersion: {}", extensionProperty.extensionName, extensionProperty.specVersion);
 
-#if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__) || defined(WIN32)
-            if (strncmp(extensionProperty.extensionName, kExtensionNameKhrExternalMemory, VK_MAX_EXTENSION_NAME_SIZE) == 0)
-            {
-                m_info.externalMemory = true;
-            }
-#endif
-
 #if VK_HEADER_VERSION >= 216
             if (strncmp(extensionProperty.extensionName, VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_MAX_EXTENSION_NAME_SIZE) == 0)
             {
-                m_info.portabilityEnum = true;
+                m_instanceInfo.portabilityEnum = true;
             }
 #endif
+        }
+    }
+}
+
+void VulkanContext::gatherPhysicalDeviceInfo()
+{
+    // Gather physical device properties and features.
+    vkAPI.GetPhysicalDeviceProperties(m_vkPhysicalDevice, &m_physicalDeviceInfo.physicalDeviceProperties);
+
+    spdlog::info("Vulkan Device API Version: {}.{}.{}",
+                 VK_API_VERSION_MAJOR(m_physicalDeviceInfo.physicalDeviceProperties.apiVersion),
+                 VK_API_VERSION_MINOR(m_physicalDeviceInfo.physicalDeviceProperties.apiVersion),
+                 VK_API_VERSION_PATCH(m_physicalDeviceInfo.physicalDeviceProperties.apiVersion));
+
+    // currently only support AAA.BBB.CCC.
+    // TODO: support AAA.BBB.CCC.DDD for NVIDIA and AAA.BBB for intel windows
+    spdlog::info("Vulkan Device Instance Version: {}.{}.{}",
+                 VK_API_VERSION_MAJOR(m_physicalDeviceInfo.physicalDeviceProperties.driverVersion),
+                 VK_API_VERSION_MINOR(m_physicalDeviceInfo.physicalDeviceProperties.driverVersion),
+                 VK_API_VERSION_PATCH(m_physicalDeviceInfo.physicalDeviceProperties.driverVersion));
+
+    spdlog::info("Physical Device Id: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.deviceID));
+    spdlog::info("Physical Device Name: {}", m_physicalDeviceInfo.physicalDeviceProperties.deviceName);
+    spdlog::info("Physical Device Type: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.deviceType));
+    spdlog::info("Physical Device Vender ID: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.vendorID));
+
+    vkAPI.GetPhysicalDeviceFeatures(m_vkPhysicalDevice, &m_physicalDeviceInfo.physicalDeviceFeatures);
+
+    // Gather device memory properties.
+    {
+        VkPhysicalDeviceMemoryProperties memoryProperties{};
+        vkAPI.GetPhysicalDeviceMemoryProperties(m_vkPhysicalDevice, &memoryProperties);
+
+        m_physicalDeviceInfo.memoryTypes.assign(memoryProperties.memoryTypes, memoryProperties.memoryTypes + memoryProperties.memoryTypeCount);
+        m_physicalDeviceInfo.memoryHeaps.assign(memoryProperties.memoryHeaps, memoryProperties.memoryHeaps + memoryProperties.memoryHeapCount);
+
+        for (const auto& memoryType : m_physicalDeviceInfo.memoryTypes)
+        {
+            spdlog::info("Heap index: {}, property flags: {}", memoryType.heapIndex, static_cast<uint32_t>(memoryType.propertyFlags));
+        }
+
+        for (const auto& memoryHeap : m_physicalDeviceInfo.memoryHeaps)
+        {
+            spdlog::info("Heap size: {}, flags: {}", memoryHeap.size, static_cast<uint32_t>(memoryHeap.flags));
+        }
+    }
+
+    // Gather queue Family Properties.
+    {
+        uint32_t queueFamilyCount = 0;
+        vkAPI.GetPhysicalDeviceQueueFamilyProperties(m_vkPhysicalDevice, &queueFamilyCount, nullptr);
+
+        m_physicalDeviceInfo.queueFamilyProperties.resize(queueFamilyCount);
+        vkAPI.GetPhysicalDeviceQueueFamilyProperties(m_vkPhysicalDevice, &queueFamilyCount, m_physicalDeviceInfo.queueFamilyProperties.data());
+
+        for (const auto& queueFamilyProperty : m_physicalDeviceInfo.queueFamilyProperties)
+        {
+            spdlog::info("queue flags: {}, queue count: {}", static_cast<uint32_t>(queueFamilyProperty.queueFlags), queueFamilyProperty.queueCount);
+        }
+    }
+
+    // Gather device layer properties.
+    {
+        uint32_t deviceLayerCount = 0;
+        VkResult result = vkAPI.EnumerateDeviceLayerProperties(m_vkPhysicalDevice, &deviceLayerCount, nullptr);
+        if (result != VK_SUCCESS && result != VK_INCOMPLETE)
+        {
+            throw std::runtime_error(fmt::format("Failure EnumerateDeviceLayerProperties to get count. Error: {}", static_cast<int32_t>(result)));
+        }
+
+        m_physicalDeviceInfo.layerProperties.resize(deviceLayerCount);
+        result = vkAPI.EnumerateDeviceLayerProperties(m_vkPhysicalDevice, &deviceLayerCount, m_physicalDeviceInfo.layerProperties.data());
+        if (result != VK_SUCCESS)
+        {
+            throw std::runtime_error(fmt::format("Failure EnumerateDeviceLayerProperties. Error: {}", static_cast<int32_t>(result)));
+        }
+
+        for (const auto& layerProperty : m_physicalDeviceInfo.layerProperties)
+        {
+            spdlog::info("Device Layer Name: {}", layerProperty.layerName);
+        }
+    }
+
+    // Gather device extension properties.
+    {
+        uint32_t deviceExtensionCount = 0;
+        VkResult result = vkAPI.EnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &deviceExtensionCount, nullptr);
+        if (result != VK_SUCCESS && result != VK_INCOMPLETE)
+        {
+            throw std::runtime_error(fmt::format("Failure EnumerateDeviceExtensionProperties to get count. Error: {}", static_cast<int32_t>(result)));
+        }
+
+        m_physicalDeviceInfo.extensionProperties.resize(deviceExtensionCount);
+        result = vkAPI.EnumerateDeviceExtensionProperties(m_vkPhysicalDevice, nullptr, &deviceExtensionCount, m_physicalDeviceInfo.extensionProperties.data());
+        if (result != VK_SUCCESS)
+        {
+            throw std::runtime_error(fmt::format("Failure EnumerateDeviceExtensionProperties. Error: {}", static_cast<int32_t>(result)));
+        }
+
+        for (const auto& extensionProperty : m_physicalDeviceInfo.extensionProperties)
+        {
+            spdlog::info("Device Extention Name: {}", extensionProperty.extensionName);
+
+            // TODO: define "VK_KHR_portability_subset"
+            if (strncmp(extensionProperty.extensionName, "VK_KHR_portability_subset", VK_MAX_EXTENSION_NAME_SIZE) == 0)
+            {
+                m_physicalDeviceInfo.portabilitySubset = true;
+            }
         }
     }
 }
@@ -199,7 +310,7 @@ bool VulkanContext::checkInstanceExtensionSupport(const std::vector<const char*>
     for (const auto& requiredInstanceExtension : requiredInstanceExtensions)
     {
         bool extensionFound = false;
-        for (const auto& availableInstanceExtension : m_info.extensionProperties)
+        for (const auto& availableInstanceExtension : m_instanceInfo.extensionProperties)
         {
             if (strcmp(requiredInstanceExtension, availableInstanceExtension.extensionName) == 0)
             {
@@ -222,12 +333,8 @@ const std::vector<const char*> VulkanContext::getRequiredInstanceExtensions()
 {
     std::vector<const char*> requiredInstanceExtensions{};
 
-#if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__) || defined(WIN32)
-    requiredInstanceExtensions.push_back(kExtensionNameKhrExternalMemory);
-#endif
-
 #if VK_HEADER_VERSION >= 216
-    if (m_info.portabilityEnum)
+    if (m_instanceInfo.portabilityEnum)
     {
         requiredInstanceExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
     }
@@ -247,7 +354,7 @@ bool VulkanContext::checkInstanceLayerSupport(const std::vector<const char*> req
     for (const auto& requiredInstanceLayer : requiredInstanceLayers)
     {
         bool layerFound = false;
-        for (const auto& availableInstanceLayer : m_info.layerProperties)
+        for (const auto& availableInstanceLayer : m_instanceInfo.layerProperties)
         {
             if (strcmp(requiredInstanceLayer, availableInstanceLayer.layerName) == 0)
             {

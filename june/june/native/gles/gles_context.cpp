@@ -8,9 +8,6 @@
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 
-// memory
-const char kExtensionNameKhrExternalMemory[] = "VK_KHR_external_memory";
-
 namespace june
 {
 
