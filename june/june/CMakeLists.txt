@@ -20,12 +20,10 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_buffer_memory.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_buffer_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_shared_memory.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_shared_memory.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_buffer.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_buffer.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_texture_memory.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_texture_memory.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_texture.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_texture.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.cpp
@@ -35,12 +33,10 @@ set(JUNE_NATIVE_FILES
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.cpp
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.h
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_buffer_memory.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_buffer_memory.h
+  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_shared_memory.cpp
+  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_shared_memory.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_buffer.cpp
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_buffer.h
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_texture_memory.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_texture_memory.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_texture.cpp
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_texture.h
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.cpp

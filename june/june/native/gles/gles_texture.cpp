@@ -1,8 +1,8 @@
 #include "gles_texture.h"
 
 #include "gles_context.h"
+#include "gles_shared_memory.h"
 #include "gles_texture.h"
-#include "gles_texture_memory.h"
 
 namespace june
 {

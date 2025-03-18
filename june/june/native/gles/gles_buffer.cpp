@@ -1,8 +1,8 @@
 #include "gles_buffer.h"
 
 #include "gles_buffer.h"
-#include "gles_buffer_memory.h"
 #include "gles_context.h"
+#include "gles_shared_memory.h"
 
 namespace june
 {

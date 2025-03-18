@@ -1,8 +1,7 @@
 #include "vulkan_context.h"
 
 #include "june/common/assert.h"
-#include "vulkan_buffer_memory.h"
-#include "vulkan_texture_memory.h"
+#include "vulkan_shared_memory.h"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -119,14 +118,9 @@ VulkanContext::~VulkanContext()
     // do not destroy instance for vulkan.
 }
 
-BufferMemory* VulkanContext::createBufferMemory(JuneBufferMemoryDescriptor const* descriptor)
+SharedMemory* VulkanContext::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
 {
-    return VulkanBufferMemory::create(this, descriptor);
-}
-
-TextureMemory* VulkanContext::createTextureMemory(JuneTextureMemoryDescriptor const* descriptor)
-{
-    return VulkanTextureMemory::create(this, descriptor);
+    return VulkanSharedMemory::create(this, descriptor);
 }
 
 Instance* VulkanContext::getInstance() const

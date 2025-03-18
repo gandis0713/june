@@ -5,7 +5,7 @@
 namespace june
 {
 
-class TextureMemory;
+class SharedMemory;
 class Context;
 class Fence;
 class Texture
@@ -21,7 +21,7 @@ public: // June API
 
 public:
     virtual Context* getContext() const = 0;
-    virtual TextureMemory* getMemory() const = 0;
+    virtual SharedMemory* getMemory() const = 0;
 
 protected:
     Texture() = default;

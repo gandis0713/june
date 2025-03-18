@@ -7,15 +7,15 @@ namespace june
 {
 
 class VulkanContext;
-class VulkanTextureMemory;
+class VulkanSharedMemory;
 class VulkanTexture : public Texture
 {
 public:
-    static VulkanTexture* create(VulkanTextureMemory* memory, JuneTextureDescriptor const* descriptor);
+    static VulkanTexture* create(VulkanSharedMemory* memory, JuneTextureDescriptor const* descriptor);
 
 public:
     VulkanTexture() = delete;
-    VulkanTexture(VulkanTextureMemory* memory, JuneTextureDescriptor const* descriptor);
+    VulkanTexture(VulkanSharedMemory* memory, JuneTextureDescriptor const* descriptor);
     ~VulkanTexture() override = default;
 
     VulkanTexture(const VulkanTexture&) = delete;
@@ -26,10 +26,10 @@ public: // June API
 
 public:
     Context* getContext() const override;
-    TextureMemory* getMemory() const override;
+    SharedMemory* getMemory() const override;
 
 private:
-    VulkanTextureMemory* m_memory;
+    VulkanSharedMemory* m_memory;
     const JuneTextureDescriptor m_descriptor;
 };
 

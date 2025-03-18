@@ -5,7 +5,7 @@
 namespace june
 {
 
-class BufferMemory;
+class SharedMemory;
 class Context;
 class Fence;
 class Buffer
@@ -21,7 +21,7 @@ public: // June API
 
 public:
     virtual Context* getContext() const = 0;
-    virtual BufferMemory* getMemory() const = 0;
+    virtual SharedMemory* getMemory() const = 0;
 
 protected:
     Buffer() = default;

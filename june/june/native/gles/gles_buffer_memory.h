@@ -1,7 +1,7 @@
 #pragma once
 
 #include "june/june.h"
-#include "june/native/buffer_memory.h"
+#include "june/native/shared_memory.h"
 
 namespace june
 {
