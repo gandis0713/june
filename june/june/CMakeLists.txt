@@ -16,8 +16,8 @@ set(JUNE_COMMON_FILES
 )
 
 set(JUNE_NATIVE_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_context.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_shared_memory.cpp

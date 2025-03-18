@@ -5,7 +5,7 @@
 namespace june
 {
 
-class Context;
+class ApiContext;
 class Instance final
 {
 public:
@@ -19,7 +19,7 @@ public:
     Instance& operator=(const Instance&) = delete;
 
 public:
-    Context* createApiContext(JuneApiContextDescriptor const* descriptor);
+    ApiContext* createApiContext(JuneApiContextDescriptor const* descriptor);
 
 private:
     Instance(JuneInstanceDescriptor const* descriptor);

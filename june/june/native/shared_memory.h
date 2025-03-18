@@ -5,7 +5,7 @@
 namespace june
 {
 
-class Context;
+class ApiContext;
 class Buffer;
 class Texture;
 class SharedMemory
@@ -21,7 +21,7 @@ public: // June API
     virtual void endAccess(JuneEndAccessDescriptor const* descriptor) = 0;
 
 public:
-    virtual Context* getContext() const = 0;
+    virtual ApiContext* getContext() const = 0;
 
 protected:
     SharedMemory() = default;

@@ -6,15 +6,15 @@
 namespace june
 {
 
-class VulkanContext;
+class VulkanApiContext;
 class VulkanBuffer : public Buffer
 {
 public:
-    static VulkanBuffer* create(VulkanContext* context, JuneBufferDescriptor const* descriptor);
+    static VulkanBuffer* create(VulkanApiContext* context, JuneBufferDescriptor const* descriptor);
 
 public:
     VulkanBuffer() = delete;
-    VulkanBuffer(VulkanContext* context, JuneBufferDescriptor const* descriptor);
+    VulkanBuffer(VulkanApiContext* context, JuneBufferDescriptor const* descriptor);
     ~VulkanBuffer() override = default;
 
     VulkanBuffer(const VulkanBuffer&) = delete;
@@ -24,10 +24,10 @@ public: // June API
     Fence* createFence(JuneFenceDescriptor const* descriptor) override;
 
 public:
-    Context* getContext() const override;
+    ApiContext* getApiContext() const override;
 
 private:
-    VulkanContext* m_context;
+    VulkanApiContext* m_context;
     const JuneBufferDescriptor m_descriptor;
 };
 

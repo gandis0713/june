@@ -1,4 +1,4 @@
-#include "vulkan_context.h"
+#include "vulkan_api_context.h"
 
 #include "june/common/assert.h"
 #include "vulkan_buffer.h"
@@ -20,12 +20,12 @@ const char kExtensionNameKhrExternalMemory[] = "VK_KHR_external_memory";
 namespace june
 {
 
-Context* VulkanContext::create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
+ApiContext* VulkanApiContext::create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
 {
-    return new VulkanContext(instance, descriptor);
+    return new VulkanApiContext(instance, descriptor);
 }
 
-VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
+VulkanApiContext::VulkanApiContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
     : m_instance(instance)
     , m_vkInstance(static_cast<VkInstance>(descriptor->vkInstance))
     , m_vkPhysicalDevice(static_cast<VkPhysicalDevice>(descriptor->vkPhysicalDevice))
@@ -115,62 +115,62 @@ VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor 
     }
 }
 
-VulkanContext::~VulkanContext()
+VulkanApiContext::~VulkanApiContext()
 {
     // do not destroy instance for vulkan.
 }
 
-SharedMemory* VulkanContext::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
+SharedMemory* VulkanApiContext::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
 {
     return VulkanSharedMemory::create(this, descriptor);
 }
 
-Buffer* VulkanContext::createBuffer(JuneBufferDescriptor const* descriptor)
+Buffer* VulkanApiContext::createBuffer(JuneBufferDescriptor const* descriptor)
 {
     return VulkanBuffer::create(this, descriptor);
 }
 
-Texture* VulkanContext::createTexture(JuneTextureDescriptor const* descriptor)
+Texture* VulkanApiContext::createTexture(JuneTextureDescriptor const* descriptor)
 {
     return VulkanTexture::create(this, descriptor);
 }
 
-Instance* VulkanContext::getInstance() const
+Instance* VulkanApiContext::getInstance() const
 {
     return m_instance;
 }
 
-JuneApiType VulkanContext::getApiType() const
+JuneApiType VulkanApiContext::getApiType() const
 {
     return JuneApiType::JUNE_VULKAN;
 }
 
-VkInstance VulkanContext::getVkInstance() const
+VkInstance VulkanApiContext::getVkInstance() const
 {
     return m_vkInstance;
 }
 
-VkPhysicalDevice VulkanContext::getVkPhysicalDevice() const
+VkPhysicalDevice VulkanApiContext::getVkPhysicalDevice() const
 {
     return m_vkPhysicalDevice;
 }
 
-VkDevice VulkanContext::getVkDevice() const
+VkDevice VulkanApiContext::getVkDevice() const
 {
     return m_vkDevice;
 }
 
-const VulkanInstanceInfo& VulkanContext::getInstanceInfo() const
+const VulkanInstanceInfo& VulkanApiContext::getInstanceInfo() const
 {
     return m_instanceInfo;
 }
 
-const VulkanPhysicalDeviceInfo& VulkanContext::getPhysicalDeviceInfo() const
+const VulkanPhysicalDeviceInfo& VulkanApiContext::getPhysicalDeviceInfo() const
 {
     return m_physicalDeviceInfo;
 }
 
-void VulkanContext::gatherInstanceInfo()
+void VulkanApiContext::gatherInstanceInfo()
 {
     uint32_t apiVersion = 0u;
     if (vkAPI.EnumerateInstanceVersion != nullptr)
@@ -241,7 +241,7 @@ void VulkanContext::gatherInstanceInfo()
     }
 }
 
-void VulkanContext::gatherPhysicalDeviceInfo()
+void VulkanApiContext::gatherPhysicalDeviceInfo()
 {
     // Gather physical device properties and features.
     vkAPI.GetPhysicalDeviceProperties(m_vkPhysicalDevice, &m_physicalDeviceInfo.physicalDeviceProperties);
@@ -349,7 +349,7 @@ void VulkanContext::gatherPhysicalDeviceInfo()
     }
 }
 
-bool VulkanContext::checkInstanceExtensionSupport(const std::vector<const char*> requiredInstanceExtensions)
+bool VulkanApiContext::checkInstanceExtensionSupport(const std::vector<const char*> requiredInstanceExtensions)
 {
     for (const auto& requiredInstanceExtension : requiredInstanceExtensions)
     {
@@ -373,7 +373,7 @@ bool VulkanContext::checkInstanceExtensionSupport(const std::vector<const char*>
     return true;
 }
 
-const std::vector<const char*> VulkanContext::getRequiredInstanceExtensions()
+const std::vector<const char*> VulkanApiContext::getRequiredInstanceExtensions()
 {
     std::vector<const char*> requiredInstanceExtensions{};
 
@@ -393,7 +393,7 @@ const std::vector<const char*> VulkanContext::getRequiredInstanceExtensions()
     return requiredInstanceExtensions;
 }
 
-bool VulkanContext::checkInstanceLayerSupport(const std::vector<const char*> requiredInstanceLayers)
+bool VulkanApiContext::checkInstanceLayerSupport(const std::vector<const char*> requiredInstanceLayers)
 {
     for (const auto& requiredInstanceLayer : requiredInstanceLayers)
     {
@@ -416,7 +416,7 @@ bool VulkanContext::checkInstanceLayerSupport(const std::vector<const char*> req
     return true;
 }
 
-const std::vector<const char*> VulkanContext::getRequiredInstanceLayers()
+const std::vector<const char*> VulkanApiContext::getRequiredInstanceLayers()
 {
     std::vector<const char*> requiredInstanceLayers{};
 

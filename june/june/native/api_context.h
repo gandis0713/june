@@ -9,13 +9,13 @@ class SharedMemory;
 class Instance;
 class Buffer;
 class Texture;
-class Context
+class ApiContext
 {
 public:
-    virtual ~Context() = default;
+    virtual ~ApiContext() = default;
 
-    Context(const Context&) = delete;
-    Context& operator=(const Context&) = delete;
+    ApiContext(const ApiContext&) = delete;
+    ApiContext& operator=(const ApiContext&) = delete;
 
 public: // June API
     virtual SharedMemory* createSharedMemory(JuneSharedMemoryDescriptor const* descriptor) = 0;
@@ -27,6 +27,6 @@ public:
     virtual JuneApiType getApiType() const = 0;
 
 protected:
-    Context() = default;
+    ApiContext() = default;
 };
 } // namespace june

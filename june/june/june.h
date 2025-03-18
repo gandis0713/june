@@ -98,11 +98,13 @@ typedef struct JuneExtent3D
 typedef struct JuneInstanceDescriptor
 {
     JuneChainedStruct const* nextInChain;
+    StringView label;
 } JuneInstanceDescriptor;
 
 typedef struct JuneApiContextDescriptor
 {
     JuneChainedStruct const* nextInChain;
+    StringView label;
 } JuneApiContextDescriptor;
 
 typedef struct JuneVulkanApiContextDescriptor
@@ -191,11 +193,27 @@ typedef struct JuneTextureDescriptor
 typedef struct JuneFenceDescriptor
 {
     JuneChainedStruct const* nextInChain;
+    StringView label;
 } JuneFenceDescriptor;
+
+typedef struct JuneBeginAccessVulkanBufferDescriptor
+{
+    JuneChainedStruct chain;
+    void* vkSubmitInfo;
+} JuneBeginAccessVulkanDescriptor;
+
+typedef struct JuneBeginAccessVulkanTextureDescriptor
+{
+    JuneChainedStruct chain;
+    void* vkSubmitInfo;
+    uint32_t oldLayout;
+    uint32_t newLayout;
+} JuneBeginAccessVulkanTextureDescriptor;
 
 typedef struct JuneBeginAccessDescriptor
 {
     JuneChainedStruct const* nextInChain;
+    StringView label;
     JuneFence* fences;
     uint32_t fenceCount;
 } JuneBeginAccessDescriptor;

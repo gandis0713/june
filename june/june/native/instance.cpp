@@ -1,6 +1,6 @@
 #include "instance.h"
 // #include "gles/gles_context.h"
-#include "vulkan/vulkan_context.h"
+#include "vulkan/vulkan_api_context.h"
 
 namespace june
 {
@@ -14,7 +14,7 @@ Instance::Instance(JuneInstanceDescriptor const* descriptor)
 {
 }
 
-Context* Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
+ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
 {
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
@@ -23,7 +23,7 @@ Context* Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
         {
         case JuneSType_VulkanApiContext: {
             JuneVulkanApiContextDescriptor const* vulkanDescriptor = reinterpret_cast<JuneVulkanApiContextDescriptor const*>(current);
-            return VulkanContext::create(this, vulkanDescriptor);
+            return VulkanApiContext::create(this, vulkanDescriptor);
         }
         break;
         // case JuneSType_GLESApiContext: {

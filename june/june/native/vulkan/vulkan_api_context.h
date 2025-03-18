@@ -2,7 +2,7 @@
 
 #include "june/common/cast.h"
 #include "june/common/dylib.h"
-#include "june/native/context.h"
+#include "june/native/api_context.h"
 
 #include "june/june.h"
 
@@ -35,17 +35,17 @@ struct VulkanPhysicalDeviceInfo : VulkanDeviceKnobs
 };
 
 class Instance;
-class VulkanContext : public Context
+class VulkanApiContext : public ApiContext
 {
 public:
-    static Context* create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
+    static ApiContext* create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
 
 public:
-    VulkanContext() = delete;
-    ~VulkanContext() override;
+    VulkanApiContext() = delete;
+    ~VulkanApiContext() override;
 
-    VulkanContext(const VulkanContext&) = delete;
-    VulkanContext& operator=(const VulkanContext&) = delete;
+    VulkanApiContext(const VulkanApiContext&) = delete;
+    VulkanApiContext& operator=(const VulkanApiContext&) = delete;
 
 public: // June APi
     SharedMemory* createSharedMemory(JuneSharedMemoryDescriptor const* descriptor) override;
@@ -88,7 +88,7 @@ private:
     VulkanPhysicalDeviceInfo m_physicalDeviceInfo{};
 
 private:
-    VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
+    VulkanApiContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
 };
 
 } // namespace june

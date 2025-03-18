@@ -6,15 +6,15 @@
 namespace june
 {
 
-class VulkanContext;
+class VulkanApiContext;
 class VulkanTexture : public Texture
 {
 public:
-    static VulkanTexture* create(VulkanContext* context, JuneTextureDescriptor const* descriptor);
+    static VulkanTexture* create(VulkanApiContext* context, JuneTextureDescriptor const* descriptor);
 
 public:
     VulkanTexture() = delete;
-    VulkanTexture(VulkanContext* context, JuneTextureDescriptor const* descriptor);
+    VulkanTexture(VulkanApiContext* context, JuneTextureDescriptor const* descriptor);
     ~VulkanTexture() override = default;
 
     VulkanTexture(const VulkanTexture&) = delete;
@@ -24,10 +24,10 @@ public: // June API
     Fence* createFence(JuneFenceDescriptor const* descriptor) override;
 
 public:
-    Context* getContext() const override;
+    ApiContext* getApiContext() const override;
 
 private:
-    VulkanContext* m_context;
+    VulkanApiContext* m_context;
     const JuneTextureDescriptor m_descriptor;
 };
 
