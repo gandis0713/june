@@ -22,8 +22,6 @@ public:
     VulkanSharedMemory& operator=(const VulkanSharedMemory&) = delete;
 
 public: // June API
-    Buffer* createBuffer(JuneBufferDescriptor const* descriptor) override;
-    Texture* createTexture(JuneTextureDescriptor const* descriptor) override;
     void beginAccess(JuneBeginAccessDescriptor const* descriptor) override;
     void endAccess(JuneEndAccessDescriptor const* descriptor) override;
 

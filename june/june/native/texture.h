@@ -21,7 +21,6 @@ public: // June API
 
 public:
     virtual Context* getContext() const = 0;
-    virtual SharedMemory* getMemory() const = 0;
 
 protected:
     Texture() = default;

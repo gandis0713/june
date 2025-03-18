@@ -7,6 +7,8 @@ namespace june
 
 class SharedMemory;
 class Instance;
+class Buffer;
+class Texture;
 class Context
 {
 public:
@@ -17,6 +19,8 @@ public:
 
 public: // June API
     virtual SharedMemory* createSharedMemory(JuneSharedMemoryDescriptor const* descriptor) = 0;
+    virtual Buffer* createBuffer(JuneBufferDescriptor const* descriptor) = 0;
+    virtual Texture* createTexture(JuneTextureDescriptor const* descriptor) = 0;
 
 public:
     virtual Instance* getInstance() const = 0;

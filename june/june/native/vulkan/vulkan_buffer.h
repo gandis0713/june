@@ -7,15 +7,14 @@ namespace june
 {
 
 class VulkanContext;
-class VulkanSharedMemory;
 class VulkanBuffer : public Buffer
 {
 public:
-    static VulkanBuffer* create(VulkanSharedMemory* memory, JuneBufferDescriptor const* descriptor);
+    static VulkanBuffer* create(VulkanContext* context, JuneBufferDescriptor const* descriptor);
 
 public:
     VulkanBuffer() = delete;
-    VulkanBuffer(VulkanSharedMemory* memory, JuneBufferDescriptor const* descriptor);
+    VulkanBuffer(VulkanContext* context, JuneBufferDescriptor const* descriptor);
     ~VulkanBuffer() override = default;
 
     VulkanBuffer(const VulkanBuffer&) = delete;
@@ -26,10 +25,9 @@ public: // June API
 
 public:
     Context* getContext() const override;
-    SharedMemory* getMemory() const override;
 
 private:
-    VulkanSharedMemory* m_memory;
+    VulkanContext* m_context;
     const JuneBufferDescriptor m_descriptor;
 };
 

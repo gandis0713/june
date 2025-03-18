@@ -7,13 +7,13 @@
 namespace june
 {
 
-VulkanBuffer* VulkanBuffer::create(VulkanSharedMemory* memory, JuneBufferDescriptor const* descriptor)
+VulkanBuffer* VulkanBuffer::create(VulkanContext* context, JuneBufferDescriptor const* descriptor)
 {
-    return new VulkanBuffer(memory, descriptor);
+    return new VulkanBuffer(context, descriptor);
 }
 
-VulkanBuffer::VulkanBuffer(VulkanSharedMemory* memory, JuneBufferDescriptor const* descriptor)
-    : m_memory(memory)
+VulkanBuffer::VulkanBuffer(VulkanContext* context, JuneBufferDescriptor const* descriptor)
+    : m_context(context)
     , m_descriptor(*descriptor)
 {
 }
@@ -25,12 +25,7 @@ Fence* VulkanBuffer::createFence(JuneFenceDescriptor const* descriptor)
 
 Context* VulkanBuffer::getContext() const
 {
-    return m_memory->getContext();
-}
-
-SharedMemory* VulkanBuffer::getMemory() const
-{
-    return m_memory;
+    return m_context;
 }
 
 } // namespace june

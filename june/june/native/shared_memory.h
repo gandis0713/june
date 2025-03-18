@@ -17,8 +17,6 @@ public:
     SharedMemory& operator=(const SharedMemory&) = delete;
 
 public: // June API
-    virtual Buffer* createBuffer(JuneBufferDescriptor const* descriptor) = 0;
-    virtual Texture* createTexture(JuneTextureDescriptor const* descriptor) = 0;
     virtual void beginAccess(JuneBeginAccessDescriptor const* descriptor) = 0;
     virtual void endAccess(JuneEndAccessDescriptor const* descriptor) = 0;
 

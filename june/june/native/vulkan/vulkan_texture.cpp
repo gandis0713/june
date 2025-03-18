@@ -7,13 +7,13 @@
 namespace june
 {
 
-VulkanTexture* VulkanTexture::create(VulkanSharedMemory* memory, JuneTextureDescriptor const* descriptor)
+VulkanTexture* VulkanTexture::create(VulkanContext* context, JuneTextureDescriptor const* descriptor)
 {
-    return new VulkanTexture(memory, descriptor);
+    return new VulkanTexture(context, descriptor);
 }
 
-VulkanTexture::VulkanTexture(VulkanSharedMemory* memory, JuneTextureDescriptor const* descriptor)
-    : m_memory(memory)
+VulkanTexture::VulkanTexture(VulkanContext* context, JuneTextureDescriptor const* descriptor)
+    : m_context(context)
     , m_descriptor(*descriptor)
 {
 }
@@ -25,12 +25,7 @@ Fence* VulkanTexture::createFence(JuneFenceDescriptor const* descriptor)
 
 Context* VulkanTexture::getContext() const
 {
-    return m_memory->getContext();
-}
-
-SharedMemory* VulkanTexture::getMemory() const
-{
-    return m_memory;
+    return m_context;
 }
 
 } // namespace june

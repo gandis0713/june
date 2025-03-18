@@ -170,14 +170,16 @@ typedef struct JuneBufferDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
-    size_t size;
+    JuneSharedMemory memory;
     JuneSharedMemoryUsage usage;
+    size_t size;
 } JuneBufferDescriptor;
 
 typedef struct JuneTextureDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
+    JuneSharedMemory memory;
     JuneSharedMemoryUsage usage;
     JuneTextureDimension dimension;
     JuneExtent3D size;
@@ -213,10 +215,10 @@ extern "C"
     typedef void (*JuneProcInstanceDestroy)(JuneInstance instance);
 
     typedef JuneSharedMemory (*JuneProcApiContextCreateSharedMemory)(JuneApiContext context, JuneSharedMemoryDescriptor const* descriptor);
+    typedef JuneBuffer (*JuneProcApiContextCreateBuffer)(JuneApiContext context, JuneBufferDescriptor const* descriptor);
+    typedef JuneTexture (*JuneProcApiContextCreateTexture)(JuneApiContext context, JuneTextureDescriptor const* descriptor);
     typedef void (*JuneProcApiContextDestroy)(JuneApiContext context);
 
-    typedef JuneBuffer (*JuneProcSharedMemoryCreateBuffer)(JuneSharedMemory memory, JuneBufferDescriptor const* descriptor);
-    typedef JuneTexture (*JuneProcSharedMemoryCreateTexture)(JuneSharedMemory memory, JuneTextureDescriptor const* descriptor);
     typedef void (*JuneProcSharedMemoryBeginAccess)(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor);
     typedef void (*JuneProcSharedMemoryEndAccess)(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor);
     typedef void (*JuneProcSharedMemoryDestroy)(JuneSharedMemory memory);
@@ -238,10 +240,10 @@ extern "C"
     JUNE_EXPORT void juneInstanceDestroy(JuneInstance instance);
 
     JUNE_EXPORT JuneSharedMemory juneApiContextCreateSharedMemory(JuneApiContext context, JuneSharedMemoryDescriptor const* descriptor);
+    JUNE_EXPORT JuneBuffer juneApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor);
+    JUNE_EXPORT JuneTexture juneApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor);
     JUNE_EXPORT void juneApiContextDestroy(JuneApiContext context);
 
-    JUNE_EXPORT JuneBuffer juneSharedMemoryCreateBuffer(JuneSharedMemory memory, JuneBufferDescriptor const* descriptor);
-    JUNE_EXPORT JuneTexture juneSharedMemoryCreateTexture(JuneSharedMemory memory, JuneTextureDescriptor const* descriptor);
     JUNE_EXPORT void juneSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor);
     JUNE_EXPORT void juneSharedMemoryEndAccess(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor);
     JUNE_EXPORT void juneSharedMemoryDestroy(JuneSharedMemory memory);

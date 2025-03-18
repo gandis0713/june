@@ -34,20 +34,20 @@ JuneSharedMemory procApiContextCreateSharedMemory(JuneApiContext context, JuneSh
     return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<Context*>(context)->createSharedMemory(descriptor));
 }
 
+JuneBuffer procApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
+{
+    return reinterpret_cast<JuneBuffer>(reinterpret_cast<Context*>(context)->createBuffer(descriptor));
+}
+
+JuneTexture procApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
+{
+    return reinterpret_cast<JuneTexture>(reinterpret_cast<Context*>(context)->createTexture(descriptor));
+}
+
 void procApiContextDestroy(JuneApiContext context)
 {
     if (context)
         delete reinterpret_cast<Context*>(context);
-}
-
-JuneBuffer procSharedMemoryCreateBuffer(JuneSharedMemory memory, JuneBufferDescriptor const* descriptor)
-{
-    return reinterpret_cast<JuneBuffer>(reinterpret_cast<SharedMemory*>(memory)->createBuffer(descriptor));
-}
-
-JuneTexture procSharedMemoryCreateTexture(JuneSharedMemory memory, JuneTextureDescriptor const* descriptor)
-{
-    return reinterpret_cast<JuneTexture>(reinterpret_cast<SharedMemory*>(memory)->createTexture(descriptor));
 }
 
 void procSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor)
@@ -102,9 +102,9 @@ std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneInstanceCreateApiContext", reinterpret_cast<JuneProc>(procInstanceCreateApiContext) },
     { "juneInstanceDestroy", reinterpret_cast<JuneProc>(procInstanceDestroy) },
     { "juneApiContextCreateSharedMemory", reinterpret_cast<JuneProc>(procApiContextCreateSharedMemory) },
+    { "juneApiContextCreateBuffer", reinterpret_cast<JuneProc>(procApiContextCreateBuffer) },
+    { "juneApiContextCreateTexture", reinterpret_cast<JuneProc>(procApiContextCreateTexture) },
     { "juneApiContextDestroy", reinterpret_cast<JuneProc>(procApiContextDestroy) },
-    { "juneSharedMemoryCreateBuffer", reinterpret_cast<JuneProc>(procSharedMemoryCreateBuffer) },
-    { "juneSharedMemoryCreateTexture", reinterpret_cast<JuneProc>(procSharedMemoryCreateTexture) },
     { "juneSharedMemoryBeginAccess", reinterpret_cast<JuneProc>(procSharedMemoryBeginAccess) },
     { "juneSharedMemoryEndAccess", reinterpret_cast<JuneProc>(procSharedMemoryEndAccess) },
     { "juneSharedMemoryDestroy", reinterpret_cast<JuneProc>(procSharedMemoryDestroy) },

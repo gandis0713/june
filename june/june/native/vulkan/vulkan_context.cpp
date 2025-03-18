@@ -1,7 +1,9 @@
 #include "vulkan_context.h"
 
 #include "june/common/assert.h"
+#include "vulkan_buffer.h"
 #include "vulkan_shared_memory.h"
+#include "vulkan_texture.h"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -121,6 +123,16 @@ VulkanContext::~VulkanContext()
 SharedMemory* VulkanContext::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
 {
     return VulkanSharedMemory::create(this, descriptor);
+}
+
+Buffer* VulkanContext::createBuffer(JuneBufferDescriptor const* descriptor)
+{
+    return VulkanBuffer::create(this, descriptor);
+}
+
+Texture* VulkanContext::createTexture(JuneTextureDescriptor const* descriptor)
+{
+    return VulkanTexture::create(this, descriptor);
 }
 
 Instance* VulkanContext::getInstance() const

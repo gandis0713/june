@@ -49,6 +49,8 @@ public:
 
 public: // June APi
     SharedMemory* createSharedMemory(JuneSharedMemoryDescriptor const* descriptor) override;
+    Buffer* createBuffer(JuneBufferDescriptor const* descriptor) override;
+    Texture* createTexture(JuneTextureDescriptor const* descriptor) override;
 
 public:
     Instance* getInstance() const override;

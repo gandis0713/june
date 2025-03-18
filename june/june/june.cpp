@@ -10,10 +10,10 @@ extern JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneAp
 extern void procInstanceDestroy(JuneInstance instance);
 
 extern JuneSharedMemory procApiContextCreateSharedMemory(JuneApiContext context, JuneSharedMemoryDescriptor const* descriptor);
+extern JuneBuffer procApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor);
+extern JuneTexture procApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor);
 extern void procApiContextDestroy(JuneApiContext context);
 
-extern JuneBuffer procSharedMemoryCreateBuffer(JuneSharedMemory memory, JuneBufferDescriptor const* descriptor);
-extern JuneTexture procSharedMemoryCreateTexture(JuneSharedMemory memory, JuneTextureDescriptor const* descriptor);
 extern void procSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor);
 extern void procSharedMemoryEndAccess(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor);
 extern void procSharedMemoryDestroy(JuneSharedMemory bufferMemory);
@@ -62,14 +62,14 @@ extern "C"
         procApiContextDestroy(context);
     }
 
-    JUNE_EXPORT JuneBuffer juneSharedMemoryCreateBuffer(JuneSharedMemory memory, JuneBufferDescriptor const* descriptor)
+    JUNE_EXPORT JuneBuffer juneApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
     {
-        return procSharedMemoryCreateBuffer(memory, descriptor);
+        return procApiContextCreateBuffer(context, descriptor);
     }
 
-    JUNE_EXPORT JuneTexture juneSharedMemoryCreateTexture(JuneSharedMemory memory, JuneTextureDescriptor const* descriptor)
+    JUNE_EXPORT JuneTexture juneApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
     {
-        return procSharedMemoryCreateTexture(memory, descriptor);
+        return procApiContextCreateTexture(context, descriptor);
     }
 
     JUNE_EXPORT void juneSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor)
