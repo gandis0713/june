@@ -29,7 +29,6 @@ typedef struct JuneApiContext_T* JuneApiContext;     // Opaque handle for an API
 typedef struct JuneSharedMemory_T* JuneSharedMemory; // Opaque handle for a shared memory
 typedef struct JuneBuffer_T* JuneBuffer;             // Opaque handle for a buffer with shared memory
 typedef struct JuneTexture_T* JuneTexture;           // Opaque handle for a texture with shared memory
-typedef struct JuneSemaphore_T* JuneSemaphore;       // Opaque cross-API semaphore
 typedef struct JuneFence_T* JuneFence;               // Opaque cross-API fence
 
 struct JuneApiContextDescriptor;
@@ -144,8 +143,7 @@ typedef struct JuneGLESApiContextDescriptor
 typedef struct JuneSharedMemoryDXGISharedHandleDescriptor
 {
     JuneChainedStruct chain;
-    void* handle;
-    // bool useKeyedMutex;
+    void* handle; // ??
 } JuneSharedMemoryDXGISharedHandleDescriptor;
 
 typedef struct JuneTextureMemoeyEGLImageDescriptor
@@ -157,8 +155,7 @@ typedef struct JuneTextureMemoeyEGLImageDescriptor
 typedef struct JuneSharedMemoryAHardwareBufferDescriptor
 {
     JuneChainedStruct chain;
-    void* handle;
-    // bool useExternalFormat;
+    void* aHardwareBuffer;
 } JuneSharedMemoryAhardwareBufferDescriptor;
 
 typedef struct JuneSharedMemoryDescriptor
@@ -202,8 +199,6 @@ typedef struct JuneBeginAccessDescriptor
 } JuneBeginAccessDescriptor;
 
 typedef JuneBeginAccessDescriptor JuneEndAccessDescriptor;
-typedef JuneBeginAccessDescriptor JuneBeginTextureAccessDescriptor;
-typedef JuneBeginAccessDescriptor JuneEndTextureAccessDescriptor;
 
 #ifdef __cplusplus
 extern "C"
