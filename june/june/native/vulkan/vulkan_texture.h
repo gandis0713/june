@@ -22,6 +22,7 @@ public:
 
 public: // June API
     Fence* createFence(JuneFenceDescriptor const* descriptor) override;
+    void* getVkImage() const override;
 
 public:
     ApiContext* getApiContext() const override;

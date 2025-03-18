@@ -23,6 +23,11 @@ Fence* VulkanTexture::createFence(JuneFenceDescriptor const* descriptor)
     return nullptr;
 }
 
+void* VulkanTexture::getVkImage() const
+{
+    return nullptr;
+}
+
 ApiContext* VulkanTexture::getApiContext() const
 {
     return m_context;

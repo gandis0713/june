@@ -241,10 +241,12 @@ extern "C"
     typedef void (*JuneProcSharedMemoryEndAccess)(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor);
     typedef void (*JuneProcSharedMemoryDestroy)(JuneSharedMemory memory);
 
-    typedef void (*JuneProcBufferDestroy)(JuneBuffer buffer);
     typedef JuneFence (*JuneProcBufferCreateFence)(JuneBuffer buffer, JuneFenceDescriptor const* descriptor);
+    typedef void* (*JuneProcBufferGetVkBuffer)(JuneBuffer buffer);
+    typedef void (*JuneProcBufferDestroy)(JuneBuffer buffer);
 
     typedef JuneFence (*JuneProcTextureCreateFence)(JuneTexture texture, JuneFenceDescriptor const* descriptor);
+    typedef void* (*JuneProcTextureGetVkImage)(JuneTexture texture);
     typedef void (*JuneProcTextureDestroy)(JuneTexture texture);
 
     typedef void (*JuneProcFenceDestroy)(JuneFence fence);
@@ -270,6 +272,7 @@ extern "C"
     JUNE_EXPORT void juneBufferDestroy(JuneBuffer buffer);
 
     JUNE_EXPORT JuneFence juneTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor);
+    JUNE_EXPORT void* juneTextureGetVkImage(JuneTexture texture);
     JUNE_EXPORT void juneTextureDestroy(JuneTexture texture);
 
     JUNE_EXPORT void juneFenceDestroy(JuneFence fence);

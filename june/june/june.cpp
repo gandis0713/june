@@ -19,9 +19,11 @@ extern void procSharedMemoryEndAccess(JuneSharedMemory memory, JuneEndAccessDesc
 extern void procSharedMemoryDestroy(JuneSharedMemory bufferMemory);
 
 extern JuneFence procBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor);
+extern void* procBufferGetVkBuffer(JuneBuffer buffer);
 extern void procBufferDestroy(JuneBuffer buffer);
 
 extern JuneFence procTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor);
+extern void* procTextureGetVkImage(JuneTexture texture);
 extern void procTextureDestroy(JuneTexture texture);
 
 extern void procFenceDestroy(JuneFence fence);
@@ -92,6 +94,11 @@ extern "C"
         return procBufferCreateFence(buffer, descriptor);
     }
 
+    JUNE_EXPORT void* juneBufferGetVkBuffer(JuneBuffer buffer)
+    {
+        return procBufferGetVkBuffer(buffer);
+    }
+
     JUNE_EXPORT void juneBufferDestroy(JuneBuffer buffer)
     {
         procBufferDestroy(buffer);
@@ -100,6 +107,11 @@ extern "C"
     JUNE_EXPORT JuneFence juneTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor)
     {
         return procTextureCreateFence(texture, descriptor);
+    }
+
+    JUNE_EXPORT void* juneTextureGetVkImage(JuneTexture texture)
+    {
+        return procTextureGetVkImage(texture);
     }
 
     JUNE_EXPORT void juneTextureDestroy(JuneTexture texture)

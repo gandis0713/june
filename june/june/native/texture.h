@@ -18,6 +18,7 @@ public:
 
 public: // June API
     virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
+    virtual void* getVkImage() const = 0;
 
 public:
     virtual ApiContext* getApiContext() const = 0;

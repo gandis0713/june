@@ -71,6 +71,11 @@ JuneFence procBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* de
     return reinterpret_cast<JuneFence>(reinterpret_cast<Buffer*>(buffer)->createFence(descriptor));
 }
 
+void* procBufferGetVkBuffer(JuneBuffer buffer)
+{
+    return reinterpret_cast<Buffer*>(buffer)->getVkBuffer();
+}
+
 void procBufferDestroy(JuneBuffer buffer)
 {
     if (buffer)
@@ -80,6 +85,11 @@ void procBufferDestroy(JuneBuffer buffer)
 JuneFence procTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor)
 {
     return reinterpret_cast<JuneFence>(reinterpret_cast<Texture*>(texture)->createFence(descriptor));
+}
+
+void* procTextureGetVkImage(JuneTexture texture)
+{
+    return reinterpret_cast<Texture*>(texture)->getVkImage();
 }
 
 void procTextureDestroy(JuneTexture texture)
@@ -109,8 +119,10 @@ std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneSharedMemoryEndAccess", reinterpret_cast<JuneProc>(procSharedMemoryEndAccess) },
     { "juneSharedMemoryDestroy", reinterpret_cast<JuneProc>(procSharedMemoryDestroy) },
     { "juneBufferCreateFence", reinterpret_cast<JuneProc>(procBufferCreateFence) },
+    { "juneBufferGetVkBuffer", reinterpret_cast<JuneProc>(procBufferGetVkBuffer) },
     { "juneBufferDestroy", reinterpret_cast<JuneProc>(procBufferDestroy) },
     { "juneTextureCreateFence", reinterpret_cast<JuneProc>(procTextureCreateFence) },
+    { "juneTextureGetVkImage", reinterpret_cast<JuneProc>(procTextureGetVkImage) },
     { "juneTextureDestroy", reinterpret_cast<JuneProc>(procTextureDestroy) },
     { "juneFenceDestroy", reinterpret_cast<JuneProc>(procFenceDestroy) },
 };

@@ -23,6 +23,11 @@ Fence* VulkanBuffer::createFence(JuneFenceDescriptor const* descriptor)
     return nullptr;
 }
 
+void* VulkanBuffer::getVkBuffer() const
+{
+    return nullptr;
+}
+
 ApiContext* VulkanBuffer::getApiContext() const
 {
     return m_context;
