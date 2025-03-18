@@ -61,11 +61,12 @@ typedef enum JuneTextureDimension
     JuneTextureDimension_3D = 0x00000003
 } JuneTextureDimension;
 
-typedef enum JuneSharedMemoryFormat
+typedef enum JuneTextureFormat
 {
-    JuneSharedMemoryFormat_Undefined = 0x00000000,
-    JuneSharedMemoryFormat_RGBA8Unorm = 0x00000001,
-} JuneSharedMemoryFormat;
+    JuneTextureFormat_Undefined = 0x00000000,
+    JuneTextureFormat_RGBA8Unorm = 0x00000001,
+    // TODO: Add more formats
+} JuneTextureFormat;
 
 typedef JuneFlags JuneSharedMemoryUsage;
 static const JuneSharedMemoryUsage JuneSharedMemoryUsage_None = 0x0000000000000000;
@@ -162,7 +163,6 @@ typedef struct JuneSharedMemoryDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
-    JuneSharedMemoryFormat format;
     JuneSharedMemoryUsage usage;
 } JuneSharedMemoryDescriptor;
 
@@ -181,7 +181,7 @@ typedef struct JuneTextureDescriptor
     JuneSharedMemoryUsage usage;
     JuneTextureDimension dimension;
     JuneExtent3D size;
-    JuneSharedMemoryFormat format;
+    JuneTextureFormat format;
     uint32_t mipLevelCount;
     uint32_t sampleCount;
 } JuneTextureDescriptor;
