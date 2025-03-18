@@ -22,6 +22,8 @@ public:
 
 public: // June API
     Texture* createTexture(JuneTextureDescriptor const* descriptor) override;
+    void beginAccess(JuneBeginTextureAccessDescriptor const* descriptor) override;
+    void endAccess(JuneEndTextureAccessDescriptor const* descriptor) override;
 
 public:
     Context* getContext() const override;

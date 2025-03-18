@@ -22,6 +22,8 @@ public:
 
 public: // June API
     Buffer* createBuffer(JuneBufferDescriptor const* descriptor) override;
+    void beginAccess(JuneBeginBufferAccessDescriptor const* descriptor) override;
+    void endAccess(JuneEndBufferAccessDescriptor const* descriptor) override;
 
 public:
     Context* getContext() const override;

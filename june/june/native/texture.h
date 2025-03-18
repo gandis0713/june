@@ -7,6 +7,7 @@ namespace june
 
 class TextureMemory;
 class Context;
+class Fence;
 class Texture
 {
 public:
@@ -16,6 +17,8 @@ public:
     Texture& operator=(const Texture&) = delete;
 
 public: // June API
+    virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
+
 public:
     virtual Context* getContext() const = 0;
     virtual TextureMemory* getMemory() const = 0;

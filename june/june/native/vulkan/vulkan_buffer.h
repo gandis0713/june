@@ -22,6 +22,8 @@ public:
     VulkanBuffer& operator=(const VulkanBuffer&) = delete;
 
 public: // June API
+    Fence* createFence(JuneFenceDescriptor const* descriptor) override;
+
 public:
     Context* getContext() const override;
     BufferMemory* getMemory() const override;

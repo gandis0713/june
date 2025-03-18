@@ -1,5 +1,5 @@
 #include "instance.h"
-#include "gles/gles_context.h"
+// #include "gles/gles_context.h"
 #include "vulkan/vulkan_context.h"
 
 namespace june
@@ -26,10 +26,10 @@ Context* Instance::createApiContext(JuneApiContextDescriptor const* descriptor)
             return VulkanContext::create(this, vulkanDescriptor);
         }
         break;
-        case JuneSType_GLESApiContext: {
-            JuneGLESApiContextDescriptor const* glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(current);
-            return GLESContext::create(this, glesDescriptor);
-        }
+        // case JuneSType_GLESApiContext: {
+        //     JuneGLESApiContextDescriptor const* glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(current);
+        //     return GLESContext::create(this, glesDescriptor);
+        // }
         default:
             throw std::runtime_error("Unsupported type");
         }

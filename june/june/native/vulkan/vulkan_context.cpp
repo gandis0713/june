@@ -8,6 +8,11 @@
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 
+#if defined(__ANDROID__) || defined(ANDROID)
+#include <android/hardware_buffer.h>
+#include <android/native_window.h>
+#endif
+
 // memory
 const char kExtensionNameKhrExternalMemory[] = "VK_KHR_external_memory";
 
@@ -33,6 +38,39 @@ VulkanContext::VulkanContext(Instance* instance, JuneVulkanApiContextDescriptor 
     const char vulkanLibraryName[] = "libvulkan.dylib";
 #elif defined(WIN32)
     const char vulkanLibraryName[] = "vulkan-1.dll";
+#endif
+
+#if defined(__ANDROID__) || defined(ANDROID)
+
+    // AHardwareBuffer 생성 예시
+    AHardwareBuffer_Desc desc = {};
+    desc.width = 1024;
+    desc.height = 1024;
+    desc.layers = 1;
+    desc.format = AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM;
+    desc.usage = AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE | AHARDWAREBUFFER_USAGE_GPU_COLOR_OUTPUT;
+
+    AHardwareBuffer* ahb = nullptr;
+    int ret = AHardwareBuffer_allocate(&desc, &ahb);
+    if (ret != 0 || ahb == nullptr)
+    {
+        // 오류 처리
+        fprintf(stderr, "AHardwareBuffer allocation failed: %d\n", ret);
+        return;
+    }
+
+    // native handle을 통해 opaque FD 추출
+    const native_handle_t* nativeHandle = AHardwareBuffer_getNativeHandle(ahb);
+    if (!nativeHandle || nativeHandle->numFds < 1)
+    {
+        // 오류 처리
+        fprintf(stderr, "Failed to get valid native handle\n");
+        return;
+    }
+
+    // 일반적으로 첫 번째 FD가 외부 메모리 FD로 사용됨
+    int exportedFd = nativeHandle->data[0];
+
 #endif
 
     if (!m_vulkanLib.open(vulkanLibraryName))

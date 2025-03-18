@@ -15,6 +15,8 @@ public:
 
 public: // June API
     virtual Buffer* createBuffer(JuneBufferDescriptor const* descriptor) = 0;
+    virtual void beginAccess(JuneBeginBufferAccessDescriptor const* descriptor) = 0;
+    virtual void endAccess(JuneEndBufferAccessDescriptor const* descriptor) = 0;
 
 public:
     virtual Context* getContext() const = 0;

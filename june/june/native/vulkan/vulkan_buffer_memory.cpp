@@ -22,6 +22,14 @@ Buffer* VulkanBufferMemory::createBuffer(JuneBufferDescriptor const* descriptor)
     return VulkanBuffer::create(this, descriptor);
 }
 
+void VulkanBufferMemory::beginAccess(JuneBeginBufferAccessDescriptor const* descriptor)
+{
+}
+
+void VulkanBufferMemory::endAccess(JuneEndBufferAccessDescriptor const* descriptor)
+{
+}
+
 Context* VulkanBufferMemory::getContext() const
 {
     return m_context;

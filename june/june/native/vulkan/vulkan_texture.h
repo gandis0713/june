@@ -22,6 +22,8 @@ public:
     VulkanTexture& operator=(const VulkanTexture&) = delete;
 
 public: // June API
+    Fence* createFence(JuneFenceDescriptor const* descriptor) override;
+
 public:
     Context* getContext() const override;
     TextureMemory* getMemory() const override;

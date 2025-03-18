@@ -220,6 +220,12 @@ typedef struct JuneChainedStruct
     JuneSType sType;
 } JuneChainedStruct;
 
+typedef struct StringView
+{
+    char const* data;
+    size_t length;
+} StringView;
+
 typedef struct JuneExtent3D
 {
     uint32_t width;
@@ -276,13 +282,13 @@ typedef struct JuneGLESApiContextDescriptor
 typedef struct JuneBufferMemoryDescriptor
 {
     JuneChainedStruct const* nextInChain;
-    char const* label;
+    StringView label;
 } JuneBufferMemoryDescriptor;
 
 typedef struct JuneBufferDescriptor
 {
     JuneChainedStruct const* nextInChain;
-    char const* label;
+    StringView label;
     size_t size;
     JuneBufferUsage usage;
 } JuneBufferDescriptor;
@@ -310,13 +316,13 @@ typedef struct JuneTextureMemoryAHardwareBufferDescriptor
 typedef struct JuneTextureMemoryDescriptor
 {
     JuneChainedStruct const* nextInChain;
-    char const* label;
+    StringView label;
 } JuneTextureMemoryDescriptor;
 
 typedef struct JuneTextureDescriptor
 {
     JuneChainedStruct const* nextInChain;
-    char const* label;
+    StringView label;
     JuneTextureUsage usage;
     JuneTextureDimension dimension;
     JuneExtent3D size;
@@ -325,41 +331,87 @@ typedef struct JuneTextureDescriptor
     uint32_t sampleCount;
 } JuneTextureDescriptor;
 
+typedef struct JuneFenceDescriptor
+{
+    JuneChainedStruct const* nextInChain;
+} JuneFenceDescriptor;
+
+typedef struct JuneBeginAccessDescriptor
+{
+    JuneChainedStruct const* nextInChain;
+    JuneFence* fences;
+    uint32_t fenceCount;
+} JuneBeginAccessDescriptor;
+
+typedef JuneBeginAccessDescriptor JuneBeginBufferAccessDescriptor;
+typedef JuneBeginAccessDescriptor JuneBeginTextureAccessDescriptor;
+typedef JuneBeginAccessDescriptor JuneEndAccessDescriptor;
+typedef JuneBeginAccessDescriptor JuneEndBufferAccessDescriptor;
+typedef JuneBeginAccessDescriptor JuneEndTextureAccessDescriptor;
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
     typedef void (*JuneProc)(void);
-    typedef JuneProc (*JuneProcGetProcAddress)(char const* name);
+    typedef JuneProc (*JuneProcGetProcAddress)(StringView name);
     typedef JuneInstance (*JuneProcCreateInstance)(JuneInstanceDescriptor const* desc);
-    typedef void (*JuneProcDestroyInstance)(JuneInstance instance);
-    typedef JuneApiContext (*JuneProcCreateApiContext)(JuneInstance instance, JuneApiContextDescriptor const* desc);
-    typedef void (*JuneProcDestroyApiContext)(JuneApiContext context);
-    typedef JuneBufferMemory (*JuneProcCreateBufferMemory)(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor);
-    typedef JuneTextureMemory (*JuneProcCreateTextureMemory)(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor);
-    typedef void (*JuneProcDestroyBufferMemory)(JuneBufferMemory bufferMemory);
-    typedef void (*JuneProcDestroyTextureMemory)(JuneTextureMemory textureMemory);
-    typedef JuneBuffer (*JuneProcCreateBuffer)(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor);
-    typedef JuneTexture (*JuneProcCreateTexture)(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor);
-    typedef void (*JuneProcDestroyBuffer)(JuneBuffer buffer);
-    typedef void (*JuneProcDestroyTexture)(JuneTexture texture);
+
+    typedef JuneApiContext (*JuneProcInstanceCreateApiContext)(JuneInstance instance, JuneApiContextDescriptor const* desc);
+    typedef void (*JuneProcInstanceDestroy)(JuneInstance instance);
+
+    typedef JuneBufferMemory (*JuneProcApiContextCreateBufferMemory)(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor);
+    typedef JuneTextureMemory (*JuneProcApiContextCreateTextureMemory)(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor);
+    typedef void (*JuneProcApiContextDestroy)(JuneApiContext context);
+
+    typedef JuneBuffer (*JuneProcBufferMemoryCreateBuffer)(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor);
+    typedef void (*JuneProcBufferMemoryBeginAccess)(JuneBufferMemory memory, JuneBeginBufferAccessDescriptor const* descriptor);
+    typedef void (*JuneProcBufferMemoryEndAccess)(JuneBufferMemory memory, JuneEndBufferAccessDescriptor const* descriptor);
+    typedef void (*JuneProcBufferMemoryDestroy)(JuneBufferMemory bufferMemory);
+
+    typedef JuneTexture (*JuneProcTextureMemoryCreateTexture)(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor);
+    typedef void (*JuneProcTextureMemoryBeginAccess)(JuneTextureMemory memory, JuneBeginTextureAccessDescriptor const* descriptor);
+    typedef void (*JuneProcTextureMemoryEndAccess)(JuneTextureMemory memory, JuneEndTextureAccessDescriptor const* descriptor);
+    typedef void (*JuneProcTextureMemoryDestroy)(JuneTextureMemory textureMemory);
+
+    typedef void (*JuneProcBufferDestroy)(JuneBuffer buffer);
+    typedef JuneFence (*JuneProcBufferCreateFence)(JuneBuffer buffer, JuneFenceDescriptor const* descriptor);
+
+    typedef JuneFence (*JuneProcTextureCreateFence)(JuneTexture texture, JuneFenceDescriptor const* descriptor);
+    typedef void (*JuneProcTextureDestroy)(JuneTexture texture);
+
+    typedef void (*JuneProcFenceDestroy)(JuneFence fence);
 
 #if !defined(JUNE_SKIP_DECLARATIONS)
 
-    JUNE_EXPORT JuneProc juneGetProcAddress(char const* name);
+    JUNE_EXPORT JuneProc juneGetProcAddress(StringView name);
     JUNE_EXPORT JuneInstance juneCreateInstance(JuneInstanceDescriptor const* desc);
-    JUNE_EXPORT JuneApiContext juneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc);
-    JUNE_EXPORT void juneDestroyInstance(JuneInstance instance);
-    JUNE_EXPORT void juneDestroyApiContext(JuneApiContext context);
-    JUNE_EXPORT JuneBufferMemory juneCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor);
-    JUNE_EXPORT JuneTextureMemory juneCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor);
-    JUNE_EXPORT void juneDestroyBufferMemory(JuneBufferMemory bufferMemory);
-    JUNE_EXPORT void juneDestroyTextureMemory(JuneTextureMemory textureMemory);
-    JUNE_EXPORT JuneBuffer juneCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor);
-    JUNE_EXPORT JuneTexture juneCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor);
-    JUNE_EXPORT void juneDestroyBuffer(JuneBuffer buffer);
-    JUNE_EXPORT void juneDestroyTexture(JuneTexture texture);
+
+    JUNE_EXPORT JuneApiContext juneInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc);
+    JUNE_EXPORT void juneInstanceDestroy(JuneInstance instance);
+
+    JUNE_EXPORT JuneBufferMemory juneApiContextCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor);
+    JUNE_EXPORT JuneTextureMemory juneApiContextCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor);
+    JUNE_EXPORT void juneApiContextDestroy(JuneApiContext context);
+
+    JUNE_EXPORT JuneBuffer juneBufferMemoryCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor);
+    JUNE_EXPORT void juneBufferMemoryBeginAccess(JuneBufferMemory memory, JuneBeginBufferAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneBufferMemoryEndAccess(JuneBufferMemory memory, JuneEndBufferAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneBufferMemoryDestroy(JuneBufferMemory bufferMemory);
+
+    JUNE_EXPORT JuneTexture juneTextureMemoryCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor);
+    JUNE_EXPORT void juneTextureMemoryBeginAccess(JuneTextureMemory memory, JuneBeginTextureAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneTextureMemoryEndAccess(JuneTextureMemory memory, JuneEndTextureAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneTextureMemoryDestroy(JuneTextureMemory textureMemory);
+
+    JUNE_EXPORT JuneFence juneBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor);
+    JUNE_EXPORT void juneBufferDestroy(JuneBuffer buffer);
+
+    JUNE_EXPORT JuneFence juneTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor);
+    JUNE_EXPORT void juneTextureDestroy(JuneTexture texture);
+
+    JUNE_EXPORT void juneFenceDestroy(JuneFence fence);
 
 #endif // !defined(JUNE_SKIP_DECLARATIONS)
 

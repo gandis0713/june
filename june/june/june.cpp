@@ -3,19 +3,33 @@
 namespace june
 {
 
-extern JuneProc procGetProcAddress(char const* procName);
+extern JuneProc procGetProcAddress(StringView name);
 extern JuneInstance procCreateInstance(JuneInstanceDescriptor const* desc);
-extern JuneApiContext procCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc);
-extern void procDestroyInstance(JuneInstance instance);
-extern void procDestroyApiContext(JuneApiContext context);
-extern JuneBufferMemory procCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor);
-extern JuneTextureMemory procCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor);
-extern void procDestroyBufferMemory(JuneBufferMemory bufferMemory);
-extern void procDestroyTextureMemory(JuneTextureMemory textureMemory);
-extern JuneBuffer procCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor);
-extern JuneTexture procCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor);
-extern void procDestroyBuffer(JuneBuffer buffer);
-extern void procDestroyTexture(JuneTexture texture);
+
+extern JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc);
+extern void procInstanceDestroy(JuneInstance instance);
+
+extern JuneBufferMemory procApiContextCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor);
+extern JuneTextureMemory procApiContextCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor);
+extern void procApiContextDestroy(JuneApiContext context);
+
+extern JuneBuffer procBufferMemoryCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor);
+extern void procBufferMemoryBeginAccess(JuneBufferMemory memory, JuneBeginBufferAccessDescriptor const* descriptor);
+extern void procBufferMemoryEndAccess(JuneBufferMemory memory, JuneEndBufferAccessDescriptor const* descriptor);
+extern void procBufferMemoryDestroy(JuneBufferMemory bufferMemory);
+
+extern JuneTexture procTextureMemoryCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor);
+extern void procTextureMemoryBeginAccess(JuneTextureMemory memory, JuneBeginTextureAccessDescriptor const* descriptor);
+extern void procTextureMemoryEndAccess(JuneTextureMemory memory, JuneEndTextureAccessDescriptor const* descriptor);
+extern void procTextureMemoryDestroy(JuneTextureMemory textureMemory);
+
+extern JuneFence procBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor);
+extern void procBufferDestroy(JuneBuffer buffer);
+
+extern JuneFence procTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor);
+extern void procTextureDestroy(JuneTexture texture);
+
+extern void procFenceDestroy(JuneFence fence);
 
 } // namespace june
 
@@ -23,9 +37,9 @@ extern "C"
 {
     using namespace june;
 
-    JUNE_EXPORT JuneProc juneGetProcAddress(char const* procName)
+    JUNE_EXPORT JuneProc juneGetProcAddress(StringView name)
     {
-        return procGetProcAddress(procName);
+        return procGetProcAddress(name);
     }
 
     JUNE_EXPORT JuneInstance juneCreateInstance(JuneInstanceDescriptor const* desc)
@@ -33,58 +47,93 @@ extern "C"
         return procCreateInstance(desc);
     }
 
-    JUNE_EXPORT JuneApiContext juneCreateApiContext(JuneInstance innstance, JuneApiContextDescriptor const* desc)
+    JUNE_EXPORT JuneApiContext juneInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc)
     {
-        return procCreateApiContext(innstance, desc);
+        return procInstanceCreateApiContext(instance, desc);
     }
 
-    JUNE_EXPORT void juneDestroyInstance(JuneInstance instance)
+    JUNE_EXPORT void juneInstanceDestroy(JuneInstance instance)
     {
-        return procDestroyInstance(instance);
+        procInstanceDestroy(instance);
     }
 
-    JUNE_EXPORT void juneDestroyApiContext(JuneApiContext context)
+    JUNE_EXPORT JuneBufferMemory juneApiContextCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor)
     {
-        return procDestroyApiContext(context);
+        return procApiContextCreateBufferMemory(context, descriptor);
     }
 
-    JUNE_EXPORT JuneBufferMemory juneCreateBufferMemory(JuneApiContext context, JuneBufferMemoryDescriptor const* descriptor)
+    JUNE_EXPORT JuneTextureMemory juneApiContextCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor)
     {
-        return procCreateBufferMemory(context, descriptor);
+        return procApiContextCreateTextureMemory(context, descriptor);
     }
 
-    JUNE_EXPORT JuneTextureMemory juneCreateTextureMemory(JuneApiContext context, JuneTextureMemoryDescriptor const* descriptor)
+    JUNE_EXPORT void juneApiContextDestroy(JuneApiContext context)
     {
-        return procCreateTextureMemory(context, descriptor);
+        procApiContextDestroy(context);
     }
 
-    JUNE_EXPORT void juneDestroyBufferMemory(JuneBufferMemory bufferMemory)
+    JUNE_EXPORT JuneBuffer juneBufferMemoryCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor)
     {
-        return procDestroyBufferMemory(bufferMemory);
+        return procBufferMemoryCreateBuffer(memory, descriptor);
     }
 
-    JUNE_EXPORT void juneDestroyTextureMemory(JuneTextureMemory textureMemory)
+    JUNE_EXPORT void juneBufferMemoryBeginAccess(JuneBufferMemory memory, JuneBeginBufferAccessDescriptor const* descriptor)
     {
-        return procDestroyTextureMemory(textureMemory);
+        procBufferMemoryBeginAccess(memory, descriptor);
     }
 
-    JUNE_EXPORT JuneBuffer juneCreateBuffer(JuneBufferMemory memory, JuneBufferDescriptor const* descriptor)
+    JUNE_EXPORT void juneBufferMemoryEndAccess(JuneBufferMemory memory, JuneEndBufferAccessDescriptor const* descriptor)
     {
-        return procCreateBuffer(memory, descriptor);
+        procBufferMemoryEndAccess(memory, descriptor);
     }
 
-    JUNE_EXPORT JuneTexture juneCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor)
+    JUNE_EXPORT void juneBufferMemoryDestroy(JuneBufferMemory bufferMemory)
     {
-        return procCreateTexture(memory, descriptor);
+        procBufferMemoryDestroy(bufferMemory);
     }
 
-    JUNE_EXPORT void juneDestroyBuffer(JuneBuffer buffer)
+    JUNE_EXPORT JuneTexture juneTextureMemoryCreateTexture(JuneTextureMemory memory, JuneTextureDescriptor const* descriptor)
     {
-        return procDestroyBuffer(buffer);
+        return procTextureMemoryCreateTexture(memory, descriptor);
     }
 
-    JUNE_EXPORT void juneDestroyTexture(JuneTexture texture)
+    JUNE_EXPORT void juneTextureMemoryBeginAccess(JuneTextureMemory memory, JuneBeginTextureAccessDescriptor const* descriptor)
     {
-        return procDestroyTexture(texture);
+        procTextureMemoryBeginAccess(memory, descriptor);
+    }
+
+    JUNE_EXPORT void juneTextureMemoryEndAccess(JuneTextureMemory memory, JuneEndTextureAccessDescriptor const* descriptor)
+    {
+        procTextureMemoryEndAccess(memory, descriptor);
+    }
+
+    JUNE_EXPORT void juneTextureMemoryDestroy(JuneTextureMemory textureMemory)
+    {
+        procTextureMemoryDestroy(textureMemory);
+    }
+
+    JUNE_EXPORT JuneFence juneBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor)
+    {
+        return procBufferCreateFence(buffer, descriptor);
+    }
+
+    JUNE_EXPORT void juneBufferDestroy(JuneBuffer buffer)
+    {
+        procBufferDestroy(buffer);
+    }
+
+    JUNE_EXPORT JuneFence juneTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor)
+    {
+        return procTextureCreateFence(texture, descriptor);
+    }
+
+    JUNE_EXPORT void juneTextureDestroy(JuneTexture texture)
+    {
+        procTextureDestroy(texture);
+    }
+
+    JUNE_EXPORT void juneFenceDestroy(JuneFence fence)
+    {
+        procFenceDestroy(fence);
     }
 }

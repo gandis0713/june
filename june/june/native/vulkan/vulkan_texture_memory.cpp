@@ -22,6 +22,14 @@ Texture* VulkanTextureMemory::createTexture(JuneTextureDescriptor const* descrip
     return VulkanTexture::create(this, descriptor);
 }
 
+void VulkanTextureMemory::beginAccess(JuneBeginTextureAccessDescriptor const* descriptor)
+{
+}
+
+void VulkanTextureMemory::endAccess(JuneEndTextureAccessDescriptor const* descriptor)
+{
+}
+
 Context* VulkanTextureMemory::getContext() const
 {
     return m_context;

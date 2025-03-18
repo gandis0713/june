@@ -17,6 +17,8 @@ public:
 
 public: // June API
     virtual Texture* createTexture(JuneTextureDescriptor const* descriptor) = 0;
+    virtual void beginAccess(JuneBeginTextureAccessDescriptor const* descriptor) = 0;
+    virtual void endAccess(JuneEndTextureAccessDescriptor const* descriptor) = 0;
 
 public:
     virtual Context* getContext() const = 0;

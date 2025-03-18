@@ -7,6 +7,7 @@ namespace june
 
 class BufferMemory;
 class Context;
+class Fence;
 class Buffer
 {
 public:
@@ -16,6 +17,8 @@ public:
     Buffer& operator=(const Buffer&) = delete;
 
 public: // June API
+    virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
+
 public:
     virtual Context* getContext() const = 0;
     virtual BufferMemory* getMemory() const = 0;

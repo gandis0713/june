@@ -18,6 +18,11 @@ VulkanTexture::VulkanTexture(VulkanTextureMemory* memory, JuneTextureDescriptor 
 {
 }
 
+Fence* VulkanTexture::createFence(JuneFenceDescriptor const* descriptor)
+{
+    return nullptr;
+}
+
 Context* VulkanTexture::getContext() const
 {
     return m_memory->getContext();

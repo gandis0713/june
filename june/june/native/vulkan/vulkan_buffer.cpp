@@ -18,6 +18,11 @@ VulkanBuffer::VulkanBuffer(VulkanBufferMemory* memory, JuneBufferDescriptor cons
 {
 }
 
+Fence* VulkanBuffer::createFence(JuneFenceDescriptor const* descriptor)
+{
+    return nullptr;
+}
+
 Context* VulkanBuffer::getContext() const
 {
     return m_memory->getContext();
