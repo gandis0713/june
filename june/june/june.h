@@ -24,7 +24,7 @@
 
 typedef uint64_t JuneFlags;
 
-typedef struct JuneInstance_T* JuneInstance;         // Opaque handle for an API instance
+typedef struct JuneInstance_T* JuneInstance;         // Opaque handle for an instance
 typedef struct JuneApiContext_T* JuneApiContext;     // Opaque handle for an API context
 typedef struct JuneSharedMemory_T* JuneSharedMemory; // Opaque handle for a shared memory
 typedef struct JuneBuffer_T* JuneBuffer;             // Opaque handle for a buffer with shared memory
@@ -35,11 +35,12 @@ struct JuneApiContextDescriptor;
 
 typedef enum JuneApiType
 {
-    JUNE_VULKAN,
-    JUNE_D3D11,
-    JUNE_D3D12,
-    JUNE_OPENGL,
-    JUNE_GLES
+    JuneApiType_Undefined = 0x00000000,
+    JuneApiType_Vulkan = 0x00000001,
+    JuneApiType_D3D11 = 0x00000002,
+    JuneApiType_D3D12 = 0x00000003,
+    JuneApiType_OpenGL = 0x00000004,
+    JuneApiType_GLES = 0x00000005,
 } JuneApiType;
 
 typedef enum JuneSType

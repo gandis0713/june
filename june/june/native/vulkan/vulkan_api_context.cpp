@@ -142,7 +142,7 @@ Instance* VulkanApiContext::getInstance() const
 
 JuneApiType VulkanApiContext::getApiType() const
 {
-    return JuneApiType::JUNE_VULKAN;
+    return JuneApiType_Vulkan;
 }
 
 VkInstance VulkanApiContext::getVkInstance() const
