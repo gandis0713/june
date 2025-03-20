@@ -11,6 +11,7 @@ class Texture;
 class SharedMemory
 {
 public:
+    SharedMemory() = delete;
     virtual ~SharedMemory() = default;
 
     SharedMemory(const SharedMemory&) = delete;
@@ -21,10 +22,15 @@ public: // June API
     virtual void endAccess(JuneEndAccessDescriptor const* descriptor) = 0;
 
 public:
-    virtual ApiContext* getContext() const = 0;
+    ApiContext* getContext() const;
+    size_t getSize() const;
 
 protected:
-    SharedMemory() = default;
+    SharedMemory(ApiContext* context, JuneSharedMemoryDescriptor const* descriptor);
+
+protected:
+    ApiContext* m_context{ nullptr };
+    const JuneSharedMemoryDescriptor m_descriptor;
 };
 
 } // namespace june

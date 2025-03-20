@@ -11,8 +11,7 @@ VulkanSharedMemory* VulkanSharedMemory::create(VulkanApiContext* context, JuneSh
 }
 
 VulkanSharedMemory::VulkanSharedMemory(VulkanApiContext* context, JuneSharedMemoryDescriptor const* descriptor)
-    : m_context(context)
-    , m_descriptor(*descriptor)
+    : SharedMemory(context, descriptor)
 {
 }
 
@@ -22,11 +21,6 @@ void VulkanSharedMemory::beginAccess(JuneBeginAccessDescriptor const* descriptor
 
 void VulkanSharedMemory::endAccess(JuneEndAccessDescriptor const* descriptor)
 {
-}
-
-ApiContext* VulkanSharedMemory::getContext() const
-{
-    return m_context;
 }
 
 } // namespace june

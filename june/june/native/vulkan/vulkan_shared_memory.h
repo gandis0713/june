@@ -24,13 +24,6 @@ public:
 public: // June API
     void beginAccess(JuneBeginAccessDescriptor const* descriptor) override;
     void endAccess(JuneEndAccessDescriptor const* descriptor) override;
-
-public:
-    ApiContext* getContext() const override;
-
-private:
-    VulkanApiContext* m_context;
-    const JuneSharedMemoryDescriptor m_descriptor;
 };
 
 } // namespace june

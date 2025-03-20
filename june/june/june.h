@@ -52,6 +52,8 @@ typedef enum JuneSType
     JuneSType_GLESApiContext = 0x00000004,
     JuneSType_EGLImageSharedMemory = 0x00000005,
     JuneSType_AHardwareBufferSharedMemory = 0x00000006,
+    JuneSType_BeginAccessVulkanBuffer = 0x00000007,
+    JuneSType_BeginAccessVulkanTexture = 0x00000008,
 } JuneSType;
 
 typedef enum JuneTextureDimension
@@ -167,6 +169,9 @@ typedef struct JuneSharedMemoryDescriptor
     JuneChainedStruct const* nextInChain;
     StringView label;
     JuneSharedMemoryUsage usage;
+    uint32_t width;
+    uint32_t height;
+    uint32_t layers;
 } JuneSharedMemoryDescriptor;
 
 typedef struct JuneBufferDescriptor
