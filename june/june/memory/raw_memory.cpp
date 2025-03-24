@@ -15,9 +15,8 @@ RawMemoryType RawMemory::getDefaultMemoryType()
     return RawMemoryType::kNone;
 }
 
-RawMemory::RawMemory(SharedMemory* sharedMemory, const RawMemoryDescriptor& descriptor)
-    : m_sharedMemory(sharedMemory)
-    , m_descriptor(descriptor)
+RawMemory::RawMemory(const RawMemoryDescriptor& descriptor)
+    : m_descriptor(descriptor)
 {
 }
 

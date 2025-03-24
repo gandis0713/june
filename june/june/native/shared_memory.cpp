@@ -5,8 +5,9 @@
 namespace june
 {
 
-SharedMemory::SharedMemory(ApiContext* context, JuneSharedMemoryDescriptor const* descriptor)
+SharedMemory::SharedMemory(ApiContext* context, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor)
     : m_context(context)
+    , m_rawMemory(std::move(rawMemory))
     , m_descriptor(*descriptor)
 {
 }

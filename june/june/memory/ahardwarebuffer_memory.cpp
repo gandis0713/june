@@ -5,25 +5,22 @@
 namespace june
 {
 
-AHardwareBufferMemory* AHardwareBufferMemory::create(SharedMemory* sharedMemory,
-                                                     const RawMemoryDescriptor& descriptor)
+std::unique_ptr<AHardwareBufferMemory> AHardwareBufferMemory::create(const RawMemoryDescriptor& descriptor)
 {
-    return new AHardwareBufferMemory(sharedMemory, descriptor);
+    return std::unique_ptr<AHardwareBufferMemory>(new AHardwareBufferMemory(descriptor));
 }
 
-AHardwareBufferMemory* AHardwareBufferMemory::create(SharedMemory* sharedMemory,
-                                                     const RawMemoryDescriptor& descriptor,
-                                                     const AHardwareBufferMemoryDescriptor& ahbDescriptor)
+std::unique_ptr<AHardwareBufferMemory> AHardwareBufferMemory::create(const RawMemoryDescriptor& descriptor,
+                                                                     const AHardwareBufferMemoryDescriptor& ahbDescriptor)
 {
-    return new AHardwareBufferMemory(sharedMemory, descriptor, ahbDescriptor);
+    return std::unique_ptr<AHardwareBufferMemory>(new AHardwareBufferMemory(descriptor, ahbDescriptor));
 }
 
-AHardwareBufferMemory::AHardwareBufferMemory(SharedMemory* sharedMemory,
-                                             const RawMemoryDescriptor& descriptor)
-    : RawMemory(sharedMemory, descriptor)
-    , m_ahbDescriptor(nullptr)
+AHardwareBufferMemory::AHardwareBufferMemory(const RawMemoryDescriptor& descriptor)
+    : RawMemory(descriptor)
+    , m_ahbDescriptor(AHardwareBufferMemoryDescriptor{})
 {
-    AHardwareBufferMemory_Desc desc = {
+    AHardwareBuffer_Desc desc = {
         .width = m_descriptor.width,
         .height = m_descriptor.height,
         .layers = m_descriptor.layers,
@@ -31,25 +28,23 @@ AHardwareBufferMemory::AHardwareBufferMemory(SharedMemory* sharedMemory,
         .usage = AHARDWAREBUFFER_USAGE_GPU_SAMPLED_IMAGE | AHARDWAREBUFFER_USAGE_GPU_COLOR_OUTPUT,
     };
 
-    AHardwareBufferMemory_allocate(&desc, &m_ahbDescriptor.aHardwareBuffer);
+    AHardwareBuffer_allocate(&desc, &m_ahbDescriptor.aHardwareBuffer);
 }
 
-AHardwareBufferMemory::AHardwareBufferMemory(SharedMemory* sharedMemory,
-                                             const RawMemoryDescriptor& descriptor,
+AHardwareBufferMemory::AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
                                              const AHardwareBufferMemoryDescriptor& ahbDescriptor)
-    : RawMemory(sharedMemory, descriptor)
-    , m_ahbDescriptor(*ahbDescriptor)
+    : RawMemory(descriptor)
+    , m_ahbDescriptor(ahbDescriptor)
 {
-    m_aHardwareBuffer = m_ahbDescriptor.aHardwareBuffer;
 }
 
 AHardwareBufferMemory::~AHardwareBufferMemory()
 {
     if (m_descriptor.hasOwnership)
-        AHardwareBufferMemory_free(&m_ahbDescriptor.aHardwareBuffer);
+        AHardwareBuffer_release(m_ahbDescriptor.aHardwareBuffer);
 }
 
-AHardwareBufferMemory* AHardwareBufferMemory::getAHardwareBuffer() const
+AHardwareBuffer* AHardwareBufferMemory::getAHardwareBuffer() const
 {
     return m_ahbDescriptor.aHardwareBuffer;
 }

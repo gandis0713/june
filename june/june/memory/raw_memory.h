@@ -21,7 +21,6 @@ struct RawMemoryDescriptor
     bool hasOwnership{ false };
 };
 
-class SharedMemory;
 class RawMemory
 {
 public:
@@ -35,10 +34,9 @@ public:
     RawMemoryType getType() const;
 
 protected:
-    RawMemory(SharedMemory* sharedMemory, const RawMemoryDescriptor& descriptor);
+    RawMemory(const RawMemoryDescriptor& descriptor);
 
 protected:
-    SharedMemory* m_sharedMemory{ nullptr };
     const RawMemoryDescriptor m_descriptor;
 };
 

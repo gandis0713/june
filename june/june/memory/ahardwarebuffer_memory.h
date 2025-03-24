@@ -5,6 +5,8 @@
 
 #include <android/hardware_buffer.h>
 
+#include <memory>
+
 namespace june
 {
 
@@ -18,18 +20,14 @@ class Buffer;
 class AHardwareBufferMemory : public RawMemory
 {
 public:
-    static AHardwareBufferMemory* create(SharedMemory* sharedMemory,
-                                         const RawMemoryDescriptor& descriptor);
-    static AHardwareBufferMemory* create(SharedMemory* sharedMemory,
-                                         const RawMemoryDescriptor& descriptor,
-                                         const AHardwareBufferMemoryDescriptor& ahbDescriptor);
+    static std::unique_ptr<AHardwareBufferMemory> create(const RawMemoryDescriptor& descriptor);
+    static std::unique_ptr<AHardwareBufferMemory> create(const RawMemoryDescriptor& descriptor,
+                                                         const AHardwareBufferMemoryDescriptor& ahbDescriptor);
 
 public:
     AHardwareBufferMemory() = delete;
-    AHardwareBufferMemory(SharedMemory* sharedMemory,
-                          const RawMemoryDescriptor& descriptor);
-    AHardwareBufferMemory(SharedMemory* sharedMemory,
-                          const RawMemoryDescriptor& descriptor,
+    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor);
+    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
                           const AHardwareBufferMemoryDescriptor& ahbDescriptor);
     ~AHardwareBufferMemory() override;
 
@@ -37,10 +35,10 @@ public:
     AHardwareBufferMemory& operator=(const AHardwareBufferMemory&) = delete;
 
 public:
-    AHardwareBufferMemory* getAHardwareBuffer() const;
+    AHardwareBuffer* getAHardwareBuffer() const;
 
 private:
-    AHardwareBufferMemory* m_aHardwareBuffer{ nullptr };
+    AHardwareBufferMemoryDescriptor m_ahbDescriptor;
 };
 
 } // namespace june

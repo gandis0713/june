@@ -2,6 +2,10 @@
 
 #include "june/june.h"
 
+#include "june/memory/raw_memory.h"
+
+#include <memory>
+
 namespace june
 {
 
@@ -26,10 +30,11 @@ public:
     size_t getSize() const;
 
 protected:
-    SharedMemory(ApiContext* context, JuneSharedMemoryDescriptor const* descriptor);
+    SharedMemory(ApiContext* context, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
 
 protected:
     ApiContext* m_context{ nullptr };
+    std::unique_ptr<RawMemory> m_rawMemory{ nullptr };
     const JuneSharedMemoryDescriptor m_descriptor;
 };
 

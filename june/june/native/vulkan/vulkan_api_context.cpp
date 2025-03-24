@@ -4,10 +4,6 @@
 #include "vulkan_buffer.h"
 #include "vulkan_shared_memory.h"
 #include "vulkan_texture.h"
-#if defined(__ANDROID__) || defined(ANDROID)
-#include "vulkan_ahardwarebuffer_shared_memory.h"
-#include "vulkan_ahardwarebuffer_texture.h"
-#endif
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -89,26 +85,7 @@ VulkanApiContext::~VulkanApiContext()
 
 SharedMemory* VulkanApiContext::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
 {
-    const JuneChainedStruct* current = descriptor->nextInChain;
-    while (current)
-    {
-        switch (current->sType)
-        {
-#if defined(__ANDROID__) || defined(ANDROID)
-        case JuneSType_AHardwareBufferSharedMemory: {
-            JuneSharedMemoryAHardwareBufferDescriptor const* ahbDescriptor = reinterpret_cast<JuneSharedMemoryAHardwareBufferDescriptor const*>(current);
-            return VulkanAHardwareBufferSharedMemory::create(this, descriptor, ahbDescriptor);
-        }
-        break;
-#endif
-        default:
-            return VulkanSharedMemory::create(this, descriptor);
-        }
-
-        current = current->next;
-    }
-
-    return nullptr;
+    return VulkanSharedMemory::create(this, descriptor);
 }
 
 Buffer* VulkanApiContext::createBuffer(JuneBufferDescriptor const* descriptor)

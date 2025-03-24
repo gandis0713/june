@@ -15,7 +15,7 @@ public:
 
 public:
     VulkanSharedMemory() = delete;
-    VulkanSharedMemory(VulkanApiContext* context, JuneSharedMemoryDescriptor const* descriptor);
+    VulkanSharedMemory(VulkanApiContext* context, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
     ~VulkanSharedMemory() override = default;
 
     VulkanSharedMemory(const VulkanSharedMemory&) = delete;
