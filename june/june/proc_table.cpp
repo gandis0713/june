@@ -1,11 +1,9 @@
 #include "june/june.h"
 
 #include "june/native/api_context.h"
-#include "june/native/buffer.h"
 #include "june/native/fence.h"
 #include "june/native/instance.h"
 #include "june/native/shared_memory.h"
-#include "june/native/texture.h"
 
 #include <string>
 #include <unordered_map>
@@ -23,25 +21,27 @@ JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneApiContex
     return reinterpret_cast<JuneApiContext>(reinterpret_cast<Instance*>(instance)->createApiContext(desc));
 }
 
+JuneSharedMemory procInstanceCreateSharedMemory(JuneInstance instance, JuneSharedMemoryDescriptor const* descriptor)
+{
+    // return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<Instance*>(instance)->createSharedMemory(descriptor));
+    return nullptr;
+}
+
 void procInstanceDestroy(JuneInstance instance)
 {
     if (instance)
         delete reinterpret_cast<Instance*>(instance);
 }
 
-JuneSharedMemory procApiContextCreateSharedMemory(JuneApiContext context, JuneSharedMemoryDescriptor const* descriptor)
+JuneApiMemory procApiContextCreateApiMemory(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor)
 {
-    return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<ApiContext*>(context)->createSharedMemory(descriptor));
+    return reinterpret_cast<JuneApiMemory>(reinterpret_cast<ApiContext*>(context)->createApiMemory(descriptor));
 }
 
-JuneBuffer procApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
+JuneFence procApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor)
 {
-    return reinterpret_cast<JuneBuffer>(reinterpret_cast<ApiContext*>(context)->createBuffer(descriptor));
-}
-
-JuneTexture procApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
-{
-    return reinterpret_cast<JuneTexture>(reinterpret_cast<ApiContext*>(context)->createTexture(descriptor));
+    // return reinterpret_cast<JuneFence>(reinterpret_cast<ApiContext*>(context)->createFence(descriptor));
+    return nullptr;
 }
 
 void procApiContextDestroy(JuneApiContext context)
@@ -50,52 +50,32 @@ void procApiContextDestroy(JuneApiContext context)
         delete reinterpret_cast<ApiContext*>(context);
 }
 
-void procSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor)
+void procApiMemoryBeginAccess(JuneApiMemory memory, JuneBeginAccessDescriptor const* descriptor)
 {
-    reinterpret_cast<SharedMemory*>(memory)->beginAccess(descriptor);
+    // reinterpret_cast<ApiMemory*>(memory)->beginAccess(descriptor);
 }
 
-void procSharedMemoryEndAccess(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor)
+void procApiMemoryEndAccess(JuneApiMemory memory, JuneEndAccessDescriptor const* descriptor)
 {
-    reinterpret_cast<SharedMemory*>(memory)->endAccess(descriptor);
+    // reinterpret_cast<ApiMemory*>(memory)->endAccess(descriptor);
 }
 
-void procSharedMemoryDestroy(JuneSharedMemory bufferMemory)
+void* procApiMemoryCreateBuffer(JuneApiMemory memory, JuneBufferDescriptor const* descriptor)
 {
-    if (bufferMemory)
-        delete reinterpret_cast<SharedMemory*>(bufferMemory);
+    // return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createBuffer(descriptor));
+    return nullptr;
 }
 
-JuneFence procBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor)
+void* procApiMemoryCreateTexture(JuneApiMemory memory, JuneTextureDescriptor const* descriptor)
 {
-    return reinterpret_cast<JuneFence>(reinterpret_cast<Buffer*>(buffer)->createFence(descriptor));
+    // return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createTexture(descriptor));
+    return nullptr;
 }
 
-void* procBufferGetVkBuffer(JuneBuffer buffer)
+void procApiMemoryDestroy(JuneApiMemory memory)
 {
-    return reinterpret_cast<Buffer*>(buffer)->getVkBuffer();
-}
-
-void procBufferDestroy(JuneBuffer buffer)
-{
-    if (buffer)
-        delete reinterpret_cast<Buffer*>(buffer);
-}
-
-JuneFence procTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor)
-{
-    return reinterpret_cast<JuneFence>(reinterpret_cast<Texture*>(texture)->createFence(descriptor));
-}
-
-void* procTextureGetVkImage(JuneTexture texture)
-{
-    return reinterpret_cast<Texture*>(texture)->getVkImage();
-}
-
-void procTextureDestroy(JuneTexture texture)
-{
-    if (texture)
-        delete reinterpret_cast<Texture*>(texture);
+    // if (memory)
+    // delete reinterpret_cast<ApiMemory*>(memory);
 }
 
 void procFenceDestroy(JuneFence fence)
@@ -110,20 +90,16 @@ namespace
 std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
     { "juneInstanceCreateApiContext", reinterpret_cast<JuneProc>(procInstanceCreateApiContext) },
+    { "juneInstanceCreateSharedMemory", reinterpret_cast<JuneProc>(procInstanceCreateSharedMemory) },
     { "juneInstanceDestroy", reinterpret_cast<JuneProc>(procInstanceDestroy) },
-    { "juneApiContextCreateSharedMemory", reinterpret_cast<JuneProc>(procApiContextCreateSharedMemory) },
-    { "juneApiContextCreateBuffer", reinterpret_cast<JuneProc>(procApiContextCreateBuffer) },
-    { "juneApiContextCreateTexture", reinterpret_cast<JuneProc>(procApiContextCreateTexture) },
+    { "juneApiContextCreateApiMemory", reinterpret_cast<JuneProc>(procApiContextCreateApiMemory) },
+    { "juneApiContextCreateFence", reinterpret_cast<JuneProc>(procApiContextCreateFence) },
     { "juneApiContextDestroy", reinterpret_cast<JuneProc>(procApiContextDestroy) },
-    { "juneSharedMemoryBeginAccess", reinterpret_cast<JuneProc>(procSharedMemoryBeginAccess) },
-    { "juneSharedMemoryEndAccess", reinterpret_cast<JuneProc>(procSharedMemoryEndAccess) },
-    { "juneSharedMemoryDestroy", reinterpret_cast<JuneProc>(procSharedMemoryDestroy) },
-    { "juneBufferCreateFence", reinterpret_cast<JuneProc>(procBufferCreateFence) },
-    { "juneBufferGetVkBuffer", reinterpret_cast<JuneProc>(procBufferGetVkBuffer) },
-    { "juneBufferDestroy", reinterpret_cast<JuneProc>(procBufferDestroy) },
-    { "juneTextureCreateFence", reinterpret_cast<JuneProc>(procTextureCreateFence) },
-    { "juneTextureGetVkImage", reinterpret_cast<JuneProc>(procTextureGetVkImage) },
-    { "juneTextureDestroy", reinterpret_cast<JuneProc>(procTextureDestroy) },
+    { "juneApiMemoryBeginAccess", reinterpret_cast<JuneProc>(procApiMemoryBeginAccess) },
+    { "juneApiMemoryEndAccess", reinterpret_cast<JuneProc>(procApiMemoryEndAccess) },
+    { "juneApiMemoryCreateBuffer", reinterpret_cast<JuneProc>(procApiMemoryCreateBuffer) },
+    { "juneApiMemoryCreateTexture", reinterpret_cast<JuneProc>(procApiMemoryCreateTexture) },
+    { "juneApiMemoryDestroy", reinterpret_cast<JuneProc>(procApiMemoryDestroy) },
     { "juneFenceDestroy", reinterpret_cast<JuneProc>(procFenceDestroy) },
 };
 

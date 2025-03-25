@@ -1,9 +1,7 @@
 #include "vulkan_api_context.h"
 
 #include "june/common/assert.h"
-#include "vulkan_buffer.h"
-#include "vulkan_shared_memory.h"
-#include "vulkan_texture.h"
+#include "vulkan_api_memory.h"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -83,19 +81,9 @@ VulkanApiContext::~VulkanApiContext()
     // do not destroy device for vulkan.
 }
 
-SharedMemory* VulkanApiContext::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
+ApiMemory* VulkanApiContext::createApiMemory(JuneApiMemoryDescriptor const* descriptor)
 {
-    return VulkanSharedMemory::create(this, descriptor);
-}
-
-Buffer* VulkanApiContext::createBuffer(JuneBufferDescriptor const* descriptor)
-{
-    return VulkanBuffer::create(this, descriptor);
-}
-
-Texture* VulkanApiContext::createTexture(JuneTextureDescriptor const* descriptor)
-{
-    return VulkanTexture::create(this, descriptor);
+    return VulkanApiMemory::create(this, descriptor);
 }
 
 Instance* VulkanApiContext::getInstance() const

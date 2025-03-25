@@ -7,24 +7,18 @@ extern JuneProc procGetProcAddress(StringView name);
 extern JuneInstance procCreateInstance(JuneInstanceDescriptor const* desc);
 
 extern JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc);
+extern JuneSharedMemory procInstanceCreateSharedMemory(JuneInstance instance, JuneSharedMemoryDescriptor const* descriptor);
 extern void procInstanceDestroy(JuneInstance instance);
 
-extern JuneSharedMemory procApiContextCreateSharedMemory(JuneApiContext context, JuneSharedMemoryDescriptor const* descriptor);
-extern JuneBuffer procApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor);
-extern JuneTexture procApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor);
+extern JuneApiMemory procApiContextCreateApiMemory(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor);
+extern JuneFence procApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor);
 extern void procApiContextDestroy(JuneApiContext context);
 
-extern void procSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor);
-extern void procSharedMemoryEndAccess(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor);
-extern void procSharedMemoryDestroy(JuneSharedMemory bufferMemory);
-
-extern JuneFence procBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor);
-extern void* procBufferGetVkBuffer(JuneBuffer buffer);
-extern void procBufferDestroy(JuneBuffer buffer);
-
-extern JuneFence procTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor);
-extern void* procTextureGetVkImage(JuneTexture texture);
-extern void procTextureDestroy(JuneTexture texture);
+extern void procApiMemoryBeginAccess(JuneApiMemory memory, JuneBeginAccessDescriptor const* descriptor);
+extern void procApiMemoryEndAccess(JuneApiMemory memory, JuneEndAccessDescriptor const* descriptor);
+extern void* procApiMemoryCreateBuffer(JuneApiMemory memory, JuneBufferDescriptor const* descriptor);
+extern void* procApiMemoryCreateTexture(JuneApiMemory memory, JuneTextureDescriptor const* descriptor);
+extern void procApiMemoryDestroy(JuneApiMemory memory);
 
 extern void procFenceDestroy(JuneFence fence);
 
@@ -49,14 +43,24 @@ extern "C"
         return procInstanceCreateApiContext(instance, desc);
     }
 
+    JUNE_EXPORT JuneSharedMemory juneInstanceCreateSharedMemory(JuneInstance instance, JuneSharedMemoryDescriptor const* descriptor)
+    {
+        return procInstanceCreateSharedMemory(instance, descriptor);
+    }
+
     JUNE_EXPORT void juneInstanceDestroy(JuneInstance instance)
     {
         procInstanceDestroy(instance);
     }
 
-    JUNE_EXPORT JuneSharedMemory juneApiContextCreateSharedMemory(JuneApiContext context, JuneSharedMemoryDescriptor const* descriptor)
+    JUNE_EXPORT JuneApiMemory juneApiContextCreateApiMemory(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor)
     {
-        return procApiContextCreateSharedMemory(context, descriptor);
+        return procApiContextCreateApiMemory(context, descriptor);
+    }
+
+    JUNE_EXPORT JuneFence juneApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor)
+    {
+        return procApiContextCreateFence(context, descriptor);
     }
 
     JUNE_EXPORT void juneApiContextDestroy(JuneApiContext context)
@@ -64,59 +68,29 @@ extern "C"
         procApiContextDestroy(context);
     }
 
-    JUNE_EXPORT JuneBuffer juneApiContextCreateBuffer(JuneApiContext context, JuneBufferDescriptor const* descriptor)
+    JUNE_EXPORT void juneApiMemoryBeginAccess(JuneApiMemory memory, JuneBeginAccessDescriptor const* descriptor)
     {
-        return procApiContextCreateBuffer(context, descriptor);
+        procApiMemoryBeginAccess(memory, descriptor);
     }
 
-    JUNE_EXPORT JuneTexture juneApiContextCreateTexture(JuneApiContext context, JuneTextureDescriptor const* descriptor)
+    JUNE_EXPORT void juneApiMemoryEndAccess(JuneApiMemory memory, JuneEndAccessDescriptor const* descriptor)
     {
-        return procApiContextCreateTexture(context, descriptor);
+        procApiMemoryEndAccess(memory, descriptor);
     }
 
-    JUNE_EXPORT void juneSharedMemoryBeginAccess(JuneSharedMemory memory, JuneBeginAccessDescriptor const* descriptor)
+    JUNE_EXPORT void* juneApiMemoryCreateBuffer(JuneApiMemory memory, JuneBufferDescriptor const* descriptor)
     {
-        procSharedMemoryBeginAccess(memory, descriptor);
+        return procApiMemoryCreateBuffer(memory, descriptor);
     }
 
-    JUNE_EXPORT void juneSharedMemoryEndAccess(JuneSharedMemory memory, JuneEndAccessDescriptor const* descriptor)
+    JUNE_EXPORT void* juneApiMemoryCreateTexture(JuneApiMemory memory, JuneTextureDescriptor const* descriptor)
     {
-        procSharedMemoryEndAccess(memory, descriptor);
+        return procApiMemoryCreateTexture(memory, descriptor);
     }
 
-    JUNE_EXPORT void juneSharedMemoryDestroy(JuneSharedMemory bufferMemory)
+    JUNE_EXPORT void juneApiMemoryDestroy(JuneApiMemory memory)
     {
-        procSharedMemoryDestroy(bufferMemory);
-    }
-
-    JUNE_EXPORT JuneFence juneBufferCreateFence(JuneBuffer buffer, JuneFenceDescriptor const* descriptor)
-    {
-        return procBufferCreateFence(buffer, descriptor);
-    }
-
-    JUNE_EXPORT void* juneBufferGetVkBuffer(JuneBuffer buffer)
-    {
-        return procBufferGetVkBuffer(buffer);
-    }
-
-    JUNE_EXPORT void juneBufferDestroy(JuneBuffer buffer)
-    {
-        procBufferDestroy(buffer);
-    }
-
-    JUNE_EXPORT JuneFence juneTextureCreateFence(JuneTexture texture, JuneFenceDescriptor const* descriptor)
-    {
-        return procTextureCreateFence(texture, descriptor);
-    }
-
-    JUNE_EXPORT void* juneTextureGetVkImage(JuneTexture texture)
-    {
-        return procTextureGetVkImage(texture);
-    }
-
-    JUNE_EXPORT void juneTextureDestroy(JuneTexture texture)
-    {
-        procTextureDestroy(texture);
+        procApiMemoryDestroy(memory);
     }
 
     JUNE_EXPORT void juneFenceDestroy(JuneFence fence)

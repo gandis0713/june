@@ -5,10 +5,8 @@
 namespace june
 {
 
-class SharedMemory;
+class ApiMemory;
 class Instance;
-class Buffer;
-class Texture;
 class ApiContext
 {
 public:
@@ -18,9 +16,7 @@ public:
     ApiContext& operator=(const ApiContext&) = delete;
 
 public: // June API
-    virtual SharedMemory* createSharedMemory(JuneSharedMemoryDescriptor const* descriptor) = 0;
-    virtual Buffer* createBuffer(JuneBufferDescriptor const* descriptor) = 0;
-    virtual Texture* createTexture(JuneTextureDescriptor const* descriptor) = 0;
+    virtual ApiMemory* createApiMemory(JuneApiMemoryDescriptor const* descriptor) = 0;
 
 public:
     virtual Instance* getInstance() const = 0;

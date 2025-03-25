@@ -9,11 +9,12 @@
 namespace june
 {
 
-class ApiContext;
-class Buffer;
-class Texture;
+class Instance;
 class SharedMemory
 {
+public:
+    static SharedMemory* create(Instance* instance, JuneSharedMemoryDescriptor const* descriptor);
+
 public:
     SharedMemory() = delete;
     virtual ~SharedMemory() = default;
@@ -22,18 +23,15 @@ public:
     SharedMemory& operator=(const SharedMemory&) = delete;
 
 public: // June API
-    virtual void beginAccess(JuneBeginAccessDescriptor const* descriptor) = 0;
-    virtual void endAccess(JuneEndAccessDescriptor const* descriptor) = 0;
-
 public:
-    ApiContext* getContext() const;
+    Instance* getInstance() const;
     size_t getSize() const;
 
 protected:
-    SharedMemory(ApiContext* context, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
+    SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
 
 protected:
-    ApiContext* m_context{ nullptr };
+    Instance* m_instance{ nullptr };
     std::unique_ptr<RawMemory> m_rawMemory{ nullptr };
     const JuneSharedMemoryDescriptor m_descriptor;
 };
