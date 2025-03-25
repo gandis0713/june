@@ -7,12 +7,12 @@
 namespace june
 {
 
-GLESTexture* GLESTexture::create(GLESTextureMemory* memory, JuneTextureDescriptor const* descriptor)
+GLESTexture* GLESTexture::create(GLESTextureMemory* memory, JuneResourceDescriptor const* descriptor)
 {
     return new GLESTexture(memory, descriptor);
 }
 
-GLESTexture::GLESTexture(GLESTextureMemory* memory, JuneTextureDescriptor const* descriptor)
+GLESTexture::GLESTexture(GLESTextureMemory* memory, JuneResourceDescriptor const* descriptor)
     : m_memory(memory)
     , m_descriptor(*descriptor)
 {

@@ -51,7 +51,7 @@ BufferMemory* GLESContext::createBufferMemory(JuneBufferMemoryDescriptor const* 
     return GLESBufferMemory::create(this, descriptor);
 }
 
-TextureMemory* GLESContext::createTextureMemory(JuneTextureMemoryDescriptor const* descriptor)
+TextureMemory* GLESContext::createTextureMemory(JuneResourceMemoryDescriptor const* descriptor)
 {
     return GLESTextureMemory::create(this, descriptor);
 }

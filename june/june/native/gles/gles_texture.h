@@ -11,11 +11,11 @@ class GLESTextureMemory;
 class GLESTexture : public Texture
 {
 public:
-    static GLESTexture* create(GLESTextureMemory* memory, JuneTextureDescriptor const* descriptor);
+    static GLESTexture* create(GLESTextureMemory* memory, JuneResourceDescriptor const* descriptor);
 
 public:
     GLESTexture() = delete;
-    GLESTexture(GLESTextureMemory* memory, JuneTextureDescriptor const* descriptor);
+    GLESTexture(GLESTextureMemory* memory, JuneResourceDescriptor const* descriptor);
     ~GLESTexture() override = default;
 
     GLESTexture(const GLESTexture&) = delete;
@@ -28,7 +28,7 @@ public:
 
 private:
     GLESTextureMemory* m_memory;
-    const JuneTextureDescriptor m_descriptor;
+    const JuneResourceDescriptor m_descriptor;
 };
 
 } // namespace june

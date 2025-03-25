@@ -50,23 +50,17 @@ void procApiContextDestroy(JuneApiContext context)
         delete reinterpret_cast<ApiContext*>(context);
 }
 
-void procApiMemoryBeginAccess(JuneApiMemory memory, JuneBeginAccessDescriptor const* descriptor)
+void procApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor)
 {
     // reinterpret_cast<ApiMemory*>(memory)->beginAccess(descriptor);
 }
 
-void procApiMemoryEndAccess(JuneApiMemory memory, JuneEndAccessDescriptor const* descriptor)
+void procApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor)
 {
     // reinterpret_cast<ApiMemory*>(memory)->endAccess(descriptor);
 }
 
-void* procApiMemoryCreateBuffer(JuneApiMemory memory, JuneBufferDescriptor const* descriptor)
-{
-    // return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createBuffer(descriptor));
-    return nullptr;
-}
-
-void* procApiMemoryCreateTexture(JuneApiMemory memory, JuneTextureDescriptor const* descriptor)
+void* procApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor)
 {
     // return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createTexture(descriptor));
     return nullptr;
@@ -89,16 +83,15 @@ namespace
 
 std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
-    { "juneInstanceCreateApiContext", reinterpret_cast<JuneProc>(procInstanceCreateApiContext) },
     { "juneInstanceCreateSharedMemory", reinterpret_cast<JuneProc>(procInstanceCreateSharedMemory) },
+    { "juneInstanceCreateApiContext", reinterpret_cast<JuneProc>(procInstanceCreateApiContext) },
     { "juneInstanceDestroy", reinterpret_cast<JuneProc>(procInstanceDestroy) },
     { "juneApiContextCreateApiMemory", reinterpret_cast<JuneProc>(procApiContextCreateApiMemory) },
     { "juneApiContextCreateFence", reinterpret_cast<JuneProc>(procApiContextCreateFence) },
     { "juneApiContextDestroy", reinterpret_cast<JuneProc>(procApiContextDestroy) },
     { "juneApiMemoryBeginAccess", reinterpret_cast<JuneProc>(procApiMemoryBeginAccess) },
     { "juneApiMemoryEndAccess", reinterpret_cast<JuneProc>(procApiMemoryEndAccess) },
-    { "juneApiMemoryCreateBuffer", reinterpret_cast<JuneProc>(procApiMemoryCreateBuffer) },
-    { "juneApiMemoryCreateTexture", reinterpret_cast<JuneProc>(procApiMemoryCreateTexture) },
+    { "juneApiMemoryCreateResource", reinterpret_cast<JuneProc>(procApiMemoryCreateResource) },
     { "juneApiMemoryDestroy", reinterpret_cast<JuneProc>(procApiMemoryDestroy) },
     { "juneFenceDestroy", reinterpret_cast<JuneProc>(procFenceDestroy) },
 };

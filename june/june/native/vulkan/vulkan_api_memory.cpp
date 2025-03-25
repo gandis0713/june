@@ -15,7 +15,7 @@ VulkanApiMemory::VulkanApiMemory(VulkanApiContext* context, JuneApiMemoryDescrip
 {
 }
 
-void VulkanApiMemory::beginAccess(JuneBeginAccessDescriptor const* descriptor)
+void VulkanApiMemory::beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor)
 {
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
@@ -24,7 +24,7 @@ void VulkanApiMemory::beginAccess(JuneBeginAccessDescriptor const* descriptor)
     }
 }
 
-void VulkanApiMemory::endAccess(JuneEndAccessDescriptor const* descriptor)
+void VulkanApiMemory::endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor)
 {
 }
 

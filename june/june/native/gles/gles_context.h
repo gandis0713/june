@@ -27,7 +27,7 @@ public:
 
 public: // June APi
     BufferMemory* createBufferMemory(JuneBufferMemoryDescriptor const* descriptor) override;
-    TextureMemory* createTextureMemory(JuneTextureMemoryDescriptor const* descriptor) override;
+    TextureMemory* createTextureMemory(JuneResourceMemoryDescriptor const* descriptor) override;
 
 public:
     Instance* getInstance() const override;

@@ -21,8 +21,8 @@ public:
     VulkanApiMemory& operator=(const VulkanApiMemory&) = delete;
 
 public: // June API
-    void beginAccess(JuneBeginAccessDescriptor const* descriptor) override;
-    void endAccess(JuneEndAccessDescriptor const* descriptor) override;
+    void beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor) override;
+    void endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor) override;
 };
 
 } // namespace june

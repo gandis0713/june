@@ -22,8 +22,8 @@ public:
     ApiMemory& operator=(const ApiMemory&) = delete;
 
 public: // June API
-    virtual void beginAccess(JuneBeginAccessDescriptor const* descriptor) = 0;
-    virtual void endAccess(JuneEndAccessDescriptor const* descriptor) = 0;
+    virtual void beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor) = 0;
+    virtual void endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor) = 0;
 
 public:
     ApiContext* getContext() const;
