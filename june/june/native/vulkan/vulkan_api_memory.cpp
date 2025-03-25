@@ -28,4 +28,9 @@ void VulkanApiMemory::endAccess(JuneApiMemoryEndAccessDescriptor const* descript
 {
 }
 
+void* VulkanApiMemory::createResource(JuneResourceDescriptor const* descriptor)
+{
+    return nullptr;
+}
+
 } // namespace june

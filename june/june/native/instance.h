@@ -6,6 +6,7 @@ namespace june
 {
 
 class ApiContext;
+class SharedMemory;
 class Instance final
 {
 public:
@@ -20,6 +21,7 @@ public:
 
 public:
     ApiContext* createApiContext(JuneApiContextDescriptor const* descriptor);
+    SharedMemory* createSharedMemory(JuneSharedMemoryDescriptor const* descriptor);
 
 private:
     Instance(JuneInstanceDescriptor const* descriptor);

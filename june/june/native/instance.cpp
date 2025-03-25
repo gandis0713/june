@@ -1,5 +1,6 @@
 #include "instance.h"
 // #include "gles/gles_context.h"
+#include "june/native/shared_memory.h"
 #include "vulkan/vulkan_api_context.h"
 
 namespace june
@@ -38,6 +39,11 @@ ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descripto
     }
 
     return nullptr;
+}
+
+SharedMemory* Instance::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
+{
+    return SharedMemory::create(this, descriptor);
 }
 
 } // namespace june

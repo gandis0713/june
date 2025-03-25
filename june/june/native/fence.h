@@ -5,6 +5,7 @@
 namespace june
 {
 
+class ApiContext;
 class Fence
 {
 public:
@@ -16,9 +17,10 @@ public:
 
 public: // June API
 protected:
-    Fence(JuneFenceDescriptor const* descriptor);
+    Fence(ApiContext* context, JuneFenceDescriptor const* descriptor);
 
 protected:
+    ApiContext* m_context{ nullptr };
     const JuneFenceDescriptor m_descriptor;
 };
 

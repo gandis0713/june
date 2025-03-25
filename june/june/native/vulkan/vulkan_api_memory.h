@@ -23,6 +23,7 @@ public:
 public: // June API
     void beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor) override;
     void endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor) override;
+    void* createResource(JuneResourceDescriptor const* descriptor) override;
 };
 
 } // namespace june

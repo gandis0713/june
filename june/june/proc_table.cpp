@@ -1,6 +1,7 @@
 #include "june/june.h"
 
 #include "june/native/api_context.h"
+#include "june/native/api_memory.h"
 #include "june/native/fence.h"
 #include "june/native/instance.h"
 #include "june/native/shared_memory.h"
@@ -23,8 +24,7 @@ JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneApiContex
 
 JuneSharedMemory procInstanceCreateSharedMemory(JuneInstance instance, JuneSharedMemoryDescriptor const* descriptor)
 {
-    // return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<Instance*>(instance)->createSharedMemory(descriptor));
-    return nullptr;
+    return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<Instance*>(instance)->createSharedMemory(descriptor));
 }
 
 void procInstanceDestroy(JuneInstance instance)
@@ -52,24 +52,23 @@ void procApiContextDestroy(JuneApiContext context)
 
 void procApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor)
 {
-    // reinterpret_cast<ApiMemory*>(memory)->beginAccess(descriptor);
+    reinterpret_cast<ApiMemory*>(memory)->beginAccess(descriptor);
 }
 
 void procApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor)
 {
-    // reinterpret_cast<ApiMemory*>(memory)->endAccess(descriptor);
+    reinterpret_cast<ApiMemory*>(memory)->endAccess(descriptor);
 }
 
 void* procApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor)
 {
-    // return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createTexture(descriptor));
-    return nullptr;
+    return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createResource(descriptor));
 }
 
 void procApiMemoryDestroy(JuneApiMemory memory)
 {
-    // if (memory)
-    // delete reinterpret_cast<ApiMemory*>(memory);
+    if (memory)
+        delete reinterpret_cast<ApiMemory*>(memory);
 }
 
 void procFenceDestroy(JuneFence fence)

@@ -7,6 +7,7 @@ namespace june
 
 class ApiMemory;
 class Instance;
+class Fence;
 class ApiContext
 {
 public:
@@ -17,6 +18,7 @@ public:
 
 public: // June API
     virtual ApiMemory* createApiMemory(JuneApiMemoryDescriptor const* descriptor) = 0;
+    virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
 
 public:
     virtual Instance* getInstance() const = 0;

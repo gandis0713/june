@@ -22,6 +22,8 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.h
 
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.cpp
   # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.h
@@ -41,7 +43,8 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.h
-
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/fence.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/fence.h
   ${CMAKE_CURRENT_SOURCE_DIR}/memory/raw_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/memory/raw_memory.h
 )

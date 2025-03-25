@@ -2,6 +2,7 @@
 
 #include "june/common/assert.h"
 #include "vulkan_api_memory.h"
+#include "vulkan_fence.h"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -84,6 +85,11 @@ VulkanApiContext::~VulkanApiContext()
 ApiMemory* VulkanApiContext::createApiMemory(JuneApiMemoryDescriptor const* descriptor)
 {
     return VulkanApiMemory::create(this, descriptor);
+}
+
+Fence* VulkanApiContext::createFence(JuneFenceDescriptor const* descriptor)
+{
+    return VulkanFence::create(this, descriptor);
 }
 
 Instance* VulkanApiContext::getInstance() const
