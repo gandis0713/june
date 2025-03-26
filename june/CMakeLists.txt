@@ -75,3 +75,10 @@ target_link_libraries(june
   Vulkan::Headers
   spdlog::spdlog_header_only
 )
+
+if(ANDROID)
+  target_link_libraries(june
+    PRIVATE
+    android
+  )
+endif()

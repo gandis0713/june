@@ -22,14 +22,14 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
         switch (current->sType)
         {
 #if defined(__ANDROID__) || defined(ANDROID)
-        case JuneSType_AHardwareBufferApiMemory: {
-            JuneApiMemoryAHardwareBufferDescriptor const* ahbDescriptor = reinterpret_cast<JuneApiMemoryAHardwareBufferDescriptor const*>(current);
+        case JuneSType_AHardwareBufferSharedMemory: {
+            JuneSharedMemoryAHardwareBufferDescriptor const* ahbDescriptor = reinterpret_cast<JuneSharedMemoryAHardwareBufferDescriptor const*>(current);
 
             AHardwareBufferMemoryDescriptor ahbMemoryDescriptor;
             ahbMemoryDescriptor.aHardwareBuffer = static_cast<AHardwareBuffer*>(ahbDescriptor->aHardwareBuffer);
 
-            std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(this, rawMemoryDescriptor, ahbMemoryDescriptor);
-            return new VulkanApiMemory(instance, std::move(rawMemory), descriptor);
+            std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(rawMemoryDescriptor, ahbMemoryDescriptor);
+            return new SharedMemory(instance, std::move(rawMemory), descriptor);
         }
         break;
 #endif
@@ -45,8 +45,8 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
     {
 #if defined(__ANDROID__) || defined(ANDROID)
     case RawMemoryType::kAHardwareBuffer: {
-        std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(this, rawMemoryDescriptor);
-        return new VulkanApiMemory(instance, std::move(rawMemory), descriptor);
+        std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(rawMemoryDescriptor);
+        return new SharedMemory(instance, std::move(rawMemory), descriptor);
     }
     break;
 #endif
