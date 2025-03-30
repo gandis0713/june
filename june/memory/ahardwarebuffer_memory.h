@@ -13,6 +13,7 @@ namespace june
 struct AHardwareBufferMemoryDescriptor
 {
     AHardwareBuffer* aHardwareBuffer{ nullptr };
+    AHardwareBuffer_Desc aHardwareBufferDesc{};
 };
 
 class ApiContext;
@@ -20,15 +21,11 @@ class Buffer;
 class AHardwareBufferMemory : public RawMemory
 {
 public:
-    static std::unique_ptr<AHardwareBufferMemory> create(const RawMemoryDescriptor& descriptor);
     static std::unique_ptr<AHardwareBufferMemory> create(const RawMemoryDescriptor& descriptor,
                                                          const AHardwareBufferMemoryDescriptor& ahbDescriptor);
 
 public:
     AHardwareBufferMemory() = delete;
-    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor);
-    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
-                          const AHardwareBufferMemoryDescriptor& ahbDescriptor);
     ~AHardwareBufferMemory() override;
 
     AHardwareBufferMemory(const AHardwareBufferMemory&) = delete;
@@ -38,7 +35,14 @@ public:
     AHardwareBuffer* getAHardwareBuffer() const;
 
 private:
-    AHardwareBufferMemoryDescriptor m_ahbDescriptor;
+    AHardwareBuffer* m_ahb{ nullptr };
+    AHardwareBuffer_Desc m_desc{};
+
+private:
+    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
+                          AHardwareBuffer* ahb);
+    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
+                          const AHardwareBuffer_Desc& ahbDescriptor);
 };
 
 } // namespace june

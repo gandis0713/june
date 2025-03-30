@@ -146,7 +146,8 @@ typedef struct JuneResourceMemoeyEGLImageDescriptor
 typedef struct JuneSharedMemoryAHardwareBufferDescriptor
 {
     JuneChainedStruct chain;
-    void* aHardwareBuffer;
+    void* aHardwareBuffer;     // TODO: not allow use this field
+    void* aHardwareBufferDesc; // AHardwareBuffer_Desc
 } JuneSharedMemoryAhardwareBufferDescriptor;
 
 typedef struct JuneSharedMemoryDescriptor

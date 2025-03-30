@@ -24,9 +24,6 @@ struct RawMemoryDescriptor
 class RawMemory
 {
 public:
-    static RawMemoryType getDefaultMemoryType();
-
-public:
     RawMemory() = delete;
     virtual ~RawMemory() = default;
 

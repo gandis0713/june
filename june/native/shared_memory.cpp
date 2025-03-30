@@ -10,12 +10,6 @@ namespace june
 
 SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescriptor const* descriptor)
 {
-    RawMemoryDescriptor rawMemoryDescriptor;
-    rawMemoryDescriptor.type = RawMemoryType::kAHardwareBuffer;
-    rawMemoryDescriptor.width = descriptor->width;
-    rawMemoryDescriptor.height = descriptor->height;
-    rawMemoryDescriptor.layers = descriptor->layers;
-
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {
@@ -25,8 +19,15 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
         case JuneSType_AHardwareBufferSharedMemory: {
             JuneSharedMemoryAHardwareBufferDescriptor const* ahbDescriptor = reinterpret_cast<JuneSharedMemoryAHardwareBufferDescriptor const*>(current);
 
+            RawMemoryDescriptor rawMemoryDescriptor;
+            rawMemoryDescriptor.type = RawMemoryType::kAHardwareBuffer;
+            rawMemoryDescriptor.width = descriptor->width;
+            rawMemoryDescriptor.height = descriptor->height;
+            rawMemoryDescriptor.layers = descriptor->layers;
+
             AHardwareBufferMemoryDescriptor ahbMemoryDescriptor;
             ahbMemoryDescriptor.aHardwareBuffer = static_cast<AHardwareBuffer*>(ahbDescriptor->aHardwareBuffer);
+            ahbMemoryDescriptor.aHardwareBufferDesc = *static_cast<AHardwareBuffer_Desc*>(ahbDescriptor->aHardwareBufferDesc);
 
             std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(rawMemoryDescriptor, ahbMemoryDescriptor);
             return new SharedMemory(instance, std::move(rawMemory), descriptor);
@@ -38,20 +39,6 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
         }
 
         current = current->next;
-    }
-
-    auto defaultMemoryType = RawMemory::getDefaultMemoryType();
-    switch (defaultMemoryType)
-    {
-#if defined(__ANDROID__) || defined(ANDROID)
-    case RawMemoryType::kAHardwareBuffer: {
-        std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(rawMemoryDescriptor);
-        return new SharedMemory(instance, std::move(rawMemory), descriptor);
-    }
-    break;
-#endif
-    default:
-        break;
     }
 
     return new SharedMemory(instance, nullptr, descriptor);
