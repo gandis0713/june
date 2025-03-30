@@ -78,9 +78,13 @@ target_link_libraries(june
 )
 
 if(ANDROID)
+  find_library(egl-lib EGL)
+  find_library(glesv2-lib GLESv2)
   target_link_libraries(june
     PRIVATE
     android
+    ${egl-lib}
+    ${glesv2-lib}
   )
 elseif(APPLE)
   find_package(unofficial-angle REQUIRED CONFIG)
