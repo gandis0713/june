@@ -25,14 +25,15 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.h
 
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.h
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.h
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_memory.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_memory.h
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.cpp
-  # ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_memory.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.h
+
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.cpp
@@ -80,5 +81,12 @@ if(ANDROID)
   target_link_libraries(june
     PRIVATE
     android
+  )
+elseif(APPLE)
+  find_package(unofficial-angle REQUIRED CONFIG)
+  target_link_libraries(june
+    PRIVATE
+    unofficial::angle::libGLESv2
+    unofficial::angle::libEGL
   )
 endif()

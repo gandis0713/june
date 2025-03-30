@@ -1,5 +1,5 @@
 #include "instance.h"
-// #include "gles/gles_context.h"
+#include "gles/gles_api_context.h"
 #include "june/native/shared_memory.h"
 #include "vulkan/vulkan_api_context.h"
 
@@ -27,10 +27,10 @@ ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descripto
             return VulkanApiContext::create(this, vulkanDescriptor);
         }
         break;
-        // case JuneSType_GLESApiContext: {
-        //     JuneGLESApiContextDescriptor const* glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(current);
-        //     return GLESContext::create(this, glesDescriptor);
-        // }
+        case JuneSType_GLESApiContext: {
+            JuneGLESApiContextDescriptor const* glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(current);
+            return GLESApiContext::create(this, glesDescriptor);
+        }
         default:
             throw std::runtime_error("Unsupported type");
         }

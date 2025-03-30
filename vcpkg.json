@@ -7,6 +7,10 @@
     "spdlog",
     "vulkan-headers",
     {
+      "name": "angle",
+      "platform": "osx"
+    },
+    {
       "name": "hwcpipe",
       "platform": "android"
     },

@@ -80,6 +80,11 @@ VulkanApiContext::~VulkanApiContext()
 {
     // do not destroy instance for vulkan.
     // do not destroy device for vulkan.
+
+    if (m_vulkanLib.isValid())
+    {
+        m_vulkanLib.close();
+    }
 }
 
 ApiMemory* VulkanApiContext::createApiMemory(JuneApiMemoryDescriptor const* descriptor)
