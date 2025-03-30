@@ -18,6 +18,8 @@ ApiContext* GLESApiContext::create(Instance* instance, JuneGLESApiContextDescrip
 
 GLESApiContext::GLESApiContext(Instance* instance, JuneGLESApiContextDescriptor const* descriptor)
     : m_instance(instance)
+    , m_context(static_cast<EGLContext>(descriptor->context))
+    , m_display(static_cast<EGLDisplay>(descriptor->display))
 {
 #if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__)
     const char glesLibraryName[] = "libEGL.so";
@@ -33,13 +35,9 @@ GLESApiContext::GLESApiContext(Instance* instance, JuneGLESApiContextDescriptor 
         throw std::runtime_error(fmt::format("Failed to load GLES library: {}", glesLibraryName));
     }
 
-    EGLDisplay display = eglAPI.GetDisplay(EGL_DEFAULT_DISPLAY);
-    if (display)
+    if (!eglAPI.loadDisplayProcs(m_display))
     {
-        if (!eglAPI.loadDisplayProcs(display))
-        {
-            throw std::runtime_error("Failed to load GLES display procs");
-        }
+        spdlog::warn("Failed to load GLES display procs");
     }
 }
 

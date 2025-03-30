@@ -44,6 +44,8 @@ private:
     Instance* m_instance = nullptr;
 
 private:
+    EGLContext m_context{ nullptr };
+    EGLDisplay m_display{ nullptr };
     DyLib m_glesLib{};
 
 private:

@@ -70,11 +70,17 @@ bool GLESAPI::loadClientProcs(DyLib* glesLib)
 
 bool GLESAPI::loadDisplayProcs(EGLDisplay display)
 {
+    if (display == nullptr || display == EGL_NO_DISPLAY)
+    {
+        spdlog::warn("EGL display is invalid");
+        return false;
+    }
+
     EGLint major = 0;
     EGLint minor = 0;
     Initialize(display, &major, &minor);
 
-    spdlog::error("EGL version: {}.{}", major, minor);
+    spdlog::debug("EGL version: {}.{}", major, minor);
 
     m_majorVersion = major;
     m_minorVersion = minor;

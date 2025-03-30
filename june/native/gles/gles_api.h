@@ -6,8 +6,16 @@
 namespace june
 {
 
-class DyLib;
+#define CHECK_GL_ERROR()                                                   \
+    {                                                                      \
+        GLenum err = glGetError();                                         \
+        if (err != GL_NO_ERROR)                                            \
+        {                                                                  \
+            spdlog::error("GL get error: {}", static_cast<uint32_t>(err)); \
+        }                                                                  \
+    }
 
+class DyLib;
 struct GLESAPI
 {
     bool loadClientProcs(DyLib* glesLib);
