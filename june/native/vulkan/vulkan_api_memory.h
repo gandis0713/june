@@ -10,20 +10,18 @@ class VulkanApiContext;
 class VulkanApiMemory : public ApiMemory
 {
 public:
-    static VulkanApiMemory* create(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor);
-
-public:
     VulkanApiMemory() = delete;
-    VulkanApiMemory(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor);
     ~VulkanApiMemory() override = default;
 
     VulkanApiMemory(const VulkanApiMemory&) = delete;
     VulkanApiMemory& operator=(const VulkanApiMemory&) = delete;
 
-public: // June API
-    void beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor) override;
-    void endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor) override;
-    void* createResource(JuneResourceDescriptor const* descriptor) override;
+protected:
+    VulkanApiMemory(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor);
+
+protected:
+    VulkanApiContext* m_context{ nullptr };
+    const JuneApiMemoryDescriptor m_descriptor;
 };
 
 } // namespace june

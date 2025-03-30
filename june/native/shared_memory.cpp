@@ -61,4 +61,9 @@ size_t SharedMemory::getSize() const
     return m_descriptor.width * m_descriptor.height * m_descriptor.layers;
 }
 
+RawMemory* SharedMemory::getRawMemory() const
+{
+    return m_rawMemory.get();
+}
+
 } // namespace june

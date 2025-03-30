@@ -4,6 +4,12 @@
 #include "gles_fence.h"
 #include "june/common/assert.h"
 
+#include "june/native/shared_memory.h"
+
+#if __has_include("gles_ahardwarebuffer_api_memory.h")
+#include "gles_ahardwarebuffer_api_memory.h"
+#endif
+
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
@@ -51,7 +57,23 @@ GLESApiContext::~GLESApiContext()
 
 ApiMemory* GLESApiContext::createApiMemory(JuneApiMemoryDescriptor const* descriptor)
 {
-    return GLESApiMemory::create(this, descriptor);
+    auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
+    auto rawMemory = sharedMemory->getRawMemory();
+
+    switch (rawMemory->getType())
+    {
+#if defined(__ANDROID__) || defined(ANDROID)
+    case RawMemoryType::kAHardwareBuffer: {
+        return GLESAHardwareBufferApiMemory::create(this, descriptor);
+    }
+    break;
+#endif
+
+    default:
+        return nullptr;
+    }
+
+    return nullptr;
 }
 
 Fence* GLESApiContext::createFence(JuneFenceDescriptor const* descriptor)
@@ -67,6 +89,16 @@ Instance* GLESApiContext::getInstance() const
 JuneApiType GLESApiContext::getApiType() const
 {
     return JuneApiType_GLES;
+}
+
+EGLContext GLESApiContext::getEGLContext() const
+{
+    return m_context;
+}
+
+EGLDisplay GLESApiContext::getEGLDisplay() const
+{
+    return m_display;
 }
 
 } // namespace june

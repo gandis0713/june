@@ -52,8 +52,11 @@ typedef enum JuneSType
     JuneSType_GLESApiContext = 0x00000004,
     JuneSType_EGLImageSharedMemory = 0x00000005,
     JuneSType_AHardwareBufferSharedMemory = 0x00000006,
-    JuneSType_BeginAccessVulkanBuffer = 0x00000007,
-    JuneSType_BeginAccessVulkanTexture = 0x00000008,
+    JuneStype_EGLImageResourceDescriptor = 0x00000007,
+    JuneSType_VkImageResourceDescriptor = 0x00000008,
+    JuneSType_VkBufferResourceDescriptor = 0x00000009,
+    JuneSType_BeginAccessVulkanBuffer = 0x0000000A,
+    JuneSType_BeginAccessVulkanTexture = 0x0000000B,
 } JuneSType;
 
 typedef JuneFlags JuneSharedMemoryUsage;

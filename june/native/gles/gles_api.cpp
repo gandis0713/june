@@ -126,14 +126,14 @@ bool GLESAPI::loadDisplayProcs(EGLDisplay display)
         GET_PROC(CreatePlatformPixmapSurface);
         GET_PROC(WaitSync);
     }
-    else
+
     {
         // Load display extensions that would otherwise be promoted to EGL 1.5.
 
         // if (HasExt(EGLExt::ImageBase))
         // {
-        //     GET_PROC_WITH_NAME(CreateImage, "eglCreateImageKHR");
-        //     GET_PROC_WITH_NAME(DestroyImage, "eglDestroyImageKHR");
+        GET_PROC(CreateImageKHR);
+        GET_PROC(DestroyImageKHR);
         // }
 
         // if (HasExt(EGLExt::WaitSync))
@@ -165,12 +165,12 @@ bool GLESAPI::loadDisplayProcs(EGLDisplay display)
 
     // if (HasExt(EGLExt::GetNativeClientBuffer))
     // {
-    //     GET_PROC_WITH_NAME(GetNativeClientBuffer, "eglGetNativeClientBufferANDROID");
+    GET_PROC(GetNativeClientBufferANDROID);
     // }
 
     // if (HasExt(EGLExt::NativeFenceSync))
     // {
-    //     GET_PROC_WITH_NAME(DupNativeFenceFD, "eglDupNativeFenceFDANDROID");
+    GET_PROC(DupNativeFenceFDANDROID);
     // }
 
     return true;

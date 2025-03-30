@@ -141,6 +141,9 @@ struct GLESAPI
     PFNEGLCREATEPLATFORMPIXMAPSURFACEPROC CreatePlatformPixmapSurface;
     PFNEGLWAITSYNCPROC WaitSync;
 
+    PFNEGLCREATEIMAGEKHRPROC CreateImageKHR;
+    PFNEGLDESTROYIMAGEKHRPROC DestroyImageKHR;
+
     // EGL_KHR_fence_sync
     // NOTE: These functions use attribute lists with EGLint but the core versions use EGLattrib.
     // They are not compatible.
@@ -153,10 +156,10 @@ struct GLESAPI
     PFNEGLSIGNALSYNCKHRPROC SignalSync;
 
     // EGL_ANDROID_get_native_client_buffer
-    PFNEGLGETNATIVECLIENTBUFFERANDROIDPROC GetNativeClientBuffer;
+    PFNEGLGETNATIVECLIENTBUFFERANDROIDPROC GetNativeClientBufferANDROID;
 
     // EGL_ANDROID_native_fence_sync
-    PFNEGLDUPNATIVEFENCEFDANDROIDPROC DupNativeFenceFD;
+    PFNEGLDUPNATIVEFENCEFDANDROIDPROC DupNativeFenceFDANDROID;
 
 private:
     uint32_t m_majorVersion{ 0 };

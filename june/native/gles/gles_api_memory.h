@@ -10,20 +10,18 @@ class GLESApiContext;
 class GLESApiMemory : public ApiMemory
 {
 public:
-    static GLESApiMemory* create(GLESApiContext* context, JuneApiMemoryDescriptor const* descriptor);
-
-public:
     GLESApiMemory() = delete;
-    GLESApiMemory(GLESApiContext* context, JuneApiMemoryDescriptor const* descriptor);
     ~GLESApiMemory() override = default;
 
     GLESApiMemory(const GLESApiMemory&) = delete;
     GLESApiMemory& operator=(const GLESApiMemory&) = delete;
 
-public: // June API
-    void beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor) override;
-    void endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor) override;
-    void* createResource(JuneResourceDescriptor const* descriptor) override;
+protected:
+    GLESApiMemory(GLESApiContext* context, JuneApiMemoryDescriptor const* descriptor);
+
+protected:
+    GLESApiContext* m_context{ nullptr };
+    const JuneApiMemoryDescriptor m_descriptor;
 };
 
 } // namespace june

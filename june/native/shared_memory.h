@@ -26,6 +26,7 @@ public: // June API
 public:
     Instance* getInstance() const;
     size_t getSize() const;
+    RawMemory* getRawMemory() const;
 
 protected:
     SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);

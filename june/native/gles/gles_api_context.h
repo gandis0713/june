@@ -36,6 +36,9 @@ public:
     JuneApiType getApiType() const override;
 
 public: // gles
+    EGLContext getEGLContext() const;
+    EGLDisplay getEGLDisplay() const;
+
 public:
     GLESAPI eglAPI{};
 

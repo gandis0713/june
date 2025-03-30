@@ -36,8 +36,8 @@ set(JUNE_NATIVE_FILES
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/fence.cpp
@@ -48,6 +48,15 @@ set(JUNE_NATIVE_FILES
 
 if(ANDROID)
   list(APPEND JUNE_NATIVE_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_ahardwarebuffer_api_memory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_ahardwarebuffer_api_memory.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_ahardwarebuffer_api_memory.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_ahardwarebuffer_api_memory.h
+  )
+endif()
+
+if(ANDROID)
+  list(APPEND JUNE_MEMORY_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/memory/ahardwarebuffer_memory.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/memory/ahardwarebuffer_memory.h
   )
@@ -61,6 +70,7 @@ set(JUNE_SRC_FILES
 add_library(june
   SHARED # or SHARED
   ${JUNE_NATIVE_FILES}
+  ${JUNE_MEMORY_FILES}
   ${JUNE_COMMON_FILES}
   ${JUNE_SRC_FILES}
 )
