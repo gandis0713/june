@@ -38,22 +38,39 @@ void GLESAHardwareBufferApiMemory::endAccess(JuneApiMemoryEndAccessDescriptor co
 
 void* GLESAHardwareBufferApiMemory::createResource(JuneResourceDescriptor const* descriptor)
 {
-    EGLint imageAttribs[] = {
-        EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
-        EGL_NONE
-    };
-
-    auto glesApiContext = reinterpret_cast<GLESApiContext*>(m_context);
-    const auto& eglAPI = glesApiContext->eglAPI;
-    EGLImageKHR eglImage = eglAPI.CreateImageKHR(glesApiContext->getEGLDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
-                                                 m_clientBuffer, imageAttribs);
-    if (eglImage == EGL_NO_IMAGE_KHR)
+    const JuneChainedStruct* current = descriptor->nextInChain;
+    while (current)
     {
-        spdlog::error("Failed to create EGLImage from AHardwareBuffer.");
-        return nullptr;
+        switch (current->sType)
+        {
+        case JuneStype_EGLImageResourceDescriptor: {
+            EGLint imageAttribs[] = {
+                EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+                EGL_NONE
+            };
+
+            auto glesApiContext = reinterpret_cast<GLESApiContext*>(m_context);
+            const auto& eglAPI = glesApiContext->eglAPI;
+            EGLImageKHR eglImage = eglAPI.CreateImageKHR(glesApiContext->getEGLDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                                                         m_clientBuffer, imageAttribs);
+            if (eglImage == EGL_NO_IMAGE_KHR)
+            {
+                spdlog::error("Failed to create EGLImage from AHardwareBuffer.");
+                return nullptr;
+            }
+
+            return eglImage;
+        }
+        break;
+        default:
+            spdlog::error("Unsupported resource type: {}", static_cast<uint32_t>(current->sType));
+            return nullptr;
+        }
+
+        current = current->next;
     }
 
-    return eglImage;
+    return nullptr;
 }
 
 int32_t GLESAHardwareBufferApiMemory::initialize()
