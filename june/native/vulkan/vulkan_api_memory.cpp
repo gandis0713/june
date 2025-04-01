@@ -6,8 +6,7 @@ namespace june
 {
 
 VulkanApiMemory::VulkanApiMemory(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor)
-    : m_context(context)
-    , m_descriptor(*descriptor)
+    : ApiMemory(context, descriptor)
 {
 }
 

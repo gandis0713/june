@@ -15,7 +15,6 @@ public:
     Fence(const Fence&) = delete;
     Fence& operator=(const Fence&) = delete;
 
-public: // June API
 protected:
     Fence(ApiContext* context, JuneFenceDescriptor const* descriptor);
 

@@ -19,8 +19,6 @@ public:
 
     VulkanFence(const VulkanFence&) = delete;
     VulkanFence& operator=(const VulkanFence&) = delete;
-
-public: // June API
 };
 
 } // namespace june

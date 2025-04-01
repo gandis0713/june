@@ -42,8 +42,10 @@ void* GLESAHardwareBufferApiMemory::createResource(JuneResourceDescriptor const*
         EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
         EGL_NONE
     };
-    const auto& eglAPI = m_context->eglAPI;
-    EGLImageKHR eglImage = eglAPI.CreateImageKHR(m_context->getEGLDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+
+    auto glesApiContext = reinterpret_cast<GLESApiContext*>(m_context);
+    const auto& eglAPI = glesApiContext->eglAPI;
+    EGLImageKHR eglImage = eglAPI.CreateImageKHR(glesApiContext->getEGLDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
                                                  m_clientBuffer, imageAttribs);
     if (eglImage == EGL_NO_IMAGE_KHR)
     {
@@ -59,11 +61,18 @@ int32_t GLESAHardwareBufferApiMemory::initialize()
     auto sharedMemory = reinterpret_cast<SharedMemory*>(m_descriptor.sharedMemory);
     auto ahbMemory = static_cast<AHardwareBufferMemory*>(sharedMemory->getRawMemory());
 
-    const auto& eglAPI = m_context->eglAPI;
+    auto glesApiContext = reinterpret_cast<GLESApiContext*>(m_context);
+    const auto& eglAPI = glesApiContext->eglAPI;
 
     if (!eglAPI.GetNativeClientBufferANDROID)
     {
         spdlog::error("eglGetNativeClientBufferANDROID function pointer acquisition failed.");
+        return -1;
+    }
+
+    if (!eglAPI.DupNativeFenceFDANDROID)
+    {
+        spdlog::error("eglDupNativeFenceFDANDROID function pointer acquisition failed.");
         return -1;
     }
 

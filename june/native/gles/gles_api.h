@@ -6,15 +6,6 @@
 namespace june
 {
 
-#define CHECK_GL_ERROR()                                                   \
-    {                                                                      \
-        GLenum err = glGetError();                                         \
-        if (err != GL_NO_ERROR)                                            \
-        {                                                                  \
-            spdlog::error("GL get error: {}", static_cast<uint32_t>(err)); \
-        }                                                                  \
-    }
-
 // EGL 1.0
 typedef EGLBoolean(EGLAPIENTRYP PFNEGLCHOOSECONFIGPROC)(EGLDisplay dpy, const EGLint* attrib_list, EGLConfig* configs, EGLint config_size, EGLint* num_config);
 typedef EGLBoolean(EGLAPIENTRYP PFNEGLCOPYBUFFERSPROC)(EGLDisplay dpy, EGLSurface surface, EGLNativePixmapType target);
@@ -139,7 +130,9 @@ struct GLESAPI
     PFNEGLGETPLATFORMDISPLAYPROC GetPlatformDisplay;
     PFNEGLCREATEPLATFORMWINDOWSURFACEPROC CreatePlatformWindowSurface;
     PFNEGLCREATEPLATFORMPIXMAPSURFACEPROC CreatePlatformPixmapSurface;
-    PFNEGLWAITSYNCPROC WaitSync;
+    PFNEGLWAITSYNCPROC WaitSyncKHR;
+
+    // ext
 
     PFNEGLCREATEIMAGEKHRPROC CreateImageKHR;
     PFNEGLDESTROYIMAGEKHRPROC DestroyImageKHR;
@@ -153,7 +146,7 @@ struct GLESAPI
     PFNEGLGETSYNCATTRIBKHRPROC GetSyncAttribKHR;
 
     // EGL_KHR_reusable_sync
-    PFNEGLSIGNALSYNCKHRPROC SignalSync;
+    PFNEGLSIGNALSYNCKHRPROC SignalSyncKHR;
 
     // EGL_ANDROID_get_native_client_buffer
     PFNEGLGETNATIVECLIENTBUFFERANDROIDPROC GetNativeClientBufferANDROID;

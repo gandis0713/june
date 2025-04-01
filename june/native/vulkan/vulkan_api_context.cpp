@@ -94,8 +94,8 @@ VulkanApiContext::~VulkanApiContext()
 
 ApiMemory* VulkanApiContext::createApiMemory(JuneApiMemoryDescriptor const* descriptor)
 {
-    auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
-    auto rawMemory = sharedMemory->getRawMemory();
+    auto apiMemory = reinterpret_cast<ApiMemory*>(descriptor->sharedMemory);
+    auto rawMemory = apiMemory->getSharedMemory()->getRawMemory();
 
     switch (rawMemory->getType())
     {

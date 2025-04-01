@@ -60,6 +60,14 @@ void procApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescript
     reinterpret_cast<ApiMemory*>(memory)->endAccess(descriptor);
 }
 
+void procApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory)
+{
+    if (srcMemory && dstMemory)
+    {
+        reinterpret_cast<ApiMemory*>(srcMemory)->connect(reinterpret_cast<ApiMemory*>(dstMemory));
+    }
+}
+
 void* procApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor)
 {
     return reinterpret_cast<void*>(reinterpret_cast<ApiMemory*>(memory)->createResource(descriptor));
@@ -90,6 +98,7 @@ std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneApiContextDestroy", reinterpret_cast<JuneProc>(procApiContextDestroy) },
     { "juneApiMemoryBeginAccess", reinterpret_cast<JuneProc>(procApiMemoryBeginAccess) },
     { "juneApiMemoryEndAccess", reinterpret_cast<JuneProc>(procApiMemoryEndAccess) },
+    { "juneApiMemoryConnect", reinterpret_cast<JuneProc>(procApiMemoryConnect) },
     { "juneApiMemoryCreateResource", reinterpret_cast<JuneProc>(procApiMemoryCreateResource) },
     { "juneApiMemoryDestroy", reinterpret_cast<JuneProc>(procApiMemoryDestroy) },
     { "juneFenceDestroy", reinterpret_cast<JuneProc>(procFenceDestroy) },

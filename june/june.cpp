@@ -16,6 +16,7 @@ extern void procApiContextDestroy(JuneApiContext context);
 
 extern void procApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor);
 extern void procApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor);
+extern void procApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory);
 extern void* procApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor);
 extern void procApiMemoryDestroy(JuneApiMemory memory);
 
@@ -75,6 +76,11 @@ extern "C"
     JUNE_EXPORT void juneApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor)
     {
         procApiMemoryEndAccess(memory, descriptor);
+    }
+
+    JUNE_EXPORT void juneApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory)
+    {
+        procApiMemoryConnect(srcMemory, dstMemory);
     }
 
     JUNE_EXPORT void* juneApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor)

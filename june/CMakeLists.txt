@@ -36,6 +36,7 @@ set(JUNE_NATIVE_FILES
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.cpp

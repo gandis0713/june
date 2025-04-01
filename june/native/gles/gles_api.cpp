@@ -124,7 +124,7 @@ bool GLESAPI::loadDisplayProcs(EGLDisplay display)
         GET_PROC(GetPlatformDisplay);
         GET_PROC(CreatePlatformWindowSurface);
         GET_PROC(CreatePlatformPixmapSurface);
-        GET_PROC(WaitSync);
+        GET_PROC(WaitSyncKHR);
     }
 
     {
@@ -138,7 +138,7 @@ bool GLESAPI::loadDisplayProcs(EGLDisplay display)
 
         // if (HasExt(EGLExt::WaitSync))
         // {
-        //     GET_PROC_WITH_NAME(WaitSync, "eglWaitSyncKHR");
+        GET_PROC(WaitSyncKHR)
         // }
     }
 
@@ -152,15 +152,15 @@ bool GLESAPI::loadDisplayProcs(EGLDisplay display)
 
     // if (HasExt(EGLExt::FenceSync))
     // {
-    //     GET_PROC_WITH_NAME(ClientWaitSyncKHR, "eglClientWaitSyncKHR");
-    //     GET_PROC_WITH_NAME(CreateSyncKHR, "eglCreateSyncKHR");
-    //     GET_PROC_WITH_NAME(DestroySyncKHR, "eglDestroySyncKHR");
-    //     GET_PROC_WITH_NAME(GetSyncAttribKHR, "eglGetSyncAttribKHR");
+    GET_PROC(ClientWaitSyncKHR)
+    GET_PROC(CreateSyncKHR);
+    GET_PROC(DestroySyncKHR);
+    GET_PROC(GetSyncAttribKHR);
     // }
 
     // if (HasExt(EGLExt::ReusableSync))
     // {
-    //     GET_PROC_WITH_NAME(SignalSync, "eglSignalSyncKHR");
+    GET_PROC(SignalSyncKHR);
     // }
 
     // if (HasExt(EGLExt::GetNativeClientBuffer))

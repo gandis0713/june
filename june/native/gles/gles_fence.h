@@ -19,8 +19,6 @@ public:
 
     GLESFence(const GLESFence&) = delete;
     GLESFence& operator=(const GLESFence&) = delete;
-
-public: // June API
 };
 
 } // namespace june

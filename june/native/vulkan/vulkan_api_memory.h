@@ -18,10 +18,6 @@ public:
 
 protected:
     VulkanApiMemory(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor);
-
-protected:
-    VulkanApiContext* m_context{ nullptr };
-    const JuneApiMemoryDescriptor m_descriptor;
 };
 
 } // namespace june

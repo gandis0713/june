@@ -18,10 +18,6 @@ public:
 
 protected:
     GLESApiMemory(GLESApiContext* context, JuneApiMemoryDescriptor const* descriptor);
-
-protected:
-    GLESApiContext* m_context{ nullptr };
-    const JuneApiMemoryDescriptor m_descriptor;
 };
 
 } // namespace june

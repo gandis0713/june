@@ -8,8 +8,7 @@ namespace june
 {
 
 GLESApiMemory::GLESApiMemory(GLESApiContext* context, JuneApiMemoryDescriptor const* descriptor)
-    : m_context(context)
-    , m_descriptor(*descriptor)
+    : ApiMemory(context, descriptor)
 {
 }
 

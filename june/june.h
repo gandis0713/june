@@ -278,6 +278,7 @@ extern "C"
     // for Api Memory
     typedef void (*JuneProcApiMemoryBeginAccess)(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor);
     typedef void (*JuneProcApiMemoryEndAccess)(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor);
+    typedef void (*JuneProcApiMemoryConnect)(JuneApiMemory srcMemory, JuneApiMemory dstMemory);
     typedef void* (*JuneProcApiMemoryCreateResource)(JuneApiMemory memory, JuneResourceDescriptor const* descriptor);
     typedef void (*JuneProcApiMemoryDestroy)(JuneApiMemory memory);
 
@@ -299,6 +300,7 @@ extern "C"
 
     JUNE_EXPORT void juneApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor);
     JUNE_EXPORT void juneApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory);
     JUNE_EXPORT void* juneApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor);
     JUNE_EXPORT void juneApiMemoryDestroy(JuneApiMemory memory);
 
