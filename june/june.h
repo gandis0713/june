@@ -207,7 +207,6 @@ typedef struct JuneFenceDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
-    JuneApiMemory apiMemory;
 } JuneFenceDescriptor;
 
 typedef struct JuneApiMemoryBeginAccessEGLImageDescriptor
@@ -233,8 +232,6 @@ typedef struct JuneApiMemoryBeginAccessDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
-    JuneFence* fences;
-    uint32_t fenceCount;
 } JuneApiMemoryBeginAccessDescriptor;
 
 typedef struct JuneApiMemoryEndAccessVkImageDescriptor
@@ -249,8 +246,6 @@ typedef struct JuneApiMemoryEndAccessDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
-    JuneFence* fences;
-    uint32_t fenceCount;
 } JuneApiMemoryEndAccessDescriptor;
 
 #ifdef __cplusplus

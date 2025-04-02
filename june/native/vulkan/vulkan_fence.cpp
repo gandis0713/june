@@ -15,4 +15,16 @@ VulkanFence::VulkanFence(VulkanApiContext* context, JuneFenceDescriptor const* d
 {
 }
 
+void VulkanFence::begin()
+{
+}
+
+void VulkanFence::end()
+{
+}
+
+void VulkanFence::wait()
+{
+}
+
 } // namespace june

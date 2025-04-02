@@ -19,6 +19,11 @@ public:
 
     VulkanFence(const VulkanFence&) = delete;
     VulkanFence& operator=(const VulkanFence&) = delete;
+
+public:
+    void begin() override;
+    void end() override;
+    void wait() override;
 };
 
 } // namespace june

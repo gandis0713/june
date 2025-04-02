@@ -9,6 +9,7 @@ project(
 
 find_package(VulkanHeaders CONFIG)
 find_package(spdlog REQUIRED)
+find_package(PalSigslot CONFIG REQUIRED)
 
 set(JUNE_COMMON_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.cpp
@@ -86,6 +87,7 @@ target_link_libraries(june
   PRIVATE
   Vulkan::Headers
   spdlog::spdlog_header_only
+  Pal::Sigslot
 )
 
 if(ANDROID)

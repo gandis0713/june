@@ -5,6 +5,7 @@
 #include "june/memory/raw_memory.h"
 
 #include <memory>
+#include <vector>
 
 namespace june
 {
@@ -28,13 +29,17 @@ public:
     size_t getSize() const;
     RawMemory* getRawMemory() const;
 
-protected:
+    void attach(ApiMemory* apiMemory);
+
+private:
     SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
 
-protected:
+private:
     Instance* m_instance{ nullptr };
     std::unique_ptr<RawMemory> m_rawMemory{ nullptr };
     const JuneSharedMemoryDescriptor m_descriptor;
+
+    std::vector<ApiMemory*> m_attachedApiMemories{};
 };
 
 } // namespace june

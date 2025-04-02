@@ -3,6 +3,10 @@
 #include "june/june.h"
 #include "june/native/fence.h"
 
+#include "gles_api.h"
+
+#include <mutex>
+
 namespace june
 {
 
@@ -19,6 +23,15 @@ public:
 
     GLESFence(const GLESFence&) = delete;
     GLESFence& operator=(const GLESFence&) = delete;
+
+public:
+    void begin() override;
+    void end() override;
+    void wait() override;
+
+private:
+    EGLSyncKHR m_sync{ EGL_NO_SYNC_KHR };
+    std::mutex m_mutex;
 };
 
 } // namespace june

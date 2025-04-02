@@ -2,6 +2,7 @@
 
 #include "gles_api.h"
 #include "gles_api_context.h"
+#include "gles_fence.h"
 #include "june/memory/ahardwarebuffer_memory.h"
 #include "june/native/shared_memory.h"
 
@@ -25,15 +26,28 @@ GLESAHardwareBufferApiMemory::GLESAHardwareBufferApiMemory(GLESApiContext* conte
 
 void GLESAHardwareBufferApiMemory::beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor)
 {
+    m_accessMutex.lock();
+
+    for (auto& input : m_inputs)
+    {
+        auto fence = input->getFence();
+        fence->wait();
+    }
+
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {
         current = current->next;
     }
+
+    m_fence->begin();
 }
 
 void GLESAHardwareBufferApiMemory::endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor)
 {
+    m_fence->end();
+
+    signal();
 }
 
 void* GLESAHardwareBufferApiMemory::createResource(JuneResourceDescriptor const* descriptor)
@@ -114,6 +128,9 @@ int32_t GLESAHardwareBufferApiMemory::initialize()
 
     m_clientBuffer = clientBuffer;
     spdlog::trace("Successfully created EGLClientBuffer from AHardwareBuffer.");
+
+    JuneFenceDescriptor fenceDescriptor{};
+    m_fence = GLESFence::create(static_cast<GLESApiContext*>(m_context), &fenceDescriptor);
 
     return 0;
 }

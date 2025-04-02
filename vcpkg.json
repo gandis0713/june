@@ -6,6 +6,7 @@
     "glm",
     "spdlog",
     "vulkan-headers",
+    "palsigslot",
     {
       "name": "angle",
       "platform": "osx"

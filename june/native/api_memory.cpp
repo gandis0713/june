@@ -9,11 +9,6 @@ ApiMemory::ApiMemory(ApiContext* context, JuneApiMemoryDescriptor const* descrip
 {
 }
 
-SharedMemory* ApiMemory::getSharedMemory() const
-{
-    return reinterpret_cast<ApiMemory*>(m_descriptor.sharedMemory)->getSharedMemory();
-}
-
 void ApiMemory::connect(ApiMemory* srcMemory)
 {
     this->addInput(srcMemory);
@@ -38,6 +33,7 @@ void ApiMemory::removeInputAll()
 void ApiMemory::addOutput(ApiMemory* memory)
 {
     m_outputs.insert(memory);
+    m_signal.connect(&ApiMemory::slot, memory);
 }
 
 void ApiMemory::removeOutput(ApiMemory* memory)
@@ -48,6 +44,26 @@ void ApiMemory::removeOutput(ApiMemory* memory)
 void ApiMemory::removeOutputAll()
 {
     m_outputs.clear();
+}
+
+SharedMemory* ApiMemory::getSharedMemory() const
+{
+    return reinterpret_cast<ApiMemory*>(m_descriptor.sharedMemory)->getSharedMemory();
+}
+
+Fence* ApiMemory::getFence() const
+{
+    return m_fence;
+}
+
+void ApiMemory::signal()
+{
+    m_signal();
+}
+
+void ApiMemory::slot()
+{
+    m_accessMutex.unlock();
 }
 
 } // namespace june
