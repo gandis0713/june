@@ -75,6 +75,8 @@ VulkanApiContext::VulkanApiContext(Instance* instance, JuneVulkanApiContextDescr
         throw std::runtime_error(fmt::format("Failed to load instance prosc."));
     }
 
+    gatherPhysicalDeviceInfo();
+
     if (!vkAPI.loadDeviceProcs(m_vkDevice, static_cast<const VulkanDeviceKnobs&>(m_physicalDeviceInfo)))
     {
         throw std::runtime_error(fmt::format("Failed to load device procs."));
@@ -94,8 +96,8 @@ VulkanApiContext::~VulkanApiContext()
 
 ApiMemory* VulkanApiContext::createApiMemory(JuneApiMemoryDescriptor const* descriptor)
 {
-    auto apiMemory = reinterpret_cast<ApiMemory*>(descriptor->sharedMemory);
-    auto rawMemory = apiMemory->getSharedMemory()->getRawMemory();
+    auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
+    auto rawMemory = sharedMemory->getRawMemory();
 
     switch (rawMemory->getType())
     {
@@ -409,6 +411,22 @@ const std::vector<const char*> VulkanApiContext::getRequiredInstanceLayers()
     }
 
     return requiredInstanceLayers;
+}
+
+int findMemoryTypeIndex(const VulkanPhysicalDeviceInfo& info, VkMemoryPropertyFlags flags)
+{
+    int memoryTypeIndex = -1;
+    for (int i = 0; i < info.memoryTypes.size(); ++i)
+    {
+        const auto& memoryType = info.memoryTypes[i];
+        if ((memoryType.propertyFlags & flags) == flags)
+        {
+            memoryTypeIndex = i;
+            break;
+        }
+    }
+
+    return memoryTypeIndex;
 }
 
 } // namespace june

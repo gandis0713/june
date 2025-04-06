@@ -379,6 +379,11 @@ bool VulkanAPI::loadDeviceProcs(VkDevice device, const VulkanDeviceKnobs& device
     //     }
     // #endif
 
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    GET_DEVICE_PROC(GetAndroidHardwareBufferPropertiesANDROID);
+    GET_DEVICE_PROC(GetMemoryAndroidHardwareBufferANDROID);
+#endif
+
     return true;
 }
 

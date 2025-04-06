@@ -137,7 +137,7 @@ typedef struct JuneGLESApiContextDescriptor
 typedef struct JuneSharedMemoryDXGISharedHandleDescriptor
 {
     JuneChainedStruct chain;
-    void* handle; // ??
+    void* handle;
 } JuneSharedMemoryDXGISharedHandleDescriptor;
 
 typedef struct JuneResourceMemoeyEGLImageDescriptor
@@ -149,7 +149,7 @@ typedef struct JuneResourceMemoeyEGLImageDescriptor
 typedef struct JuneSharedMemoryAHardwareBufferDescriptor
 {
     JuneChainedStruct chain;
-    void* aHardwareBuffer;     // TODO: not allow use this field
+    void* aHardwareBuffer;     // AHardwareBuffer
     void* aHardwareBufferDesc; // AHardwareBuffer_Desc
 } JuneSharedMemoryAhardwareBufferDescriptor;
 
@@ -181,7 +181,6 @@ typedef struct JuneResourceVkBufferDescriptor
 typedef struct JuneResourceCLMemDescriptor
 {
     JuneChainedStruct chain;
-    // TODO: add more fields if needed
 } JuneResourceCLMemDescriptor;
 
 // can be chained with JuneResourceDescriptor
@@ -194,7 +193,6 @@ typedef struct JuneResourceVkImageDescriptor
 typedef struct JuneResourceEGLImageDescriptor
 {
     JuneChainedStruct chain;
-    // TODO: add more fields if needed
 } JuneResourceEGLImageDescriptor;
 
 typedef struct JuneResourceDescriptor

@@ -90,4 +90,6 @@ private:
     VulkanApiContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
 };
 
+int findMemoryTypeIndex(const VulkanPhysicalDeviceInfo& info, VkMemoryPropertyFlags flags);
+
 } // namespace june

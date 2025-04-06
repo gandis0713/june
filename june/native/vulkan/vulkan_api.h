@@ -11,6 +11,8 @@
 #define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
+#define VK_USE_PLATFORM_ANDROID_KHR
+
 #define VK_NO_PROTOTYPES
 #include <vulkan/vulkan.h>
 
@@ -393,6 +395,11 @@ struct VulkanAPI
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
     // VK_KHR_win32_surface
     PFN_vkCreateWin32SurfaceKHR CreateWin32SurfaceKHR = nullptr;
+#endif
+
+#if defined(VK_USE_PLATFORM_ANDROID_KHR)
+    PFN_vkGetAndroidHardwareBufferPropertiesANDROID GetAndroidHardwareBufferPropertiesANDROID = nullptr;
+    PFN_vkGetMemoryAndroidHardwareBufferANDROID GetMemoryAndroidHardwareBufferANDROID = nullptr;
 #endif
 };
 

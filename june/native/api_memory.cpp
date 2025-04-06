@@ -48,7 +48,7 @@ void ApiMemory::removeOutputAll()
 
 SharedMemory* ApiMemory::getSharedMemory() const
 {
-    return reinterpret_cast<ApiMemory*>(m_descriptor.sharedMemory)->getSharedMemory();
+    return reinterpret_cast<SharedMemory*>(m_descriptor.sharedMemory);
 }
 
 Fence* ApiMemory::getFence() const
