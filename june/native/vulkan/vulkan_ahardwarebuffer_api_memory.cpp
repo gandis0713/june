@@ -103,16 +103,43 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             spdlog::trace("AHardwareBuffer properties: allocationSize = {}, memoryTypeBits = {}",
                           bufferProps.allocationSize, bufferProps.memoryTypeBits);
 
-            int memoryTypeIndex = findMemoryTypeIndex(vulkanApiContext->getPhysicalDeviceInfo(), VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-            if (memoryTypeIndex < 0)
+            if (bufferProps.allocationSize < memRequirements.size)
             {
-                spdlog::error("Failed to find suitable memory type index.");
+                spdlog::error("AHardwareBuffer allocation size is less than image memory requirements, [ahardwarebuffer size: {}] < [image size: {}]",
+                              bufferProps.allocationSize, memRequirements.size);
                 return nullptr;
             }
+
+            auto info = vulkanApiContext->getPhysicalDeviceInfo();
+
+            uint32_t memoryTypeIndex = std::numeric_limits<uint32_t>::max();
+            for (uint32_t i = 0; i < info.memoryTypes.size(); i++)
+            {
+                if ((bufferProps.memoryTypeBits & (1 << i)) &&
+                    (info.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT))
+                {
+                    memoryTypeIndex = i;
+                    break;
+                }
+            }
+
+            if (memoryTypeIndex == std::numeric_limits<uint32_t>::max())
+            {
+                spdlog::error("Failed to find suitable memory type for AHardwareBuffer");
+                return nullptr;
+            }
+            spdlog::trace("Memory type index: {}", memoryTypeIndex);
+
+            VkMemoryDedicatedAllocateInfo dedicatedAllocateInfo;
+            dedicatedAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+            dedicatedAllocateInfo.pNext = nullptr;
+            dedicatedAllocateInfo.buffer = VK_NULL_HANDLE;
+            dedicatedAllocateInfo.image = image;
 
             VkImportAndroidHardwareBufferInfoANDROID importAHBInfo = {};
             importAHBInfo.sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
             importAHBInfo.buffer = hardwareBuffer;
+            importAHBInfo.pNext = &dedicatedAllocateInfo;
 
             VkMemoryAllocateInfo allocInfo{};
             allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
