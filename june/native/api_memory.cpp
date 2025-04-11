@@ -9,10 +9,10 @@ ApiMemory::ApiMemory(ApiContext* context, JuneApiMemoryDescriptor const* descrip
 {
 }
 
-void ApiMemory::connect(ApiMemory* srcMemory)
+void ApiMemory::connect(ApiMemory* inputMemory)
 {
-    this->addInput(srcMemory);
-    srcMemory->addOutput(this);
+    this->addInput(inputMemory);
+    inputMemory->addOutput(this);
 }
 
 void ApiMemory::addInput(ApiMemory* memory)
@@ -39,10 +39,15 @@ void ApiMemory::addOutput(ApiMemory* memory)
 void ApiMemory::removeOutput(ApiMemory* memory)
 {
     m_outputs.erase(memory);
+    m_signal.disconnect(&ApiMemory::slot, memory);
 }
 
 void ApiMemory::removeOutputAll()
 {
+    for (auto& output : m_outputs)
+    {
+        m_signal.disconnect(&ApiMemory::slot, output);
+    }
     m_outputs.clear();
 }
 
@@ -58,10 +63,10 @@ Fence* ApiMemory::getFence() const
 
 void ApiMemory::signal()
 {
-    m_signal();
+    m_signal(this);
 }
 
-void ApiMemory::slot()
+void ApiMemory::slot(ApiMemory* memory)
 {
     m_accessMutex.unlock();
 }

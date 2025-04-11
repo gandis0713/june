@@ -6,6 +6,7 @@
 #include "gles_api.h"
 
 #include <mutex>
+#include <unordered_map>
 
 namespace june
 {
@@ -27,11 +28,20 @@ public:
 public:
     void begin() override;
     void end() override;
-    void wait() override;
+
+public:
+    EGLSyncKHR getEGLSyncKHR() const;
+    int getFenceFd() const;
+
+protected:
+    void updated(Fence* fence) override;
 
 private:
     EGLSyncKHR m_sync{ EGL_NO_SYNC_KHR };
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
+
+    std::unordered_map<Fence*, EGLSyncKHR> m_waitSync{};
+    EGLSyncKHR m_signalSync{ EGL_NO_SYNC_KHR };
 };
 
 } // namespace june

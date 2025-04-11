@@ -28,12 +28,6 @@ void GLESAHardwareBufferApiMemory::beginAccess(JuneApiMemoryBeginAccessDescripto
 {
     m_accessMutex.lock();
 
-    for (auto& input : m_inputs)
-    {
-        auto fence = input->getFence();
-        fence->wait();
-    }
-
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {

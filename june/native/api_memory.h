@@ -30,7 +30,7 @@ public: // June API
     virtual void beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor) = 0;
     virtual void endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor) = 0;
     virtual void* createResource(JuneResourceDescriptor const* descriptor) = 0;
-    void connect(ApiMemory* srcMemory);
+    void connect(ApiMemory* inputMemory);
 
 public:
     void addInput(ApiMemory* memory);
@@ -45,7 +45,7 @@ public:
 
 protected:
     void signal();
-    void slot();
+    void slot(ApiMemory* memory);
 
 protected:
     ApiMemory(ApiContext* context, JuneApiMemoryDescriptor const* descriptor);
@@ -60,7 +60,7 @@ protected:
 
     Fence* m_fence{ nullptr };
     std::mutex m_accessMutex{};
-    sigslot::signal<> m_signal;
+    sigslot::signal<ApiMemory*> m_signal;
 };
 
 } // namespace june
