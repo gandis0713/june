@@ -2,6 +2,8 @@
 
 #include "june/native/api_context.h"
 
+#include <spdlog/spdlog.h>
+
 namespace june
 {
 
@@ -27,7 +29,12 @@ AHardwareBufferMemory::AHardwareBufferMemory(const RawMemoryDescriptor& descript
     : RawMemory(descriptor)
     , m_desc(ahbDescriptor)
 {
-    AHardwareBuffer_allocate(&m_desc, &m_ahb);
+    int result = AHardwareBuffer_allocate(&m_desc, &m_ahb);
+    if (result != 0)
+    {
+        spdlog::error("Failed to allocate AHardwareBuffer: {}", result);
+        m_ahb = nullptr;
+    }
 }
 
 AHardwareBufferMemory::~AHardwareBufferMemory()

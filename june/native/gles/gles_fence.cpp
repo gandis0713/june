@@ -126,6 +126,9 @@ void GLESFence::updated(Fence* fence)
         eglSyncKHR = eglAPI.CreateSyncKHR(context->getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);
     }
     break;
+    default:
+        spdlog::error("Unsupported fence type: {}", static_cast<uint32_t>(fence->getType()));
+        break;
     }
 
     if (eglSyncKHR == EGL_NO_SYNC_KHR)
