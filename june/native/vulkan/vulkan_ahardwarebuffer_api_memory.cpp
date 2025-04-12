@@ -60,8 +60,14 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
 
             VkDevice device = vulkanApiContext->getVkDevice();
 
+            VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo{};
+            externalMemoryImageCreateInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
+            externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
+
             const auto* imageDesc = reinterpret_cast<const JuneResourceVkImageDescriptor*>(current);
             VkImageCreateInfo* imageInfo = reinterpret_cast<VkImageCreateInfo*>(imageDesc->vkImageCreateInfo);
+            imageInfo->pNext = &externalMemoryImageCreateInfo;
+
             VkImage image;
             VkResult result = vkAPI.CreateImage(device, imageInfo, nullptr, &image);
             if (result != VK_SUCCESS)
@@ -69,11 +75,6 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
                 spdlog::error("Failed to create Vulkan image: {}", static_cast<uint32_t>(result));
                 return nullptr;
             }
-
-            VkMemoryRequirements memRequirements{};
-            vkAPI.GetImageMemoryRequirements(device, image, &memRequirements);
-            spdlog::trace("Image memory requirements: size = {}, alignment = {}, memoryTypeBits = {}",
-                          static_cast<uint64_t>(memRequirements.size), static_cast<uint64_t>(memRequirements.alignment), memRequirements.memoryTypeBits);
 
             VkAndroidHardwareBufferFormatPropertiesANDROID formatProps = {};
             formatProps.sType = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_PROPERTIES_ANDROID;
@@ -102,13 +103,6 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
 
             spdlog::trace("AHardwareBuffer properties: allocationSize = {}, memoryTypeBits = {}",
                           bufferProps.allocationSize, bufferProps.memoryTypeBits);
-
-            if (bufferProps.allocationSize < memRequirements.size)
-            {
-                spdlog::error("AHardwareBuffer allocation size is less than image memory requirements, [ahardwarebuffer size: {}] < [image size: {}]",
-                              bufferProps.allocationSize, memRequirements.size);
-                return nullptr;
-            }
 
             auto info = vulkanApiContext->getPhysicalDeviceInfo();
 
@@ -160,6 +154,17 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             {
                 spdlog::error("Failed to bind Vulkan image memory: {}", static_cast<uint32_t>(result));
                 return nullptr;
+            }
+
+            VkMemoryRequirements memRequirements{};
+            vkAPI.GetImageMemoryRequirements(device, image, &memRequirements);
+            spdlog::trace("Image memory requirements: size = {}, alignment = {}, memoryTypeBits = {}",
+                          static_cast<uint64_t>(memRequirements.size), static_cast<uint64_t>(memRequirements.alignment), memRequirements.memoryTypeBits);
+
+            if (bufferProps.allocationSize != memRequirements.size)
+            {
+                spdlog::error("AHardwareBuffer allocation size is difference with image size, [ahardwarebuffer size: {}], [image size: {}]",
+                              bufferProps.allocationSize, memRequirements.size);
             }
 
             return image;
