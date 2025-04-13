@@ -1,5 +1,7 @@
 #include "api_memory.h"
 
+#include "fence.h"
+
 namespace june
 {
 
@@ -13,6 +15,8 @@ void ApiMemory::connect(ApiMemory* inputMemory)
 {
     this->addInput(inputMemory);
     inputMemory->addOutput(this);
+
+    m_fence->connect(inputMemory->getFence());
 }
 
 void ApiMemory::addInput(ApiMemory* memory)

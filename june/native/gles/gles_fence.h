@@ -37,7 +37,6 @@ protected:
     void updated(Fence* fence) override;
 
 private:
-    EGLSyncKHR m_sync{ EGL_NO_SYNC_KHR };
     mutable std::mutex m_mutex;
 
     std::unordered_map<Fence*, EGLSyncKHR> m_waitSync{};

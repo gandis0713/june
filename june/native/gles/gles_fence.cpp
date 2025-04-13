@@ -16,6 +16,7 @@ GLESFence* GLESFence::create(GLESApiContext* context, JuneFenceDescriptor const*
 GLESFence::GLESFence(GLESApiContext* context, JuneFenceDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
+    m_type = FenceType::kFenceType_GLES;
 }
 
 void GLESFence::begin()
@@ -83,7 +84,7 @@ void GLESFence::end()
 
 EGLSyncKHR GLESFence::getEGLSyncKHR() const
 {
-    return m_sync;
+    return m_signalSync;
 }
 
 int GLESFence::getFenceFd() const
@@ -112,6 +113,7 @@ void GLESFence::updated(Fence* fence)
     case FenceType::kFenceType_GLES: {
         eglSyncKHR = static_cast<GLESFence*>(fence)->getEGLSyncKHR();
     }
+    break;
     case FenceType::kFenceType_Vulkan: {
         auto fenceFD = static_cast<VulkanFence*>(fence)->getFenceFd();
 

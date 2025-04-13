@@ -17,6 +17,7 @@ VulkanFence* VulkanFence::create(VulkanApiContext* context, JuneFenceDescriptor 
 VulkanFence::VulkanFence(VulkanApiContext* context, JuneFenceDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
+    m_type = FenceType::kFenceType_Vulkan;
 }
 
 void VulkanFence::begin()
