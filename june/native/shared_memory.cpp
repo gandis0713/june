@@ -66,9 +66,9 @@ RawMemory* SharedMemory::getRawMemory() const
     return m_rawMemory.get();
 }
 
-void SharedMemory::attach(ApiMemory* apiMemory)
+void SharedMemory::attach(Resource* resource)
 {
-    m_attachedApiMemories.push_back(apiMemory);
+    m_attachedApiMemories.push_back(resource);
 }
 
 } // namespace june

@@ -1,4 +1,4 @@
-#include "vulkan_ahardwarebuffer_api_memory.h"
+#include "vulkan_ahardwarebuffer_resource.h"
 
 #include "june/memory/ahardwarebuffer_memory.h"
 #include "june/native/shared_memory.h"
@@ -11,20 +11,20 @@
 namespace june
 {
 
-VulkanAHardwareBufferApiMemory* VulkanAHardwareBufferApiMemory::create(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor)
+VulkanAHardwareBufferResource* VulkanAHardwareBufferResource::create(VulkanApiContext* context, JuneResourceDescriptor const* descriptor)
 {
-    auto apiMemory = new VulkanAHardwareBufferApiMemory(context, descriptor);
-    apiMemory->initialize();
+    auto apiResource = new VulkanAHardwareBufferResource(context, descriptor);
+    apiResource->initialize();
 
-    return apiMemory;
+    return apiResource;
 }
 
-VulkanAHardwareBufferApiMemory::VulkanAHardwareBufferApiMemory(VulkanApiContext* context, JuneApiMemoryDescriptor const* descriptor)
-    : VulkanApiMemory(context, descriptor)
+VulkanAHardwareBufferResource::VulkanAHardwareBufferResource(VulkanApiContext* context, JuneResourceDescriptor const* descriptor)
+    : VulkanResource(context, descriptor)
 {
 }
 
-void VulkanAHardwareBufferApiMemory::beginAccess(JuneApiMemoryBeginAccessDescriptor const* descriptor)
+void VulkanAHardwareBufferResource::beginAccess(JuneResourceBeginAccessDescriptor const* descriptor)
 {
     m_accessMutex.lock();
 
@@ -37,16 +37,32 @@ void VulkanAHardwareBufferApiMemory::beginAccess(JuneApiMemoryBeginAccessDescrip
     m_fence->begin();
 }
 
-void VulkanAHardwareBufferApiMemory::endAccess(JuneApiMemoryEndAccessDescriptor const* descriptor)
+void VulkanAHardwareBufferResource::endAccess(JuneResourceEndAccessDescriptor const* descriptor)
 {
     m_fence->end();
 
     signal();
 }
 
-void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor const* descriptor)
+void* VulkanAHardwareBufferResource::getResource(JuneGetResourceDescriptor const* descriptor)
 {
-    const JuneChainedStruct* current = descriptor->nextInChain;
+    return static_cast<void*>(m_image);
+}
+
+int32_t VulkanAHardwareBufferResource::initialize()
+{
+    createResource();
+
+    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
+    JuneFenceDescriptor fenceDescriptor{};
+    m_fence = VulkanFence::create(vulkanApiContext, &fenceDescriptor);
+
+    return 0;
+}
+
+bool VulkanAHardwareBufferResource::createResource()
+{
+    const JuneChainedStruct* current = m_descriptor.nextInChain;
     while (current)
     {
         switch (current->sType)
@@ -68,12 +84,11 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             VkImageCreateInfo* imageInfo = reinterpret_cast<VkImageCreateInfo*>(imageDesc->vkImageCreateInfo);
             imageInfo->pNext = &externalMemoryImageCreateInfo;
 
-            VkImage image;
-            VkResult result = vkAPI.CreateImage(device, imageInfo, nullptr, &image);
+            VkResult result = vkAPI.CreateImage(device, imageInfo, nullptr, &m_image);
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to create Vulkan image: {}", static_cast<uint32_t>(result));
-                return nullptr;
+                return false;
             }
 
             VkAndroidHardwareBufferFormatPropertiesANDROID formatProps = {};
@@ -90,7 +105,7 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to get AHardwareBuffer properties: {}", static_cast<uint32_t>(result));
-                return nullptr;
+                return false;
             }
 
             spdlog::trace("AHardwareBuffer format properties: format = {}, externalFormat = {}, formatFeatures = {}, "
@@ -120,7 +135,7 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             if (memoryTypeIndex == std::numeric_limits<uint32_t>::max())
             {
                 spdlog::error("Failed to find suitable memory type for AHardwareBuffer");
-                return nullptr;
+                return false;
             }
             spdlog::trace("Memory type index: {}", memoryTypeIndex);
 
@@ -128,7 +143,7 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             dedicatedAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
             dedicatedAllocateInfo.pNext = nullptr;
             dedicatedAllocateInfo.buffer = VK_NULL_HANDLE;
-            dedicatedAllocateInfo.image = image;
+            dedicatedAllocateInfo.image = m_image;
 
             VkImportAndroidHardwareBufferInfoANDROID importAHBInfo = {};
             importAHBInfo.sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
@@ -146,18 +161,18 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to allocate Vulkan memory: {}", static_cast<uint32_t>(result));
-                return nullptr;
+                return false;
             }
 
-            result = vkAPI.BindImageMemory(device, image, deviceMemory, 0);
+            result = vkAPI.BindImageMemory(device, m_image, deviceMemory, 0);
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to bind Vulkan image memory: {}", static_cast<uint32_t>(result));
-                return nullptr;
+                return false;
             }
 
             VkMemoryRequirements memRequirements{};
-            vkAPI.GetImageMemoryRequirements(device, image, &memRequirements);
+            vkAPI.GetImageMemoryRequirements(device, m_image, &memRequirements);
             spdlog::trace("Image memory requirements: size = {}, alignment = {}, memoryTypeBits = {}",
                           static_cast<uint64_t>(memRequirements.size), static_cast<uint64_t>(memRequirements.alignment), memRequirements.memoryTypeBits);
 
@@ -167,28 +182,18 @@ void* VulkanAHardwareBufferApiMemory::createResource(JuneResourceDescriptor cons
                               bufferProps.allocationSize, memRequirements.size);
             }
 
-            return image;
+            return m_image;
         }
         break;
         default:
             spdlog::error("Unsupported resource type: {}", static_cast<uint32_t>(current->sType));
-            return nullptr;
+            return false;
         }
 
         current = current->next;
     }
 
-    return nullptr;
-}
-
-int32_t VulkanAHardwareBufferApiMemory::initialize()
-{
-    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
-
-    JuneFenceDescriptor fenceDescriptor{};
-    m_fence = VulkanFence::create(vulkanApiContext, &fenceDescriptor);
-
-    return 0;
+    return m_image != VK_NULL_HANDLE;
 }
 
 } // namespace june

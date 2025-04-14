@@ -27,8 +27,7 @@ typedef uint64_t JuneFlags;
 typedef struct JuneInstance_T* JuneInstance;         // Opaque handle for an instance
 typedef struct JuneSharedMemory_T* JuneSharedMemory; // Opaque handle for a sharing memory
 typedef struct JuneApiContext_T* JuneApiContext;     // Opaque handle for an API context
-typedef struct JuneApiMemory_T* JuneApiMemory;       // Opaque handle for a API(OpenGL ES, Vulkan, OpenCL and so on) memory
-typedef struct JuneResource_T* JuneResource;         // Opaque handle for a resource with api memory
+typedef struct JuneResource_T* JuneResource;         // Opaque handle for a resource in each API(OpenGL ES, Vulkan, OpenCL and so on)
 typedef struct JuneFence_T* JuneFence;               // Opaque cross-API fence
 
 struct JuneApiContextDescriptor;
@@ -55,8 +54,8 @@ typedef enum JuneSType
     JuneStype_EGLImageResourceDescriptor = 0x00000007,
     JuneSType_VkImageResourceDescriptor = 0x00000008,
     JuneSType_VkBufferResourceDescriptor = 0x00000009,
-    JuneSType_BeginAccessVulkanBuffer = 0x0000000A,
-    JuneSType_BeginAccessVulkanTexture = 0x0000000B,
+    JuneSType_BeginAccessVkBuffer = 0x0000000A,
+    JuneSType_BeginAccessVkImage = 0x0000000B,
 } JuneSType;
 
 typedef JuneFlags JuneSharedMemoryUsage;
@@ -163,13 +162,6 @@ typedef struct JuneSharedMemoryDescriptor
     uint32_t layers;
 } JuneSharedMemoryDescriptor;
 
-typedef struct JuneApiMemoryDescriptor
-{
-    JuneChainedStruct const* nextInChain;
-    StringView label;
-    JuneSharedMemory sharedMemory;
-} JuneApiMemoryDescriptor;
-
 // can be chained with JuneResourceDescriptor
 typedef struct JuneResourceVkBufferDescriptor
 {
@@ -199,6 +191,7 @@ typedef struct JuneResourceDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
+    JuneSharedMemory sharedMemory;
 } JuneResourceDescriptor;
 
 typedef struct JuneFenceDescriptor
@@ -207,44 +200,50 @@ typedef struct JuneFenceDescriptor
     StringView label;
 } JuneFenceDescriptor;
 
-typedef struct JuneApiMemoryBeginAccessEGLImageDescriptor
+typedef struct JuneResourceBeginAccessEGLImageDescriptor
 {
     JuneChainedStruct chain;
-} JuneApiMemoryBeginAccessEGLImageDescriptor;
+} JuneResourceBeginAccessEGLImageDescriptor;
 
-typedef struct JuneApiMemoryBeginAccessVkImageDescriptor
-{
-    JuneChainedStruct chain;
-    void* vkSubmitInfo;
-    uint32_t oldLayout;
-    uint32_t newLayout;
-} JuneApiMemoryBeginAccessVkImageDescriptor;
-
-typedef struct JuneApiMemoryBeginAccessVkBufferDescriptor
-{
-    JuneChainedStruct chain;
-    void* vkSubmitInfo;
-} JuneApiMemoryBeginAccessVkBufferDescriptor;
-
-typedef struct JuneApiMemoryBeginAccessDescriptor
-{
-    JuneChainedStruct const* nextInChain;
-    StringView label;
-} JuneApiMemoryBeginAccessDescriptor;
-
-typedef struct JuneApiMemoryEndAccessVkImageDescriptor
+typedef struct JuneResourceBeginAccessVkImageDescriptor
 {
     JuneChainedStruct chain;
     void* vkSubmitInfo;
     uint32_t oldLayout;
     uint32_t newLayout;
-} JuneApiMemoryEndAccessVkImageDescriptor;
+} JuneResourceBeginAccessVkImageDescriptor;
 
-typedef struct JuneApiMemoryEndAccessDescriptor
+typedef struct JuneResourceBeginAccessVkBufferDescriptor
+{
+    JuneChainedStruct chain;
+    void* vkSubmitInfo;
+} JuneResourceBeginAccessVkBufferDescriptor;
+
+typedef struct JuneResourceBeginAccessDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
-} JuneApiMemoryEndAccessDescriptor;
+} JuneResourceBeginAccessDescriptor;
+
+typedef struct JuneResourceEndAccessVkImageDescriptor
+{
+    JuneChainedStruct chain;
+    void* vkSubmitInfo; // VkSubmitInfo
+    uint32_t oldLayout;
+    uint32_t newLayout;
+} JuneResourceEndAccessVkImageDescriptor;
+
+typedef struct JuneResourceEndAccessDescriptor
+{
+    JuneChainedStruct const* nextInChain;
+    StringView label;
+} JuneResourceEndAccessDescriptor;
+
+typedef struct JuneGetResourceDescriptor
+{
+    JuneChainedStruct const* nextInChain;
+    StringView label;
+} JuneGetResourceDescriptor;
 
 #ifdef __cplusplus
 extern "C"
@@ -261,7 +260,7 @@ extern "C"
     typedef void (*JuneProcInstanceDestroy)(JuneInstance instance);
 
     // for Api Context
-    typedef JuneApiMemory (*JuneProcApiContextCreateApiMemory)(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor);
+    typedef JuneResource (*JuneProcApiContextCreateResource)(JuneApiContext context, JuneResourceDescriptor const* descriptor);
     typedef JuneFence (*JuneProcApiContextCreateFence)(JuneApiContext context, JuneFenceDescriptor const* descriptor);
     typedef void (*JuneProcApiContextDestroy)(JuneApiContext context);
 
@@ -269,11 +268,11 @@ extern "C"
     typedef void (*JuneProcSharedMemoryDestroy)(JuneSharedMemory memory);
 
     // for Api Memory
-    typedef void (*JuneProcApiMemoryBeginAccess)(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor);
-    typedef void (*JuneProcApiMemoryEndAccess)(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor);
-    typedef void (*JuneProcApiMemoryConnect)(JuneApiMemory srcMemory, JuneApiMemory dstMemory);
-    typedef void* (*JuneProcApiMemoryCreateResource)(JuneApiMemory memory, JuneResourceDescriptor const* descriptor);
-    typedef void (*JuneProcApiMemoryDestroy)(JuneApiMemory memory);
+    typedef void (*JuneProcResourceBeginAccess)(JuneResource resource, JuneResourceBeginAccessDescriptor const* descriptor);
+    typedef void (*JuneProcResourceEndAccess)(JuneResource resource, JuneResourceEndAccessDescriptor const* descriptor);
+    typedef void (*JuneProcResourceConnect)(JuneResource srcResource, JuneResource dstResource);
+    typedef void* (*JuneProcResourceGetResource)(JuneResource resource, JuneGetResourceDescriptor const* descriptor);
+    typedef void (*JuneProcResourceDestroy)(JuneResource resource);
 
     // for Fence
     typedef void (*JuneProcFenceDestroy)(JuneFence fence);
@@ -287,15 +286,15 @@ extern "C"
     JUNE_EXPORT JuneApiContext juneInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc);
     JUNE_EXPORT void juneInstanceDestroy(JuneInstance instance);
 
-    JUNE_EXPORT JuneApiMemory juneApiContextCreateApiMemory(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor);
+    JUNE_EXPORT JuneResource juneApiContextCreateResource(JuneApiContext context, JuneResourceDescriptor const* descriptor);
     JUNE_EXPORT JuneFence juneApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor);
     JUNE_EXPORT void juneApiContextDestroy(JuneApiContext context);
 
-    JUNE_EXPORT void juneApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor);
-    JUNE_EXPORT void juneApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor);
-    JUNE_EXPORT void juneApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory);
-    JUNE_EXPORT void* juneApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor);
-    JUNE_EXPORT void juneApiMemoryDestroy(JuneApiMemory memory);
+    JUNE_EXPORT void juneResourceBeginAccess(JuneResource resource, JuneResourceBeginAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneResourceEndAccess(JuneResource resource, JuneResourceEndAccessDescriptor const* descriptor);
+    JUNE_EXPORT void juneResourceConnect(JuneResource srcResource, JuneResource dstResource);
+    JUNE_EXPORT void* juneResourceGetResource(JuneResource resource, JuneGetResourceDescriptor const* descriptor);
+    JUNE_EXPORT void juneResourceDestroy(JuneResource resource);
 
     JUNE_EXPORT void juneFenceDestroy(JuneFence fence);
 

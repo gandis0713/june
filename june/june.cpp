@@ -10,15 +10,15 @@ extern JuneSharedMemory procInstanceCreateSharedMemory(JuneInstance instance, Ju
 extern JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc);
 extern void procInstanceDestroy(JuneInstance instance);
 
-extern JuneApiMemory procApiContextCreateApiMemory(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor);
+extern JuneResource procApiContextCreateResource(JuneApiContext context, JuneResourceDescriptor const* descriptor);
 extern JuneFence procApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor);
 extern void procApiContextDestroy(JuneApiContext context);
 
-extern void procApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor);
-extern void procApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor);
-extern void procApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory);
-extern void* procApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor);
-extern void procApiMemoryDestroy(JuneApiMemory memory);
+extern void procResourceBeginAccess(JuneResource resource, JuneResourceBeginAccessDescriptor const* descriptor);
+extern void procResourceEndAccess(JuneResource resource, JuneResourceEndAccessDescriptor const* descriptor);
+extern void procResourceConnect(JuneResource srcResource, JuneResource dstResource);
+extern void* procResourceGetResource(JuneResource resource, JuneGetResourceDescriptor const* descriptor);
+extern void procResourceDestroy(JuneResource resource);
 
 extern void procFenceDestroy(JuneFence fence);
 
@@ -53,9 +53,9 @@ extern "C"
         procInstanceDestroy(instance);
     }
 
-    JUNE_EXPORT JuneApiMemory juneApiContextCreateApiMemory(JuneApiContext context, JuneApiMemoryDescriptor const* descriptor)
+    JUNE_EXPORT JuneResource juneApiContextCreateResource(JuneApiContext context, JuneResourceDescriptor const* descriptor)
     {
-        return procApiContextCreateApiMemory(context, descriptor);
+        return procApiContextCreateResource(context, descriptor);
     }
 
     JUNE_EXPORT JuneFence juneApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor)
@@ -68,29 +68,29 @@ extern "C"
         procApiContextDestroy(context);
     }
 
-    JUNE_EXPORT void juneApiMemoryBeginAccess(JuneApiMemory memory, JuneApiMemoryBeginAccessDescriptor const* descriptor)
+    JUNE_EXPORT void juneResourceBeginAccess(JuneResource resource, JuneResourceBeginAccessDescriptor const* descriptor)
     {
-        procApiMemoryBeginAccess(memory, descriptor);
+        procResourceBeginAccess(resource, descriptor);
     }
 
-    JUNE_EXPORT void juneApiMemoryEndAccess(JuneApiMemory memory, JuneApiMemoryEndAccessDescriptor const* descriptor)
+    JUNE_EXPORT void juneResourceEndAccess(JuneResource resource, JuneResourceEndAccessDescriptor const* descriptor)
     {
-        procApiMemoryEndAccess(memory, descriptor);
+        procResourceEndAccess(resource, descriptor);
     }
 
-    JUNE_EXPORT void juneApiMemoryConnect(JuneApiMemory srcMemory, JuneApiMemory dstMemory)
+    JUNE_EXPORT void juneResourceConnect(JuneResource srcResource, JuneResource dstResource)
     {
-        procApiMemoryConnect(srcMemory, dstMemory);
+        procResourceConnect(srcResource, dstResource);
     }
 
-    JUNE_EXPORT void* juneApiMemoryCreateResource(JuneApiMemory memory, JuneResourceDescriptor const* descriptor)
+    JUNE_EXPORT void* juneResourceGetResource(JuneResource resource, JuneGetResourceDescriptor const* descriptor)
     {
-        return procApiMemoryCreateResource(memory, descriptor);
+        return procResourceGetResource(resource, descriptor);
     }
 
-    JUNE_EXPORT void juneApiMemoryDestroy(JuneApiMemory memory)
+    JUNE_EXPORT void juneResourceDestroy(JuneResource resource)
     {
-        procApiMemoryDestroy(memory);
+        procResourceDestroy(resource);
     }
 
     JUNE_EXPORT void juneFenceDestroy(JuneFence fence)

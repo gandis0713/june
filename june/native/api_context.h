@@ -5,7 +5,7 @@
 namespace june
 {
 
-class ApiMemory;
+class Resource;
 class Instance;
 class Fence;
 class ApiContext
@@ -17,7 +17,7 @@ public:
     ApiContext& operator=(const ApiContext&) = delete;
 
 public: // June API
-    virtual ApiMemory* createApiMemory(JuneApiMemoryDescriptor const* descriptor) = 0;
+    virtual Resource* createResource(JuneResourceDescriptor const* descriptor) = 0;
     virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
 
 public:

@@ -29,7 +29,7 @@ public:
     size_t getSize() const;
     RawMemory* getRawMemory() const;
 
-    void attach(ApiMemory* apiMemory);
+    void attach(Resource* resource);
 
 private:
     SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
@@ -39,7 +39,7 @@ private:
     std::unique_ptr<RawMemory> m_rawMemory{ nullptr };
     const JuneSharedMemoryDescriptor m_descriptor;
 
-    std::vector<ApiMemory*> m_attachedApiMemories{};
+    std::vector<Resource*> m_attachedApiMemories{};
 };
 
 } // namespace june

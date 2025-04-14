@@ -23,6 +23,7 @@ VulkanFence::VulkanFence(VulkanApiContext* context, JuneFenceDescriptor const* d
 void VulkanFence::begin()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    spdlog::debug(__func__);
 
     // wait input fences.??
 }
@@ -31,6 +32,7 @@ void VulkanFence::begin()
 void VulkanFence::end()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    spdlog::debug(__func__);
 
     if (m_signalSemaphore != VK_NULL_HANDLE)
         return;
@@ -38,6 +40,12 @@ void VulkanFence::end()
     VkExportSemaphoreCreateInfo exportSemCreateInfo = {};
     exportSemCreateInfo.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
     exportSemCreateInfo.handleTypes = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
+
+    VkSemaphoreTypeCreateInfo timelineCreateInfo;
+    timelineCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
+    timelineCreateInfo.pNext = &exportSemCreateInfo;
+    timelineCreateInfo.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
+    timelineCreateInfo.initialValue = 0;
 
     VkSemaphoreCreateInfo semaphoreCreateInfo = {};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -100,13 +108,14 @@ void VulkanFence::updated(Fence* fence)
             }
         }
 
-        VkExportSemaphoreCreateInfo exportSemCreateInfo = {};
-        exportSemCreateInfo.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
-        exportSemCreateInfo.handleTypes = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
+        // VkExportSemaphoreCreateInfo exportSemCreateInfo = {};
+        // exportSemCreateInfo.sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
+        // exportSemCreateInfo.handleTypes = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
 
         VkSemaphoreCreateInfo semaphoreCreateInfo = {};
         semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-        semaphoreCreateInfo.pNext = &exportSemCreateInfo;
+        // semaphoreCreateInfo.pNext = &exportSemCreateInfo;
+        semaphoreCreateInfo.pNext = nullptr;
 
         VkSemaphore semaphore{ VK_NULL_HANDLE };
         VkResult result = vkAPI.CreateSemaphore(vulkanApiContext->getVkDevice(), &semaphoreCreateInfo, nullptr, &semaphore);
@@ -134,7 +143,26 @@ void VulkanFence::updated(Fence* fence)
     }
     break;
     case FenceType::kFenceType_Vulkan: {
-        // TODO
+        VkSemaphoreCreateInfo semaphoreCreateInfo = {};
+        semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+        semaphoreCreateInfo.pNext = nullptr;
+
+        VkSemaphore semaphore{ VK_NULL_HANDLE };
+        VkResult result = vkAPI.CreateSemaphore(vulkanApiContext->getVkDevice(), &semaphoreCreateInfo, nullptr, &semaphore);
+        if (result != VK_SUCCESS)
+        {
+            spdlog::error("Failed to create Vulkan semaphore: {}", static_cast<uint32_t>(result));
+            return;
+        }
+
+        VkImportSemaphoreFdInfoKHR importSemaphoreFdInfo = {};
+        importSemaphoreFdInfo.sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+        importSemaphoreFdInfo.semaphore = semaphore;
+        importSemaphoreFdInfo.flags = 0; // or VK_SEMAPHORE_IMPORT_TEMPORARY_BIT
+        importSemaphoreFdInfo.handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT;
+        importSemaphoreFdInfo.fd = static_cast<VulkanFence*>(fence)->getFenceFd();
+
+        m_waitSemaphores[fence] = semaphore;
     }
     break;
     default:

@@ -21,7 +21,7 @@ struct RawMemoryDescriptor
     bool hasOwnership{ false };
 };
 
-class ApiMemory;
+class Resource;
 class RawMemory
 {
 public:

@@ -21,8 +21,8 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_memory.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_resource.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_resource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.h
 
@@ -30,15 +30,15 @@ set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_memory.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_resource.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_resource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.h
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/api_memory.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/resource.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/resource.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.h
@@ -50,10 +50,10 @@ set(JUNE_NATIVE_FILES
 
 if(ANDROID)
   list(APPEND JUNE_NATIVE_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_ahardwarebuffer_api_memory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_ahardwarebuffer_api_memory.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_ahardwarebuffer_api_memory.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_ahardwarebuffer_api_memory.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_ahardwarebuffer_resource.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_ahardwarebuffer_resource.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_ahardwarebuffer_resource.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_ahardwarebuffer_resource.h
   )
 endif()
 
