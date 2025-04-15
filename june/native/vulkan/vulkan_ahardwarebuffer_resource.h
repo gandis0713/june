@@ -29,7 +29,8 @@ public: // June API
 
 private:
     int32_t initialize();
-    bool createResource();
+    int32_t createVkImage();
+    int32_t createFence();
 
 private:
     VkImage m_image{ VK_NULL_HANDLE };

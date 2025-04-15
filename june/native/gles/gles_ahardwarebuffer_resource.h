@@ -31,6 +31,7 @@ private:
     int32_t initialize();
     int32_t createEGLClientBuffer();
     int32_t createEGLImageKHR();
+    int32_t createFence();
 
 private:
     EGLClientBuffer m_clientBuffer{ nullptr };

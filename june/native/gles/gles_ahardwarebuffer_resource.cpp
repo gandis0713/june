@@ -51,16 +51,28 @@ void* GLESAHardwareBufferResource::getResource(JuneGetResourceDescriptor const* 
 
 int32_t GLESAHardwareBufferResource::initialize()
 {
-    createEGLClientBuffer();
-    createEGLImageKHR();
+    int32_t result = createEGLClientBuffer();
+    if (result != 0)
+    {
+        spdlog::error("Failed to create EGLClientBuffer. Error code: {}", result);
+        return result;
+    }
 
-    auto glesApiContext = reinterpret_cast<GLESApiContext*>(m_context);
-    const auto& eglAPI = glesApiContext->eglAPI;
+    result = createEGLImageKHR();
+    if (result != 0)
+    {
+        spdlog::error("Failed to create EGLImageKHR. Error code: {}", result);
+        return result;
+    }
 
-    JuneFenceDescriptor fenceDescriptor{};
-    m_fence = GLESFence::create(static_cast<GLESApiContext*>(m_context), &fenceDescriptor);
+    result = createFence();
+    if (result != 0)
+    {
+        spdlog::error("Failed to create fence. Error code: {}", result);
+        return result;
+    }
 
-    return 0;
+    return result;
 }
 
 int32_t GLESAHardwareBufferResource::createEGLClientBuffer()
@@ -108,8 +120,6 @@ int32_t GLESAHardwareBufferResource::createEGLClientBuffer()
         return -1;
     }
 
-    spdlog::trace("Successfully created EGLClientBuffer from AHardwareBuffer.");
-
     return 0;
 }
 
@@ -155,6 +165,28 @@ int32_t GLESAHardwareBufferResource::createEGLImageKHR()
         }
 
         current = current->next;
+    }
+
+    if (m_eglImage == EGL_NO_IMAGE_KHR)
+    {
+        spdlog::error("Failed to create EGLImage from AHardwareBuffer.");
+        return -1;
+    }
+
+    return 0;
+}
+
+int32_t GLESAHardwareBufferResource::createFence()
+{
+    auto glesApiContext = reinterpret_cast<GLESApiContext*>(m_context);
+    const auto& eglAPI = glesApiContext->eglAPI;
+
+    JuneFenceDescriptor fenceDescriptor{};
+    m_fence = GLESFence::create(static_cast<GLESApiContext*>(m_context), &fenceDescriptor);
+    if (m_fence == nullptr)
+    {
+        spdlog::error("Failed to create GLESFence.");
+        return -1;
     }
 
     return 0;

@@ -51,16 +51,24 @@ void* VulkanAHardwareBufferResource::getResource(JuneGetResourceDescriptor const
 
 int32_t VulkanAHardwareBufferResource::initialize()
 {
-    createResource();
+    int32_t result = createVkImage();
+    if (result != 0)
+    {
+        spdlog::error("Failed to create Vulkan image. Error code: {}", result);
+        return result;
+    }
 
-    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
-    JuneFenceDescriptor fenceDescriptor{};
-    m_fence = VulkanFence::create(vulkanApiContext, &fenceDescriptor);
+    result = createFence();
+    if (result != 0)
+    {
+        spdlog::error("Failed to create Vulkan fence. Error code: {}", result);
+        return result;
+    }
 
-    return 0;
+    return result;
 }
 
-bool VulkanAHardwareBufferResource::createResource()
+int32_t VulkanAHardwareBufferResource::createVkImage()
 {
     const JuneChainedStruct* current = m_descriptor.nextInChain;
     while (current)
@@ -88,7 +96,7 @@ bool VulkanAHardwareBufferResource::createResource()
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to create Vulkan image: {}", static_cast<uint32_t>(result));
-                return false;
+                return -1;
             }
 
             VkAndroidHardwareBufferFormatPropertiesANDROID formatProps = {};
@@ -105,7 +113,7 @@ bool VulkanAHardwareBufferResource::createResource()
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to get AHardwareBuffer properties: {}", static_cast<uint32_t>(result));
-                return false;
+                return -1;
             }
 
             spdlog::trace("AHardwareBuffer format properties: format = {}, externalFormat = {}, formatFeatures = {}, "
@@ -135,7 +143,7 @@ bool VulkanAHardwareBufferResource::createResource()
             if (memoryTypeIndex == std::numeric_limits<uint32_t>::max())
             {
                 spdlog::error("Failed to find suitable memory type for AHardwareBuffer");
-                return false;
+                return -1;
             }
             spdlog::trace("Memory type index: {}", memoryTypeIndex);
 
@@ -161,14 +169,14 @@ bool VulkanAHardwareBufferResource::createResource()
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to allocate Vulkan memory: {}", static_cast<uint32_t>(result));
-                return false;
+                return -1;
             }
 
             result = vkAPI.BindImageMemory(device, m_image, deviceMemory, 0);
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to bind Vulkan image memory: {}", static_cast<uint32_t>(result));
-                return false;
+                return -1;
             }
 
             VkMemoryRequirements memRequirements{};
@@ -176,24 +184,38 @@ bool VulkanAHardwareBufferResource::createResource()
             spdlog::trace("Image memory requirements: size = {}, alignment = {}, memoryTypeBits = {}",
                           static_cast<uint64_t>(memRequirements.size), static_cast<uint64_t>(memRequirements.alignment), memRequirements.memoryTypeBits);
 
-            if (bufferProps.allocationSize != memRequirements.size)
+            if (bufferProps.allocationSize < memRequirements.size)
             {
-                spdlog::error("AHardwareBuffer allocation size is difference with image size, [ahardwarebuffer size: {}], [image size: {}]",
+                spdlog::error("AHardwareBuffer allocation size is less than image memory requirements, [ahardwarebuffer size: {}], [image size: {}]",
                               bufferProps.allocationSize, memRequirements.size);
+                return -1;
             }
-
-            return m_image;
         }
         break;
         default:
             spdlog::error("Unsupported resource type: {}", static_cast<uint32_t>(current->sType));
-            return false;
+            return -1;
         }
 
         current = current->next;
     }
 
-    return m_image != VK_NULL_HANDLE;
+    if (m_image == VK_NULL_HANDLE)
+    {
+        spdlog::error("Failed to create Vulkan image: m_image is null");
+        return -1;
+    }
+
+    return 0;
+}
+
+int32_t VulkanAHardwareBufferResource::createFence()
+{
+    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
+    JuneFenceDescriptor fenceDescriptor{};
+    m_fence = VulkanFence::create(vulkanApiContext, &fenceDescriptor);
+
+    return 0;
 }
 
 } // namespace june
