@@ -28,7 +28,7 @@ public:
     GLESApiContext& operator=(const GLESApiContext&) = delete;
 
 public: // June API
-    Resource* createResource(JuneResourceDescriptor const* descriptor) override;
+    void createResource(JuneResourceDescriptor const* descriptor) override;
     Fence* createFence(JuneFenceDescriptor const* descriptor) override;
 
 public:

@@ -1,4 +1,4 @@
-#include "vulkan_ahardwarebuffer_resource.h"
+#include "vulkan_ahardwarebuffer_vkimage.h"
 
 #include "june/memory/ahardwarebuffer_memory.h"
 #include "june/native/shared_memory.h"
@@ -11,75 +11,21 @@
 namespace june
 {
 
-VulkanAHardwareBufferResource* VulkanAHardwareBufferResource::create(VulkanApiContext* context, JuneResourceDescriptor const* descriptor)
+int VulkanAHardwareBufferVkImage::create(VulkanApiContext* context, JuneResourceDescriptor const* descriptor)
 {
-    auto apiResource = new VulkanAHardwareBufferResource(context, descriptor);
-    apiResource->initialize();
-
-    return apiResource;
-}
-
-VulkanAHardwareBufferResource::VulkanAHardwareBufferResource(VulkanApiContext* context, JuneResourceDescriptor const* descriptor)
-    : VulkanResource(context, descriptor)
-{
-}
-
-void VulkanAHardwareBufferResource::beginAccess(JuneResourceBeginAccessDescriptor const* descriptor)
-{
-    m_accessMutex.lock();
+    VkImage image = VK_NULL_HANDLE;
+    VkDeviceMemory deviceMemory = VK_NULL_HANDLE;
 
     const JuneChainedStruct* current = descriptor->nextInChain;
-    while (current)
-    {
-        current = current->next;
-    }
-
-    m_fence->begin();
-}
-
-void VulkanAHardwareBufferResource::endAccess(JuneResourceEndAccessDescriptor const* descriptor)
-{
-    m_fence->end();
-
-    signal();
-}
-
-void* VulkanAHardwareBufferResource::getResource(JuneGetResourceDescriptor const* descriptor)
-{
-    return static_cast<void*>(m_image);
-}
-
-int32_t VulkanAHardwareBufferResource::initialize()
-{
-    int32_t result = createVkImage();
-    if (result != 0)
-    {
-        spdlog::error("Failed to create Vulkan image. Error code: {}", result);
-        return result;
-    }
-
-    result = createFence();
-    if (result != 0)
-    {
-        spdlog::error("Failed to create Vulkan fence. Error code: {}", result);
-        return result;
-    }
-
-    return result;
-}
-
-int32_t VulkanAHardwareBufferResource::createVkImage()
-{
-    const JuneChainedStruct* current = m_descriptor.nextInChain;
     while (current)
     {
         switch (current->sType)
         {
         case JuneSType_VkImageResourceDescriptor: {
-            auto sharedMemory = reinterpret_cast<SharedMemory*>(m_descriptor.sharedMemory);
+            auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
             auto ahbMemory = static_cast<AHardwareBufferMemory*>(sharedMemory->getRawMemory());
 
-            auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
+            auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(context);
             const auto& vkAPI = vulkanApiContext->vkAPI;
 
             VkDevice device = vulkanApiContext->getVkDevice();
@@ -89,10 +35,10 @@ int32_t VulkanAHardwareBufferResource::createVkImage()
             externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
 
             const auto* imageDesc = reinterpret_cast<const JuneResourceVkImageDescriptor*>(current);
-            VkImageCreateInfo* imageInfo = reinterpret_cast<VkImageCreateInfo*>(imageDesc->vkImageCreateInfo);
-            imageInfo->pNext = &externalMemoryImageCreateInfo;
+            VkImageCreateInfo imageInfo = *reinterpret_cast<const VkImageCreateInfo*>(imageDesc->createInfo->vkImageCreateInfo);
+            imageInfo.pNext = &externalMemoryImageCreateInfo;
 
-            VkResult result = vkAPI.CreateImage(device, imageInfo, nullptr, &m_image);
+            VkResult result = vkAPI.CreateImage(device, &imageInfo, nullptr, &image);
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to create Vulkan image: {}", static_cast<uint32_t>(result));
@@ -151,7 +97,7 @@ int32_t VulkanAHardwareBufferResource::createVkImage()
             dedicatedAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
             dedicatedAllocateInfo.pNext = nullptr;
             dedicatedAllocateInfo.buffer = VK_NULL_HANDLE;
-            dedicatedAllocateInfo.image = m_image;
+            dedicatedAllocateInfo.image = image;
 
             VkImportAndroidHardwareBufferInfoANDROID importAHBInfo = {};
             importAHBInfo.sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
@@ -164,7 +110,6 @@ int32_t VulkanAHardwareBufferResource::createVkImage()
             allocInfo.memoryTypeIndex = static_cast<uint32_t>(memoryTypeIndex);
             allocInfo.pNext = &importAHBInfo;
 
-            VkDeviceMemory deviceMemory;
             result = vkAPI.AllocateMemory(device, &allocInfo, nullptr, &deviceMemory);
             if (result != VK_SUCCESS)
             {
@@ -172,23 +117,31 @@ int32_t VulkanAHardwareBufferResource::createVkImage()
                 return -1;
             }
 
-            result = vkAPI.BindImageMemory(device, m_image, deviceMemory, 0);
+            result = vkAPI.BindImageMemory(device, image, deviceMemory, 0);
             if (result != VK_SUCCESS)
             {
                 spdlog::error("Failed to bind Vulkan image memory: {}", static_cast<uint32_t>(result));
                 return -1;
             }
 
-            VkMemoryRequirements memRequirements{};
-            vkAPI.GetImageMemoryRequirements(device, m_image, &memRequirements);
-            spdlog::trace("Image memory requirements: size = {}, alignment = {}, memoryTypeBits = {}",
-                          static_cast<uint64_t>(memRequirements.size), static_cast<uint64_t>(memRequirements.alignment), memRequirements.memoryTypeBits);
+            imageDesc->resultInfo->vkDeviceMemory = deviceMemory;
+            imageDesc->resultInfo->vkImage = image;
+            return 0;
 
-            if (bufferProps.allocationSize < memRequirements.size)
+            // check if the AHardwareBuffer allocation size is less than the image memory requirements
+            if (false)
             {
-                spdlog::error("AHardwareBuffer allocation size is less than image memory requirements, [ahardwarebuffer size: {}], [image size: {}]",
-                              bufferProps.allocationSize, memRequirements.size);
-                return -1;
+                VkMemoryRequirements memRequirements{};
+                vkAPI.GetImageMemoryRequirements(device, image, &memRequirements);
+                spdlog::trace("Image memory requirements: size = {}, alignment = {}, memoryTypeBits = {}",
+                              static_cast<uint64_t>(memRequirements.size), static_cast<uint64_t>(memRequirements.alignment), memRequirements.memoryTypeBits);
+
+                if (bufferProps.allocationSize < memRequirements.size)
+                {
+                    spdlog::error("AHardwareBuffer allocation size is less than image memory requirements, [ahardwarebuffer size: {}], [image size: {}]",
+                                  bufferProps.allocationSize, memRequirements.size);
+                    return -1;
+                }
             }
         }
         break;
@@ -199,21 +152,6 @@ int32_t VulkanAHardwareBufferResource::createVkImage()
 
         current = current->next;
     }
-
-    if (m_image == VK_NULL_HANDLE)
-    {
-        spdlog::error("Failed to create Vulkan image: m_image is null");
-        return -1;
-    }
-
-    return 0;
-}
-
-int32_t VulkanAHardwareBufferResource::createFence()
-{
-    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
-    JuneFenceDescriptor fenceDescriptor{};
-    m_fence = VulkanFence::create(vulkanApiContext, &fenceDescriptor);
 
     return 0;
 }

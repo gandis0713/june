@@ -2,12 +2,11 @@
 
 #include "june/common/assert.h"
 #include "june/native/shared_memory.h"
-#if __has_include("vulkan_ahardwarebuffer_resource.h")
-#include "vulkan_ahardwarebuffer_resource.h"
+#if __has_include("vulkan_ahardwarebuffer_vkimage.h")
+#include "vulkan_ahardwarebuffer_vkimage.h"
 #endif
 
 #include "vulkan_fence.h"
-#include "vulkan_resource.h"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -94,7 +93,7 @@ VulkanApiContext::~VulkanApiContext()
     }
 }
 
-Resource* VulkanApiContext::createResource(JuneResourceDescriptor const* descriptor)
+void VulkanApiContext::createResource(JuneResourceDescriptor const* descriptor)
 {
     auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
     auto rawMemory = sharedMemory->getRawMemory();
@@ -103,15 +102,13 @@ Resource* VulkanApiContext::createResource(JuneResourceDescriptor const* descrip
     {
 #if defined(__ANDROID__) || defined(ANDROID)
     case RawMemoryType::kAHardwareBuffer: {
-        return VulkanAHardwareBufferResource::create(this, descriptor);
+        VulkanAHardwareBufferVkImage::create(this, descriptor);
+        return;
     }
-    break;
 #endif
     default:
-        return nullptr;
+        break;
     }
-
-    return nullptr;
 }
 
 Fence* VulkanApiContext::createFence(JuneFenceDescriptor const* descriptor)

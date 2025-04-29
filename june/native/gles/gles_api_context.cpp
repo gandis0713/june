@@ -1,13 +1,12 @@
 #include "gles_api_context.h"
 
 #include "gles_fence.h"
-#include "gles_resource.h"
 #include "june/common/assert.h"
 
 #include "june/native/shared_memory.h"
 
-#if __has_include("gles_ahardwarebuffer_resource.h")
-#include "gles_ahardwarebuffer_resource.h"
+#if __has_include("gles_ahardwarebuffer_eglimage.h")
+#include "gles_ahardwarebuffer_eglimage.h"
 #endif
 
 #include <fmt/format.h>
@@ -55,7 +54,7 @@ GLESApiContext::~GLESApiContext()
     }
 }
 
-Resource* GLESApiContext::createResource(JuneResourceDescriptor const* descriptor)
+void GLESApiContext::createResource(JuneResourceDescriptor const* descriptor)
 {
     auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
     auto rawMemory = sharedMemory->getRawMemory();
@@ -64,16 +63,13 @@ Resource* GLESApiContext::createResource(JuneResourceDescriptor const* descripto
     {
 #if defined(__ANDROID__) || defined(ANDROID)
     case RawMemoryType::kAHardwareBuffer: {
-        return GLESAHardwareBufferResource::create(this, descriptor);
+        GLESAHardwareBufferEGLImage::create(this, descriptor);
+        return;
     }
-    break;
 #endif
-
     default:
-        return nullptr;
+        break;
     }
-
-    return nullptr;
 }
 
 Fence* GLESApiContext::createFence(JuneFenceDescriptor const* descriptor)

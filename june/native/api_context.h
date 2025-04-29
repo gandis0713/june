@@ -17,7 +17,7 @@ public:
     ApiContext& operator=(const ApiContext&) = delete;
 
 public: // June API
-    virtual Resource* createResource(JuneResourceDescriptor const* descriptor) = 0;
+    virtual void createResource(JuneResourceDescriptor const* descriptor) = 0;
     virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
 
 public:
