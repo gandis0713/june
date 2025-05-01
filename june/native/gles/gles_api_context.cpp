@@ -96,6 +96,9 @@ void GLESApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor
         case FenceType::kFenceType_Vulkan:
             eglSyncs[i] = createEGLSyncKHR(static_cast<VulkanFence*>(fence)->getFd());
             break;
+        default:
+            spdlog::error("Unknown fence type");
+            break;
         }
     }
 
@@ -133,6 +136,9 @@ void GLESApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor con
             break;
         case FenceType::kFenceType_Vulkan:
             eglSyncs[i] = createEGLSyncKHR(static_cast<VulkanFence*>(fence)->getFd());
+            break;
+        default:
+            spdlog::error("Unknown fence type");
             break;
         }
     }
