@@ -6,7 +6,8 @@ namespace june
 {
 
 Fence::Fence(ApiContext* context, JuneFenceDescriptor const* descriptor)
-    : m_context(context)
+    : Object(std::string(descriptor->label.data, descriptor->label.length))
+    , m_context(context)
     , m_descriptor(*descriptor)
 {
 }

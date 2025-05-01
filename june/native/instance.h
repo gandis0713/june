@@ -1,13 +1,14 @@
 #pragma once
 
 #include "june/june.h"
+#include "object.h"
 
 namespace june
 {
 
 class ApiContext;
 class SharedMemory;
-class Instance final
+class Instance final : public Object
 {
 public:
     static Instance* create(JuneInstanceDescriptor const* descriptor);

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "june/june.h"
-
 #include "june/memory/raw_memory.h"
+#include "object.h"
 
 #include <memory>
 #include <mutex>
@@ -13,7 +13,7 @@ namespace june
 
 class Instance;
 class ApiContext;
-class SharedMemory
+class SharedMemory : public Object
 {
 public:
     static SharedMemory* create(Instance* instance, JuneSharedMemoryDescriptor const* descriptor);

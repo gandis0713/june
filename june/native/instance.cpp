@@ -12,6 +12,7 @@ Instance* Instance::create(JuneInstanceDescriptor const* descriptor)
 }
 
 Instance::Instance(JuneInstanceDescriptor const* descriptor)
+    : Object(std::string(descriptor->label.data, descriptor->label.length))
 {
 }
 
@@ -23,13 +24,11 @@ ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descripto
         switch (current->sType)
         {
         case JuneSType_VulkanApiContext: {
-            JuneVulkanApiContextDescriptor const* vulkanDescriptor = reinterpret_cast<JuneVulkanApiContextDescriptor const*>(current);
-            return VulkanApiContext::create(this, vulkanDescriptor);
+            return VulkanApiContext::create(this, descriptor);
         }
         break;
         case JuneSType_GLESApiContext: {
-            JuneGLESApiContextDescriptor const* glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(current);
-            return GLESApiContext::create(this, glesDescriptor);
+            return GLESApiContext::create(this, descriptor);
         }
         default:
             throw std::runtime_error("Unsupported type");

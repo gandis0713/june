@@ -48,7 +48,8 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
 }
 
 SharedMemory::SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor)
-    : m_instance(instance)
+    : Object(std::string(descriptor->label.data, descriptor->label.length))
+    , m_instance(instance)
     , m_rawMemory(std::move(rawMemory))
     , m_descriptor(*descriptor)
 {
@@ -71,19 +72,15 @@ RawMemory* SharedMemory::getRawMemory() const
 
 void SharedMemory::lock(ApiContext* apiContext)
 {
-    spdlog::error("try lock: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
     m_mutex.lock();
-    spdlog::error("locked: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
     m_ownerApiContext = apiContext;
 }
 
 void SharedMemory::unlock(ApiContext* apiContext)
 {
-    spdlog::error("try unlock: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
     if (m_ownerApiContext == apiContext)
     {
         m_mutex.unlock();
-        spdlog::error("unlocked: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
     }
 }
 

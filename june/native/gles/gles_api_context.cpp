@@ -17,16 +17,20 @@
 namespace june
 {
 
-ApiContext* GLESApiContext::create(Instance* instance, JuneGLESApiContextDescriptor const* descriptor)
+ApiContext* GLESApiContext::create(Instance* instance, JuneApiContextDescriptor const* descriptor)
 {
     return new GLESApiContext(instance, descriptor);
 }
 
-GLESApiContext::GLESApiContext(Instance* instance, JuneGLESApiContextDescriptor const* descriptor)
-    : m_instance(instance)
-    , m_context(static_cast<EGLContext>(descriptor->context))
-    , m_display(static_cast<EGLDisplay>(descriptor->display))
+GLESApiContext::GLESApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor)
+    : ApiContext(instance, descriptor)
 {
+    // It assumes that the descriptor is valid and has been validated before this point.
+    auto glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(descriptor->nextInChain);
+
+    m_context = (static_cast<EGLContext>(glesDescriptor->context));
+    m_display = (static_cast<EGLDisplay>(glesDescriptor->display));
+
 #if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__)
     const char glesLibraryName[] = "libEGL.so";
 #elif defined(__APPLE__)
@@ -144,11 +148,6 @@ void GLESApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor con
     }
 
     reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->unlock(this);
-}
-
-Instance* GLESApiContext::getInstance() const
-{
-    return m_instance;
 }
 
 JuneApiType GLESApiContext::getApiType() const

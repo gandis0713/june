@@ -1,6 +1,7 @@
 #pragma once
 
 #include "june/june.h"
+#include "object.h"
 
 #include <sigslot/signal.hpp>
 #include <unordered_set>
@@ -17,7 +18,7 @@ enum class FenceType
 };
 
 class ApiContext;
-class Fence
+class Fence : public Object
 {
 public:
     Fence() = delete;

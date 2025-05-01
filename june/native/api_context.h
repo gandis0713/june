@@ -1,6 +1,7 @@
 #pragma once
 
 #include "june/june.h"
+#include "object.h"
 
 namespace june
 {
@@ -8,9 +9,10 @@ namespace june
 class Resource;
 class Instance;
 class Fence;
-class ApiContext
+class ApiContext : public Object
 {
 public:
+    ApiContext() = delete;
     virtual ~ApiContext() = default;
 
     ApiContext(const ApiContext&) = delete;
@@ -23,10 +25,17 @@ public: // June API
     virtual void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) = 0;
 
 public:
-    virtual Instance* getInstance() const = 0;
     virtual JuneApiType getApiType() const = 0;
 
+public:
+    Instance* getInstance() const;
+
 protected:
-    ApiContext() = default;
+    ApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
+
+protected:
+    Instance* m_instance{ nullptr };
+    const JuneApiContextDescriptor m_descriptor;
 };
+
 } // namespace june

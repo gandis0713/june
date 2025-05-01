@@ -38,7 +38,7 @@ class Instance;
 class VulkanApiContext : public ApiContext
 {
 public:
-    static ApiContext* create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
+    static ApiContext* create(Instance* instance, JuneApiContextDescriptor const* descriptor);
 
 public:
     VulkanApiContext() = delete;
@@ -54,7 +54,6 @@ public: // June APi
     void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) override;
 
 public:
-    Instance* getInstance() const override;
     JuneApiType getApiType() const override;
 
 public: // vulkan
@@ -77,9 +76,6 @@ private:
     const std::vector<const char*> getRequiredInstanceLayers();
 
 private:
-    Instance* m_instance = nullptr;
-
-private:
     VkInstance m_vkInstance = VK_NULL_HANDLE;
     VkPhysicalDevice m_vkPhysicalDevice = VK_NULL_HANDLE;
     VkDevice m_vkDevice = VK_NULL_HANDLE;
@@ -89,7 +85,7 @@ private:
     VulkanPhysicalDeviceInfo m_physicalDeviceInfo{};
 
 private:
-    VulkanApiContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor);
+    VulkanApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
 };
 
 int findMemoryTypeIndex(const VulkanPhysicalDeviceInfo& info, VkMemoryPropertyFlags flags);

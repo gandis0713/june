@@ -33,11 +33,14 @@ set(JUNE_NATIVE_FILES
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/api_context.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/api_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/shared_memory.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/fence.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/fence.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/object.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/object.h
   ${CMAKE_CURRENT_SOURCE_DIR}/memory/raw_memory.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/memory/raw_memory.h
 )

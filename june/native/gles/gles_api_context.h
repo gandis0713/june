@@ -18,7 +18,7 @@ class Instance;
 class GLESApiContext : public ApiContext
 {
 public:
-    static ApiContext* create(Instance* instance, JuneGLESApiContextDescriptor const* descriptor);
+    static ApiContext* create(Instance* instance, JuneApiContextDescriptor const* descriptor);
 
 public:
     GLESApiContext() = delete;
@@ -34,7 +34,6 @@ public: // June API
     void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) override;
 
 public:
-    Instance* getInstance() const override;
     JuneApiType getApiType() const override;
 
 public: // gles
@@ -46,16 +45,12 @@ public:
     GLESAPI eglAPI{};
 
 private:
-private:
-    Instance* m_instance = nullptr;
-
-private:
     EGLContext m_context{ nullptr };
     EGLDisplay m_display{ nullptr };
     DyLib m_glesLib{};
 
 private:
-    GLESApiContext(Instance* instance, JuneGLESApiContextDescriptor const* descriptor);
+    GLESApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
 };
 
 } // namespace june

@@ -18,17 +18,21 @@ const char kExtensionNameKhrExternalMemory[] = "VK_KHR_external_memory";
 namespace june
 {
 
-ApiContext* VulkanApiContext::create(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
+ApiContext* VulkanApiContext::create(Instance* instance, JuneApiContextDescriptor const* descriptor)
 {
     return new VulkanApiContext(instance, descriptor);
 }
 
-VulkanApiContext::VulkanApiContext(Instance* instance, JuneVulkanApiContextDescriptor const* descriptor)
-    : m_instance(instance)
-    , m_vkInstance(static_cast<VkInstance>(descriptor->vkInstance))
-    , m_vkPhysicalDevice(static_cast<VkPhysicalDevice>(descriptor->vkPhysicalDevice))
-    , m_vkDevice(static_cast<VkDevice>(descriptor->vkDevice))
+VulkanApiContext::VulkanApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor)
+    : ApiContext(instance, descriptor)
 {
+    // It assumes that the descriptor is valid and has been validated before this point.
+    auto vulkanDescriptor = reinterpret_cast<JuneVulkanApiContextDescriptor const*>(descriptor->nextInChain);
+
+    m_vkInstance = static_cast<VkInstance>(vulkanDescriptor->vkInstance);
+    m_vkPhysicalDevice = static_cast<VkPhysicalDevice>(vulkanDescriptor->vkPhysicalDevice);
+    m_vkDevice = static_cast<VkDevice>(vulkanDescriptor->vkDevice);
+
 #if defined(__ANDROID__) || defined(ANDROID)
     const char vulkanLibraryName[] = "libvulkan.so";
 #elif defined(__linux__)
@@ -122,11 +126,6 @@ void VulkanApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescript
 
 void VulkanApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
 {
-}
-
-Instance* VulkanApiContext::getInstance() const
-{
-    return m_instance;
 }
 
 JuneApiType VulkanApiContext::getApiType() const
