@@ -4,6 +4,9 @@
 #if defined(__ANDROID__) || defined(ANDROID)
 #include "june/memory/ahardwarebuffer_memory.h"
 #endif
+#include "api_context.h"
+
+#include <spdlog/spdlog.h>
 
 namespace june
 {
@@ -66,9 +69,32 @@ RawMemory* SharedMemory::getRawMemory() const
     return m_rawMemory.get();
 }
 
-void SharedMemory::attach(Resource* resource)
+void SharedMemory::lock(ApiContext* apiContext)
 {
-    m_attachedApiResources.push_back(resource);
+    spdlog::error("try lock: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
+    m_mutex.lock();
+    spdlog::error("locked: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
+    m_ownerApiContext = apiContext;
+}
+
+void SharedMemory::unlock(ApiContext* apiContext)
+{
+    spdlog::error("try unlock: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
+    if (m_ownerApiContext == apiContext)
+    {
+        m_mutex.unlock();
+        spdlog::error("unlocked: {:#x}", reinterpret_cast<std::uintptr_t>(apiContext));
+    }
+}
+
+void SharedMemory::attach(ApiContext* apiContext)
+{
+    m_attachedApiContext.insert(apiContext);
+}
+
+void SharedMemory::detach(ApiContext* apiContext)
+{
+    m_attachedApiContext.erase(apiContext);
 }
 
 } // namespace june

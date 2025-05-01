@@ -2,6 +2,7 @@
 
 #include "gles_fence.h"
 #include "june/common/assert.h"
+#include "june/native/vulkan/vulkan_fence.h"
 
 #include "june/native/shared_memory.h"
 
@@ -79,10 +80,64 @@ Fence* GLESApiContext::createFence(JuneFenceDescriptor const* descriptor)
 
 void GLESApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
 {
+    reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->lock(this);
+
+    const auto fenceCount = descriptor->waitSyncInfo->fenceCount;
+    std::vector<EGLSyncKHR> eglSyncs(fenceCount);
+
+    for (auto i = 0; i < fenceCount; ++i)
+    {
+        auto fence = reinterpret_cast<Fence*>(descriptor->waitSyncInfo->fences[i]);
+        switch (fence->getType())
+        {
+        case FenceType::kFenceType_GLES:
+            eglSyncs[i] = static_cast<GLESFence*>(fence)->getEGLSyncKHR();
+            break;
+        case FenceType::kFenceType_Vulkan:
+            eglSyncs[i] = createEGLSyncKHR(static_cast<VulkanFence*>(fence)->getFd());
+            break;
+        }
+    }
+
+    JuneChainedStruct* current = descriptor->exportedSyncObject->nextInChain;
+    while (current)
+    {
+        switch (current->sType)
+        {
+        case JuneSType_SharedMemoryExportedEGLSyncKHRSyncObject: {
+            auto eglSyncObject = reinterpret_cast<JuneSharedMemoryExportedEGLSyncKHRSyncObject*>(current);
+            eglSyncObject->eglSyncCount = static_cast<uint32_t>(eglSyncs.size());
+            eglSyncObject->eglSyncs = reinterpret_cast<void*>(eglSyncs.data());
+            break;
+        }
+        default:
+            break;
+        }
+
+        current = current->next;
+    }
 }
 
 void GLESApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
 {
+    const auto fenceCount = descriptor->signalSyncInfo->fenceCount;
+    std::vector<EGLSyncKHR> eglSyncs(fenceCount);
+
+    for (auto i = 0; i < fenceCount; ++i)
+    {
+        auto fence = reinterpret_cast<Fence*>(descriptor->signalSyncInfo->fences[i]);
+        switch (fence->getType())
+        {
+        case FenceType::kFenceType_GLES:
+            static_cast<GLESFence*>(fence)->refresh();
+            break;
+        case FenceType::kFenceType_Vulkan:
+            eglSyncs[i] = createEGLSyncKHR(static_cast<VulkanFence*>(fence)->getFd());
+            break;
+        }
+    }
+
+    reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->unlock(this);
 }
 
 Instance* GLESApiContext::getInstance() const
@@ -103,6 +158,26 @@ EGLContext GLESApiContext::getEGLContext() const
 EGLDisplay GLESApiContext::getEGLDisplay() const
 {
     return m_display;
+}
+
+EGLSyncKHR GLESApiContext::createEGLSyncKHR(const int fd)
+{
+    EGLint attribs[] = {
+        EGL_SYNC_NATIVE_FENCE_ANDROID, fd,
+        EGL_NONE
+    };
+
+    auto context = static_cast<GLESApiContext*>(m_context);
+    const auto& eglAPI = context->eglAPI;
+
+    auto eglSyncKHR = eglAPI.CreateSyncKHR(context->getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);
+    if (eglSyncKHR == EGL_NO_SYNC_KHR)
+    {
+        spdlog::error("Failed to create EGLSyncKHR");
+        return EGL_NO_SYNC_KHR;
+    }
+
+    return eglSyncKHR;
 }
 
 } // namespace june

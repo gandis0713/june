@@ -5,12 +5,14 @@
 #include "june/memory/raw_memory.h"
 
 #include <memory>
-#include <vector>
+#include <mutex>
+#include <unordered_set>
 
 namespace june
 {
 
 class Instance;
+class ApiContext;
 class SharedMemory
 {
 public:
@@ -28,8 +30,10 @@ public:
     Instance* getInstance() const;
     size_t getSize() const;
     RawMemory* getRawMemory() const;
-
-    void attach(Resource* resource);
+    void lock(ApiContext* apiContext);
+    void unlock(ApiContext* apiContext);
+    void attach(ApiContext* apiContext);
+    void detach(ApiContext* apiContext);
 
 private:
     SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
@@ -39,7 +43,10 @@ private:
     std::unique_ptr<RawMemory> m_rawMemory{ nullptr };
     const JuneSharedMemoryDescriptor m_descriptor;
 
-    std::vector<Resource*> m_attachedApiResources{};
+    std::unordered_set<ApiContext*> m_attachedApiContext{};
+
+    ApiContext* m_ownerApiContext{ nullptr };
+    mutable std::mutex m_mutex{};
 };
 
 } // namespace june

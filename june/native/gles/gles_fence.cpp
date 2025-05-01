@@ -17,31 +17,32 @@ GLESFence::GLESFence(GLESApiContext* context, JuneFenceDescriptor const* descrip
     : Fence(context, descriptor)
 {
     m_type = FenceType::kFenceType_GLES;
+
+    refresh();
 }
 
-void GLESFence::begin()
+void GLESFence::refresh()
+{
+    waitEGLSyncKHR();
+    createEGLSyncKHR();
+    createFd();
+}
+
+EGLSyncKHR GLESFence::getEGLSyncKHR() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    for (auto& waitSync : m_waitSync)
-    {
-        EGLSyncKHR eglSyncKHR = waitSync.second;
-
-        if (eglSyncKHR == EGL_NO_SYNC_KHR)
-        {
-            spdlog::debug("No wait. because EGLSyncKHR is EGL_NO_SYNC_KHR");
-            continue;
-        }
-
-        auto context = static_cast<GLESApiContext*>(m_context);
-        const auto& eglAPI = context->eglAPI;
-
-        // eglAPI.WaitSyncKHR(context->getEGLDisplay(), eglSyncKHR, 0);
-        eglAPI.ClientWaitSyncKHR(context->getEGLDisplay(), eglSyncKHR, 0, EGL_FOREVER_KHR);
-    }
+    return m_signalSync;
 }
 
-void GLESFence::end()
+int GLESFence::getFd() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    return m_signalFd;
+}
+
+void GLESFence::waitEGLSyncKHR()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -52,17 +53,33 @@ void GLESFence::end()
     {
         EGLint value;
         eglAPI.GetSyncAttribKHR(context->getEGLDisplay(), m_signalSync, EGL_SYNC_STATUS_KHR, &value);
-        spdlog::trace("Current EGLSyncKHR status before creating a new EGLSyncKHR: {}", value);
+        spdlog::trace("Current EGLSyncKHR status before waiting: {}", value);
         // EGL_SIGNALED_KHR       12530
         // EGL_UNSIGNALED_KHR     12531
 
         if (value == EGL_UNSIGNALED_KHR)
         {
             eglAPI.ClientWaitSyncKHR(context->getEGLDisplay(), m_signalSync, 0, EGL_FOREVER_KHR);
-            eglAPI.DestroySyncKHR(context->getEGLDisplay(), m_signalSync);
-            m_signalSync = EGL_NO_SYNC_KHR;
-            spdlog::trace("Wait and destroy the EGLSyncKHR for creating a new EGLSyncKHR");
         }
+
+        eglAPI.DestroySyncKHR(context->getEGLDisplay(), m_signalSync);
+        m_signalSync = EGL_NO_SYNC_KHR;
+        m_signalFd = -1;
+        spdlog::trace("Wait and destroy the EGLSyncKHR");
+    }
+}
+
+void GLESFence::createEGLSyncKHR()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    auto context = static_cast<GLESApiContext*>(m_context);
+    const auto& eglAPI = context->eglAPI;
+
+    if (m_signalSync != EGL_NO_SYNC_KHR)
+    {
+        spdlog::debug("EGLSyncKHR already created.");
+        return;
     }
 
     m_signalSync = eglAPI.CreateSyncKHR(context->getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr);
@@ -71,74 +88,33 @@ void GLESFence::end()
         spdlog::error("Failed to create a EGLSyncKHR");
         return;
     }
-
-    EGLint value;
-    eglAPI.GetSyncAttribKHR(context->getEGLDisplay(), m_signalSync, EGL_SYNC_STATUS_KHR, &value);
-
-    // EGL_SIGNALED_KHR       12530
-    // EGL_UNSIGNALED_KHR     12531
-    spdlog::trace("Created EGLSyncKHR status: {}", value);
-
-    signal();
 }
 
-EGLSyncKHR GLESFence::getEGLSyncKHR() const
-{
-    return m_signalSync;
-}
-
-int GLESFence::getFenceFd() const
+void GLESFence::createFd()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (m_signalSync == EGL_NO_SYNC_KHR)
+    {
+        spdlog::error("EGLSyncKHR is not created yet.");
+        return;
+    }
 
     auto context = static_cast<GLESApiContext*>(m_context);
     const auto& eglAPI = context->eglAPI;
 
-    auto fenceFd = static_cast<int>(eglAPI.DupNativeFenceFDANDROID(context->getEGLDisplay(), m_signalSync));
-    spdlog::trace("Created EGLSyncKHR fenceFd: {}", fenceFd);
-    if (fenceFd == -1)
+    if (m_signalFd != -1)
+    {
+        spdlog::debug("No need to create EGLSyncKHR. because already created.");
+        return;
+    }
+
+    m_signalFd = static_cast<int>(eglAPI.DupNativeFenceFDANDROID(context->getEGLDisplay(),
+                                                                 m_signalSync));
+    spdlog::trace("Created EGLSyncKHR fenceFd: {}", m_signalFd);
+    if (m_signalFd == -1)
     {
         spdlog::error("Failed to duplicate EGLSyncKHR fenceFd");
     }
-
-    return fenceFd;
 }
-
-void GLESFence::updated(Fence* fence)
-{
-    EGLSyncKHR eglSyncKHR = EGL_NO_SYNC_KHR;
-
-    switch (fence->getType())
-    {
-    case FenceType::kFenceType_GLES: {
-        eglSyncKHR = static_cast<GLESFence*>(fence)->getEGLSyncKHR();
-    }
-    break;
-    case FenceType::kFenceType_Vulkan: {
-        auto fenceFD = static_cast<VulkanFence*>(fence)->getFenceFd();
-
-        EGLint attribs[] = {
-            EGL_SYNC_NATIVE_FENCE_ANDROID, fenceFD,
-            EGL_NONE
-        };
-
-        auto context = static_cast<GLESApiContext*>(m_context);
-        const auto& eglAPI = context->eglAPI;
-
-        eglSyncKHR = eglAPI.CreateSyncKHR(context->getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);
-    }
-    break;
-    default:
-        spdlog::error("Unsupported fence type: {}", static_cast<uint32_t>(fence->getType()));
-        break;
-    }
-
-    if (eglSyncKHR == EGL_NO_SYNC_KHR)
-    {
-        spdlog::error("Failed to create EGLSyncKHR");
-    }
-
-    m_waitSync[fence] = eglSyncKHR;
-}
-
 } // namespace june

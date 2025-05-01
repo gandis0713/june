@@ -69,7 +69,7 @@ static const JuneSharedMemoryUsage JuneSharedMemoryUsage_CPUWrite = 0x0000000000
 
 typedef struct JuneChainedStruct
 {
-    struct JuneChainedStruct const* next;
+    struct JuneChainedStruct* next;
     JuneSType sType;
 } JuneChainedStruct;
 
@@ -189,7 +189,7 @@ typedef struct JuneSharedMemoryExportedVkSemaphoreSyncObject
 
 typedef struct JuneSharedMemoryExportedSyncObject
 {
-    JuneChainedStruct const* nextInChain;
+    JuneChainedStruct* nextInChain;
 } JuneSharedMemoryExportedSyncObject;
 
 typedef struct JuneApiContextBeginMemoryAccessDescriptor
@@ -206,6 +206,7 @@ typedef struct JuneApiContextEndMemoryAccessDescriptor
 {
     JuneChainedStruct const* nextInChain;
     StringView label;
+    JuneSharedMemory sharedMemory;
     const JuneSharedMemorySyncInfo* signalSyncInfo;
     JuneSharedMemoryExportedSyncObject* exportedSyncObject;
 } JuneApiContextEndMemoryAccessDescriptor;

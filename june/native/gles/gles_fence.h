@@ -26,21 +26,22 @@ public:
     GLESFence& operator=(const GLESFence&) = delete;
 
 public:
-    void begin() override;
-    void end() override;
+    void refresh() override;
 
 public:
     EGLSyncKHR getEGLSyncKHR() const;
-    int getFenceFd() const;
+    int getFd() const;
 
-protected:
-    void updated(Fence* fence) override;
+private:
+    void waitEGLSyncKHR();
+    void createEGLSyncKHR();
+    void createFd();
 
 private:
     mutable std::mutex m_mutex;
 
-    std::unordered_map<Fence*, EGLSyncKHR> m_waitSync{};
     EGLSyncKHR m_signalSync{ EGL_NO_SYNC_KHR };
+    int m_signalFd{ -1 };
 };
 
 } // namespace june

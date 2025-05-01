@@ -25,22 +25,23 @@ public:
     VulkanFence& operator=(const VulkanFence&) = delete;
 
 public:
-    void begin() override;
-    void end() override;
+    void refresh() override;
 
 public:
-    int getFenceFd() const;
+    VkSemaphore getVkSemaphore() const;
+    int getFd() const;
 
-protected:
-    void updated(Fence* fence) override;
+private:
+    void createVkSemaphore();
+    void createFd();
 
 private:
     mutable std::mutex m_mutex;
 
-    std::unordered_map<Fence*, VkSemaphore> m_waitSemaphores{};
     VkSemaphore m_signalSemaphore{ VK_NULL_HANDLE };
     // TODO: use below instead of m_signalSemaphore for each handle type.
     // std::unordered_map<Fence*, VkSemaphore> m_signalSemaphores{};
+    int m_signalFd{ -1 };
 };
 
 } // namespace june

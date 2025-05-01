@@ -40,6 +40,7 @@ public:
 public: // gles
     EGLContext getEGLContext() const;
     EGLDisplay getEGLDisplay() const;
+    EGLSyncKHR createEGLSyncKHR(const int fd);
 
 public:
     GLESAPI eglAPI{};
