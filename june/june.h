@@ -29,8 +29,6 @@ typedef struct JuneSharedMemory_T* JuneSharedMemory; // Opaque handle for a shar
 typedef struct JuneApiContext_T* JuneApiContext;     // Opaque handle for an API context
 typedef struct JuneFence_T* JuneFence;               // Opaque cross-API fence
 
-struct JuneApiContextDescriptor;
-
 typedef enum JuneApiType
 {
     JuneApiType_Undefined = 0x00000000,
@@ -39,24 +37,31 @@ typedef enum JuneApiType
     JuneApiType_D3D12 = 0x00000003,
     JuneApiType_OpenGL = 0x00000004,
     JuneApiType_GLES = 0x00000005,
+    JuneApiType_CPU = 0x00000006,
 } JuneApiType;
 
 typedef enum JuneSType
 {
-    JuneSType_VulkanApiContext = 0x00000000,
+    JuneSType_VulkanContext = 0x00000000,
     JuneSType_D3D11ApiContext = 0x00000001,
     JuneSType_D3D12ApiContext = 0x00000002,
     JuneSType_OpenGLApiContext = 0x00000003,
-    JuneSType_GLESApiContext = 0x00000004,
-    JuneSType_EGLImageSharedMemory = 0x00000005,
-    JuneSType_AHardwareBufferSharedMemory = 0x00000006,
-    JuneSType_EGLImageResourceDescriptor = 0x00000007,
-    JuneSType_VkImageResourceDescriptor = 0x00000008,
-    JuneSType_VkBufferResourceDescriptor = 0x00000009,
-    JuneSType_BeginAccessVkBuffer = 0x0000000A,
-    JuneSType_BeginAccessVkImage = 0x0000000B,
-    JuneSType_SharedMemoryExportedEGLSyncKHRSyncObject = 0x00000000C,
-    JuneSType_SharedMemoryExportedVkSemaphoreSyncObject = 0x00000000D,
+    JuneSType_GLESContext = 0x00000004,
+    JuneSType_CPUContext = 0x00000005,
+
+    JuneSType_EGLImageSharedMemory = 0x00000010,
+    JuneSType_AHardwareBufferSharedMemory = 0x00000011,
+
+    JuneSType_EGLImageResourceDescriptor = 0x00000020,
+    JuneSType_VkImageResourceDescriptor = 0x00000021,
+    JuneSType_VkBufferResourceDescriptor = 0x00000022,
+
+    JuneSType_BeginAccessVkBuffer = 0x00000030,
+    JuneSType_BeginAccessVkImage = 0x00000031,
+
+    JuneSType_SharedMemoryExportedEGLSyncKHRSyncObject = 0x000000040,
+    JuneSType_SharedMemoryExportedVkSemaphoreSyncObject = 0x000000041,
+    JuneSType_SharedMemoryExportedFDSyncObject = 0x000000042,
 } JuneSType;
 
 typedef JuneFlags JuneSharedMemoryUsage;
@@ -92,20 +97,22 @@ typedef struct JuneInstanceDescriptor
     StringView label;
 } JuneInstanceDescriptor;
 
-typedef struct JuneApiContextDescriptor
+// can be chained with JuneApiContextDescriptor
+typedef struct JuneCPUContextDescriptor
 {
-    JuneChainedStruct const* nextInChain;
-    StringView label;
-} JuneApiContextDescriptor;
+    JuneChainedStruct chain;
+} JuneCPUContextDescriptor;
 
-typedef struct JuneVulkanApiContextDescriptor
+// can be chained with JuneApiContextDescriptor
+typedef struct JuneVulkanContextDescriptor
 {
     JuneChainedStruct chain;
     void* vkInstance;
     void* vkPhysicalDevice;
     void* vkDevice;
-} JuneVulkanApiContextDescriptor;
+} JuneVulkanContextDescriptor;
 
+// can be chained with JuneApiContextDescriptor
 typedef struct JuneD3D12ApiContextDescriptor
 {
     JuneChainedStruct chain;
@@ -113,6 +120,7 @@ typedef struct JuneD3D12ApiContextDescriptor
     void* d3d12Device;
 } JuneD3D12ApiContextDescriptor;
 
+// can be chained with JuneApiContextDescriptor
 typedef struct JuneD3D11ApiContextDescriptor
 {
     JuneChainedStruct chain;
@@ -120,6 +128,7 @@ typedef struct JuneD3D11ApiContextDescriptor
     void* d3d11Device;
 } JuneD3D11ApiContextDescriptor;
 
+// can be chained with JuneApiContextDescriptor
 typedef struct JuneOpenGLApiContextDescriptor
 {
     JuneChainedStruct chain;
@@ -127,12 +136,19 @@ typedef struct JuneOpenGLApiContextDescriptor
     void* context;
 } JuneOpenGLApiContextDescriptor;
 
-typedef struct JuneGLESApiContextDescriptor
+// can be chained with JuneApiContextDescriptor
+typedef struct JuneGLESContextDescriptor
 {
     JuneChainedStruct chain;
     void* display;
     void* context;
-} JuneGLESApiContextDescriptor;
+} JuneGLESContextDescriptor;
+
+typedef struct JuneApiContextDescriptor
+{
+    JuneChainedStruct const* nextInChain;
+    StringView label;
+} JuneApiContextDescriptor;
 
 typedef struct JuneSharedMemoryDXGISharedHandleDescriptor
 {
@@ -170,6 +186,14 @@ typedef struct JuneSharedMemorySyncInfo
     JuneFence* fences;
     uint32_t fenceCount;
 } JuneSharedMemorySyncInfo;
+
+// can be chained with JuneSharedMemoryExportedSyncObject
+typedef struct JuneSharedMemoryExportedFDSyncObject
+{
+    JuneChainedStruct chain;
+    void* fds; // file descriptors
+    uint32_t fdCount;
+} JuneSharedMemoryExportedFDSyncObject;
 
 // can be chained with JuneSharedMemoryExportedSyncObject
 typedef struct JuneSharedMemoryExportedEGLSyncKHRSyncObject

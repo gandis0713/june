@@ -3,7 +3,7 @@
 #include "june/memory/ahardwarebuffer_memory.h"
 #include "june/native/shared_memory.h"
 #include "vulkan_api.h"
-#include "vulkan_api_context.h"
+#include "vulkan_context.h"
 #include "vulkan_fence.h"
 
 #include <spdlog/spdlog.h>
@@ -11,7 +11,7 @@
 namespace june
 {
 
-int VulkanAHardwareBufferVkImage::create(VulkanApiContext* context, JuneResourceDescriptor const* descriptor)
+int VulkanAHardwareBufferVkImage::create(VulkanContext* context, JuneResourceDescriptor const* descriptor)
 {
     VkImage image = VK_NULL_HANDLE;
     VkDeviceMemory deviceMemory = VK_NULL_HANDLE;
@@ -25,10 +25,10 @@ int VulkanAHardwareBufferVkImage::create(VulkanApiContext* context, JuneResource
             auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
             auto ahbMemory = static_cast<AHardwareBufferMemory*>(sharedMemory->getRawMemory());
 
-            auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(context);
-            const auto& vkAPI = vulkanApiContext->vkAPI;
+            auto vulkanContext = reinterpret_cast<VulkanContext*>(context);
+            const auto& vkAPI = vulkanContext->vkAPI;
 
-            VkDevice device = vulkanApiContext->getVkDevice();
+            VkDevice device = vulkanContext->getVkDevice();
 
             VkExternalMemoryImageCreateInfo externalMemoryImageCreateInfo{};
             externalMemoryImageCreateInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
@@ -73,7 +73,7 @@ int VulkanAHardwareBufferVkImage::create(VulkanApiContext* context, JuneResource
             spdlog::trace("AHardwareBuffer properties: allocationSize = {}, memoryTypeBits = {}",
                           bufferProps.allocationSize, bufferProps.memoryTypeBits);
 
-            auto info = vulkanApiContext->getPhysicalDeviceInfo();
+            auto info = vulkanContext->getPhysicalDeviceInfo();
 
             uint32_t memoryTypeIndex = std::numeric_limits<uint32_t>::max();
             for (uint32_t i = 0; i < info.memoryTypes.size(); i++)

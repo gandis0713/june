@@ -35,17 +35,17 @@ struct VulkanPhysicalDeviceInfo : VulkanDeviceKnobs
 };
 
 class Instance;
-class VulkanApiContext : public ApiContext
+class VulkanContext : public ApiContext
 {
 public:
     static ApiContext* create(Instance* instance, JuneApiContextDescriptor const* descriptor);
 
 public:
-    VulkanApiContext() = delete;
-    ~VulkanApiContext() override;
+    VulkanContext() = delete;
+    ~VulkanContext() override;
 
-    VulkanApiContext(const VulkanApiContext&) = delete;
-    VulkanApiContext& operator=(const VulkanApiContext&) = delete;
+    VulkanContext(const VulkanContext&) = delete;
+    VulkanContext& operator=(const VulkanContext&) = delete;
 
 public: // June APi
     void createResource(JuneResourceDescriptor const* descriptor) override;
@@ -85,7 +85,7 @@ private:
     VulkanPhysicalDeviceInfo m_physicalDeviceInfo{};
 
 private:
-    VulkanApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
+    VulkanContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
 };
 
 int findMemoryTypeIndex(const VulkanPhysicalDeviceInfo& info, VkMemoryPropertyFlags flags);

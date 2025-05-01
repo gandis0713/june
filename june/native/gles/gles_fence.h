@@ -11,15 +11,15 @@
 namespace june
 {
 
-class GLESApiContext;
+class GLESContext;
 class GLESFence : public Fence
 {
 public:
-    static GLESFence* create(GLESApiContext* context, JuneFenceDescriptor const* descriptor);
+    static GLESFence* create(GLESContext* context, JuneFenceDescriptor const* descriptor);
 
 public:
     GLESFence() = delete;
-    GLESFence(GLESApiContext* context, JuneFenceDescriptor const* descriptor);
+    GLESFence(GLESContext* context, JuneFenceDescriptor const* descriptor);
     ~GLESFence() override = default;
 
     GLESFence(const GLESFence&) = delete;

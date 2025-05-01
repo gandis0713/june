@@ -1,4 +1,4 @@
-#include "gles_api_context.h"
+#include "gles_context.h"
 
 #include "gles_fence.h"
 #include "june/common/assert.h"
@@ -17,16 +17,16 @@
 namespace june
 {
 
-ApiContext* GLESApiContext::create(Instance* instance, JuneApiContextDescriptor const* descriptor)
+ApiContext* GLESContext::create(Instance* instance, JuneApiContextDescriptor const* descriptor)
 {
-    return new GLESApiContext(instance, descriptor);
+    return new GLESContext(instance, descriptor);
 }
 
-GLESApiContext::GLESApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor)
+GLESContext::GLESContext(Instance* instance, JuneApiContextDescriptor const* descriptor)
     : ApiContext(instance, descriptor)
 {
     // It assumes that the descriptor is valid and has been validated before this point.
-    auto glesDescriptor = reinterpret_cast<JuneGLESApiContextDescriptor const*>(descriptor->nextInChain);
+    auto glesDescriptor = reinterpret_cast<JuneGLESContextDescriptor const*>(descriptor->nextInChain);
 
     m_context = (static_cast<EGLContext>(glesDescriptor->context));
     m_display = (static_cast<EGLDisplay>(glesDescriptor->display));
@@ -51,7 +51,7 @@ GLESApiContext::GLESApiContext(Instance* instance, JuneApiContextDescriptor cons
     }
 }
 
-GLESApiContext::~GLESApiContext()
+GLESContext::~GLESContext()
 {
     if (m_glesLib.isValid())
     {
@@ -59,7 +59,7 @@ GLESApiContext::~GLESApiContext()
     }
 }
 
-void GLESApiContext::createResource(JuneResourceDescriptor const* descriptor)
+void GLESContext::createResource(JuneResourceDescriptor const* descriptor)
 {
     auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
     auto rawMemory = sharedMemory->getRawMemory();
@@ -77,12 +77,12 @@ void GLESApiContext::createResource(JuneResourceDescriptor const* descriptor)
     }
 }
 
-Fence* GLESApiContext::createFence(JuneFenceDescriptor const* descriptor)
+Fence* GLESContext::createFence(JuneFenceDescriptor const* descriptor)
 {
     return GLESFence::create(this, descriptor);
 }
 
-void GLESApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
+void GLESContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
 {
     reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->lock(this);
 
@@ -125,7 +125,7 @@ void GLESApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor
     }
 }
 
-void GLESApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
+void GLESContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
 {
     const auto fenceCount = descriptor->signalSyncInfo->fenceCount;
     std::vector<EGLSyncKHR> eglSyncs(fenceCount);
@@ -150,29 +150,29 @@ void GLESApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor con
     reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->unlock(this);
 }
 
-JuneApiType GLESApiContext::getApiType() const
+JuneApiType GLESContext::getApiType() const
 {
     return JuneApiType_GLES;
 }
 
-EGLContext GLESApiContext::getEGLContext() const
+EGLContext GLESContext::getEGLContext() const
 {
     return m_context;
 }
 
-EGLDisplay GLESApiContext::getEGLDisplay() const
+EGLDisplay GLESContext::getEGLDisplay() const
 {
     return m_display;
 }
 
-EGLSyncKHR GLESApiContext::createEGLSyncKHR(const int fd)
+EGLSyncKHR GLESContext::createEGLSyncKHR(const int fd)
 {
     EGLint attribs[] = {
         EGL_SYNC_NATIVE_FENCE_ANDROID, fd,
         EGL_NONE
     };
 
-    auto context = static_cast<GLESApiContext*>(m_context);
+    auto context = static_cast<GLESContext*>(m_context);
     const auto& eglAPI = context->eglAPI;
 
     auto eglSyncKHR = eglAPI.CreateSyncKHR(context->getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);

@@ -1,7 +1,7 @@
 #include "instance.h"
-#include "gles/gles_api_context.h"
+#include "gles/gles_context.h"
 #include "june/native/shared_memory.h"
-#include "vulkan/vulkan_api_context.h"
+#include "vulkan/vulkan_context.h"
 
 namespace june
 {
@@ -23,12 +23,12 @@ ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descripto
     {
         switch (current->sType)
         {
-        case JuneSType_VulkanApiContext: {
-            return VulkanApiContext::create(this, descriptor);
+        case JuneSType_VulkanContext: {
+            return VulkanContext::create(this, descriptor);
         }
         break;
-        case JuneSType_GLESApiContext: {
-            return GLESApiContext::create(this, descriptor);
+        case JuneSType_GLESContext: {
+            return GLESContext::create(this, descriptor);
         }
         default:
             throw std::runtime_error("Unsupported type");

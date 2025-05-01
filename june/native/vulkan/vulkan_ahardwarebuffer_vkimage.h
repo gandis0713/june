@@ -6,11 +6,11 @@
 namespace june
 {
 
-class VulkanApiContext;
+class VulkanContext;
 class VulkanAHardwareBufferVkImage
 {
 public:
-    static int create(VulkanApiContext* context, JuneResourceDescriptor const* descriptor);
+    static int create(VulkanContext* context, JuneResourceDescriptor const* descriptor);
 };
 
 } // namespace june

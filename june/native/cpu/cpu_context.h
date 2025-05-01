@@ -6,8 +6,6 @@
 
 #include "june/june.h"
 
-#include "gles_api.h"
-
 #include <memory>
 #include <vector>
 
@@ -15,17 +13,17 @@ namespace june
 {
 
 class Instance;
-class GLESApiContext : public ApiContext
+class CPUContext : public ApiContext
 {
 public:
     static ApiContext* create(Instance* instance, JuneApiContextDescriptor const* descriptor);
 
 public:
-    GLESApiContext() = delete;
-    ~GLESApiContext() override;
+    CPUContext() = delete;
+    ~CPUContext() override;
 
-    GLESApiContext(const GLESApiContext&) = delete;
-    GLESApiContext& operator=(const GLESApiContext&) = delete;
+    CPUContext(const CPUContext&) = delete;
+    CPUContext& operator=(const CPUContext&) = delete;
 
 public: // June API
     void createResource(JuneResourceDescriptor const* descriptor) override;
@@ -36,21 +34,8 @@ public: // June API
 public:
     JuneApiType getApiType() const override;
 
-public: // gles
-    EGLContext getEGLContext() const;
-    EGLDisplay getEGLDisplay() const;
-    EGLSyncKHR createEGLSyncKHR(const int fd);
-
-public:
-    GLESAPI eglAPI{};
-
 private:
-    EGLContext m_context{ nullptr };
-    EGLDisplay m_display{ nullptr };
-    DyLib m_glesLib{};
-
-private:
-    GLESApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
+    CPUContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
 };
 
 } // namespace june

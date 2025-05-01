@@ -6,11 +6,11 @@
 namespace june
 {
 
-class GLESApiContext;
+class GLESContext;
 class GLESAHardwareBufferEGLImage
 {
 public:
-    static int create(GLESApiContext* context, JuneResourceDescriptor const* descriptor);
+    static int create(GLESContext* context, JuneResourceDescriptor const* descriptor);
 };
 
 } // namespace june

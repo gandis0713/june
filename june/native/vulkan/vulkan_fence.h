@@ -10,15 +10,15 @@
 namespace june
 {
 
-class VulkanApiContext;
+class VulkanContext;
 class VulkanFence : public Fence
 {
 public:
-    static VulkanFence* create(VulkanApiContext* context, JuneFenceDescriptor const* descriptor);
+    static VulkanFence* create(VulkanContext* context, JuneFenceDescriptor const* descriptor);
 
 public:
     VulkanFence() = delete;
-    VulkanFence(VulkanApiContext* context, JuneFenceDescriptor const* descriptor);
+    VulkanFence(VulkanContext* context, JuneFenceDescriptor const* descriptor);
     ~VulkanFence() override = default;
 
     VulkanFence(const VulkanFence&) = delete;

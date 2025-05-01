@@ -1,7 +1,7 @@
 #include "gles_ahardwarebuffer_eglimage.h"
 
 #include "gles_api.h"
-#include "gles_api_context.h"
+#include "gles_context.h"
 #include "gles_fence.h"
 #include "june/memory/ahardwarebuffer_memory.h"
 #include "june/native/shared_memory.h"
@@ -11,7 +11,7 @@
 namespace june
 {
 
-int GLESAHardwareBufferEGLImage::create(GLESApiContext* context, JuneResourceDescriptor const* descriptor)
+int GLESAHardwareBufferEGLImage::create(GLESContext* context, JuneResourceDescriptor const* descriptor)
 {
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
@@ -26,8 +26,8 @@ int GLESAHardwareBufferEGLImage::create(GLESApiContext* context, JuneResourceDes
                 auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
                 auto ahbMemory = static_cast<AHardwareBufferMemory*>(sharedMemory->getRawMemory());
 
-                auto glesApiContext = reinterpret_cast<GLESApiContext*>(context);
-                const auto& eglAPI = glesApiContext->eglAPI;
+                auto glesContext = reinterpret_cast<GLESContext*>(context);
+                const auto& eglAPI = glesContext->eglAPI;
 
                 if (!eglAPI.GetNativeClientBufferANDROID)
                 {
@@ -63,13 +63,13 @@ int GLESAHardwareBufferEGLImage::create(GLESApiContext* context, JuneResourceDes
 
             {
                 EGLint imageAttribs[] = {
-                        EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
-                        EGL_NONE
+                    EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+                    EGL_NONE
                 };
 
-                auto glesApiContext = reinterpret_cast<GLESApiContext*>(context);
-                const auto& eglAPI = glesApiContext->eglAPI;
-                eglImage = eglAPI.CreateImageKHR(glesApiContext->getEGLDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                auto glesContext = reinterpret_cast<GLESContext*>(context);
+                const auto& eglAPI = glesContext->eglAPI;
+                eglImage = eglAPI.CreateImageKHR(glesContext->getEGLDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
                                                  eglClientBuffer, imageAttribs);
                 if (eglImage == EGL_NO_IMAGE_KHR)
                 {

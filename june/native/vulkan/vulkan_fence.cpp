@@ -1,6 +1,6 @@
 #include "vulkan_fence.h"
 
-#include "vulkan_api_context.h"
+#include "vulkan_context.h"
 
 #include "june/native/gles/gles_fence.h"
 
@@ -9,12 +9,12 @@
 namespace june
 {
 
-VulkanFence* VulkanFence::create(VulkanApiContext* context, JuneFenceDescriptor const* descriptor)
+VulkanFence* VulkanFence::create(VulkanContext* context, JuneFenceDescriptor const* descriptor)
 {
     return new VulkanFence(context, descriptor);
 }
 
-VulkanFence::VulkanFence(VulkanApiContext* context, JuneFenceDescriptor const* descriptor)
+VulkanFence::VulkanFence(VulkanContext* context, JuneFenceDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
     m_type = FenceType::kFenceType_Vulkan;
@@ -64,9 +64,9 @@ void VulkanFence::createVkSemaphore()
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     semaphoreCreateInfo.pNext = &exportSemCreateInfo;
 
-    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
-    VkDevice device = vulkanApiContext->getVkDevice();
-    const auto& vkAPI = vulkanApiContext->vkAPI;
+    auto vulkanContext = reinterpret_cast<VulkanContext*>(m_context);
+    VkDevice device = vulkanContext->getVkDevice();
+    const auto& vkAPI = vulkanContext->vkAPI;
 
     VkResult result = vkAPI.CreateSemaphore(device, &semaphoreCreateInfo, nullptr, &m_signalSemaphore);
     if (result != VK_SUCCESS)
@@ -92,9 +92,9 @@ void VulkanFence::createFd()
         return;
     }
 
-    auto vulkanApiContext = reinterpret_cast<VulkanApiContext*>(m_context);
-    VkDevice device = vulkanApiContext->getVkDevice();
-    const auto& vkAPI = vulkanApiContext->vkAPI;
+    auto vulkanContext = reinterpret_cast<VulkanContext*>(m_context);
+    VkDevice device = vulkanContext->getVkDevice();
+    const auto& vkAPI = vulkanContext->vkAPI;
 
     VkSemaphoreGetFdInfoKHR getFdInfo = {};
     getFdInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;

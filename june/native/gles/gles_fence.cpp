@@ -1,6 +1,6 @@
 #include "gles_fence.h"
 
-#include "gles_api_context.h"
+#include "gles_context.h"
 #include "june/native/vulkan/vulkan_fence.h"
 
 #include <spdlog/spdlog.h>
@@ -8,12 +8,12 @@
 namespace june
 {
 
-GLESFence* GLESFence::create(GLESApiContext* context, JuneFenceDescriptor const* descriptor)
+GLESFence* GLESFence::create(GLESContext* context, JuneFenceDescriptor const* descriptor)
 {
     return new GLESFence(context, descriptor);
 }
 
-GLESFence::GLESFence(GLESApiContext* context, JuneFenceDescriptor const* descriptor)
+GLESFence::GLESFence(GLESContext* context, JuneFenceDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
     m_type = FenceType::kFenceType_GLES;
@@ -46,7 +46,7 @@ void GLESFence::waitEGLSyncKHR()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    auto context = static_cast<GLESApiContext*>(m_context);
+    auto context = static_cast<GLESContext*>(m_context);
     const auto& eglAPI = context->eglAPI;
 
     if (m_signalSync != EGL_NO_SYNC_KHR)
@@ -73,7 +73,7 @@ void GLESFence::createEGLSyncKHR()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    auto context = static_cast<GLESApiContext*>(m_context);
+    auto context = static_cast<GLESContext*>(m_context);
     const auto& eglAPI = context->eglAPI;
 
     if (m_signalSync != EGL_NO_SYNC_KHR)
@@ -100,7 +100,7 @@ void GLESFence::createFd()
         return;
     }
 
-    auto context = static_cast<GLESApiContext*>(m_context);
+    auto context = static_cast<GLESContext*>(m_context);
     const auto& eglAPI = context->eglAPI;
 
     if (m_signalFd != -1)

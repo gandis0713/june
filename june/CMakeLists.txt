@@ -17,15 +17,20 @@ set(JUNE_COMMON_FILES
 )
 
 set(JUNE_NATIVE_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_context.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_context.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_fence.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_fence.h
+
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.h
 
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.cpp

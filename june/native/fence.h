@@ -15,6 +15,7 @@ enum class FenceType
     kFenceType_None = 0,
     kFenceType_GLES,
     kFenceType_Vulkan,
+    kFenceType_FD,
 };
 
 class ApiContext;
