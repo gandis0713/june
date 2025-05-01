@@ -1,2 +1,2 @@
 # June
-External Resource Synchronizer
+External Memory & Synchronization Abstraction Library
