@@ -50,6 +50,8 @@ public:
 public: // June APi
     void createResource(JuneResourceDescriptor const* descriptor) override;
     Fence* createFence(JuneFenceDescriptor const* descriptor) override;
+    void beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor) override;
+    void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) override;
 
 public:
     Instance* getInstance() const override;

@@ -24,9 +24,6 @@ public:
     SharedMemory& operator=(const SharedMemory&) = delete;
 
 public: // June API
-    void beginAccess(JuneSharedMemoryBeginAccessDescriptor const* descriptor);
-    void endAccess(JuneSharedMemoryEndAccessDescriptor const* descriptor);
-
 public:
     Instance* getInstance() const;
     size_t getSize() const;

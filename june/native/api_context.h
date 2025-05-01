@@ -19,6 +19,8 @@ public:
 public: // June API
     virtual void createResource(JuneResourceDescriptor const* descriptor) = 0;
     virtual Fence* createFence(JuneFenceDescriptor const* descriptor) = 0;
+    virtual void beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor) = 0;
+    virtual void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) = 0;
 
 public:
     virtual Instance* getInstance() const = 0;

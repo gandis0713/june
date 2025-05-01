@@ -32,31 +32,30 @@ void procInstanceDestroy(JuneInstance instance)
         delete reinterpret_cast<Instance*>(instance);
 }
 
-void procApiContextCreateResource(JuneApiContext context, JuneResourceDescriptor const* descriptor)
+void procApiContextCreateResource(JuneApiContext apiContext, JuneResourceDescriptor const* descriptor)
 {
-    return reinterpret_cast<ApiContext*>(context)->createResource(descriptor);
+    return reinterpret_cast<ApiContext*>(apiContext)->createResource(descriptor);
 }
 
-JuneFence procApiContextCreateFence(JuneApiContext context, JuneFenceDescriptor const* descriptor)
+JuneFence procApiContextCreateFence(JuneApiContext apiContext, JuneFenceDescriptor const* descriptor)
 {
-    // return reinterpret_cast<JuneFence>(reinterpret_cast<ApiContext*>(context)->createFence(descriptor));
-    return nullptr;
+    return reinterpret_cast<JuneFence>(reinterpret_cast<ApiContext*>(apiContext)->createFence(descriptor));
 }
 
-void procApiContextDestroy(JuneApiContext context)
+void procApiContextBeginMemoryAccess(JuneApiContext apiContext, JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
 {
-    if (context)
-        delete reinterpret_cast<ApiContext*>(context);
+    reinterpret_cast<ApiContext*>(apiContext)->beginMemoryAccess(descriptor);
 }
 
-void procSharedMemoryBeginAccess(JuneSharedMemory sharedMemory, JuneSharedMemoryBeginAccessDescriptor const* descriptor)
+void procApiContextEndMemoryAccess(JuneApiContext apiContext, JuneApiContextEndMemoryAccessDescriptor const* descriptor)
 {
-    reinterpret_cast<SharedMemory*>(sharedMemory)->beginAccess(descriptor);
+    reinterpret_cast<ApiContext*>(apiContext)->endMemoryAccess(descriptor);
 }
 
-void procSharedMemoryEndAccess(JuneSharedMemory sharedMemory, JuneSharedMemoryEndAccessDescriptor const* descriptor)
+void procApiContextDestroy(JuneApiContext apiContext)
 {
-    reinterpret_cast<SharedMemory*>(sharedMemory)->endAccess(descriptor);
+    if (apiContext)
+        delete reinterpret_cast<ApiContext*>(apiContext);
 }
 
 void procSharedMemoryDestroy(JuneSharedMemory sharedMemory)
@@ -81,9 +80,9 @@ std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneInstanceDestroy", reinterpret_cast<JuneProc>(procInstanceDestroy) },
     { "juneApiContextCreateResource", reinterpret_cast<JuneProc>(procApiContextCreateResource) },
     { "juneApiContextCreateFence", reinterpret_cast<JuneProc>(procApiContextCreateFence) },
+    { "juneApiContextBeginMemoryAccess", reinterpret_cast<JuneProc>(procApiContextBeginMemoryAccess) },
+    { "juneApiContextEndMemoryAccess", reinterpret_cast<JuneProc>(procApiContextEndMemoryAccess) },
     { "juneApiContextDestroy", reinterpret_cast<JuneProc>(procApiContextDestroy) },
-    { "juneSharedMemoryBeginAccess", reinterpret_cast<JuneProc>(procSharedMemoryBeginAccess) },
-    { "juneSharedMemoryEndAccess", reinterpret_cast<JuneProc>(procSharedMemoryEndAccess) },
     { "juneSharedMemoryDestroy", reinterpret_cast<JuneProc>(procSharedMemoryDestroy) },
     { "juneFenceDestroy", reinterpret_cast<JuneProc>(procFenceDestroy) },
 };

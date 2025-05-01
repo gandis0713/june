@@ -77,6 +77,14 @@ Fence* GLESApiContext::createFence(JuneFenceDescriptor const* descriptor)
     return GLESFence::create(this, descriptor);
 }
 
+void GLESApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
+{
+}
+
+void GLESApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
+{
+}
+
 Instance* GLESApiContext::getInstance() const
 {
     return m_instance;

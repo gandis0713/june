@@ -51,16 +51,6 @@ SharedMemory::SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMem
 {
 }
 
-void SharedMemory::beginAccess(JuneSharedMemoryBeginAccessDescriptor const* descriptor)
-{
-    // Implementation for beginning access to the shared memory
-}
-
-void SharedMemory::endAccess(JuneSharedMemoryEndAccessDescriptor const* descriptor)
-{
-    // Implementation for ending access to the shared memory
-}
-
 Instance* SharedMemory::getInstance() const
 {
     return m_instance;

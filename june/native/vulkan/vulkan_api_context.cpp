@@ -116,6 +116,14 @@ Fence* VulkanApiContext::createFence(JuneFenceDescriptor const* descriptor)
     return VulkanFence::create(this, descriptor);
 }
 
+void VulkanApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
+{
+}
+
+void VulkanApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
+{
+}
+
 Instance* VulkanApiContext::getInstance() const
 {
     return m_instance;
