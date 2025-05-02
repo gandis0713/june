@@ -1,9 +1,9 @@
-#include "cpu_context.h"
+#include "noapi_context.h"
 
-#include "cpu_fence.h"
 #include "june/common/assert.h"
 #include "june/native/gles/gles_fence.h"
 #include "june/native/vulkan/vulkan_fence.h"
+#include "noapi_fence.h"
 
 #include "june/native/shared_memory.h"
 
@@ -14,33 +14,33 @@
 namespace june
 {
 
-ApiContext* CPUContext::create(Instance* instance, JuneApiContextDescriptor const* descriptor)
+ApiContext* NoApiContext::create(Instance* instance, JuneApiContextDescriptor const* descriptor)
 {
-    return new CPUContext(instance, descriptor);
+    return new NoApiContext(instance, descriptor);
 }
 
-CPUContext::CPUContext(Instance* instance, JuneApiContextDescriptor const* descriptor)
+NoApiContext::NoApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor)
     : ApiContext(instance, descriptor)
 {
     // It assumes that the descriptor is valid and has been validated before this point.
-    auto CPUDescriptor = reinterpret_cast<JuneCPUContextDescriptor const*>(descriptor->nextInChain);
+    auto NoApiDescriptor = reinterpret_cast<JuneNoApiContextDescriptor const*>(descriptor->nextInChain);
 }
 
-CPUContext::~CPUContext()
+NoApiContext::~NoApiContext()
 {
 }
 
-void CPUContext::createResource(JuneResourceDescriptor const* descriptor)
+void NoApiContext::createResource(JuneResourceDescriptor const* descriptor)
 {
     // nothing do to
 }
 
-Fence* CPUContext::createFence(JuneFenceDescriptor const* descriptor)
+Fence* NoApiContext::createFence(JuneFenceDescriptor const* descriptor)
 {
-    return CPUFence::create(this, descriptor);
+    return NoApiFence::create(this, descriptor);
 }
 
-void CPUContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
+void NoApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
 {
     reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->lock(this);
 
@@ -83,12 +83,12 @@ void CPUContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor con
     }
 }
 
-void CPUContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
+void NoApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
 {
     reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->unlock(this);
 }
 
-JuneApiType CPUContext::getApiType() const
+JuneApiType NoApiContext::getApiType() const
 {
     return JuneApiType_GLES;
 }

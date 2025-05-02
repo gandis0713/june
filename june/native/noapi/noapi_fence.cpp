@@ -1,19 +1,19 @@
-#include "cpu_fence.h"
+#include "noapi_fence.h"
 
-#include "cpu_context.h"
 #include "june/native/vulkan/vulkan_fence.h"
+#include "noapi_context.h"
 
 #include <spdlog/spdlog.h>
 
 namespace june
 {
 
-CPUFence* CPUFence::create(CPUContext* context, JuneFenceDescriptor const* descriptor)
+NoApiFence* NoApiFence::create(NoApiContext* context, JuneFenceDescriptor const* descriptor)
 {
-    return new CPUFence(context, descriptor);
+    return new NoApiFence(context, descriptor);
 }
 
-CPUFence::CPUFence(CPUContext* context, JuneFenceDescriptor const* descriptor)
+NoApiFence::NoApiFence(NoApiContext* context, JuneFenceDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
     m_type = FenceType::kFenceType_FD;
@@ -21,19 +21,19 @@ CPUFence::CPUFence(CPUContext* context, JuneFenceDescriptor const* descriptor)
     refresh();
 }
 
-void CPUFence::refresh()
+void NoApiFence::refresh()
 {
     createFd();
 }
 
-int CPUFence::getFd() const
+int NoApiFence::getFd() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     return m_signalFd;
 }
 
-void CPUFence::createFd()
+void NoApiFence::createFd()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 

@@ -37,7 +37,7 @@ typedef enum JuneApiType
     JuneApiType_D3D12 = 0x00000003,
     JuneApiType_OpenGL = 0x00000004,
     JuneApiType_GLES = 0x00000005,
-    JuneApiType_CPU = 0x00000006,
+    JuneApiType_NoApi = 0x00000006,
 } JuneApiType;
 
 typedef enum JuneSType
@@ -47,7 +47,7 @@ typedef enum JuneSType
     JuneSType_D3D12ApiContext = 0x00000002,
     JuneSType_OpenGLApiContext = 0x00000003,
     JuneSType_GLESContext = 0x00000004,
-    JuneSType_CPUContext = 0x00000005,
+    JuneSType_NoApiContext = 0x00000005,
 
     JuneSType_EGLImageSharedMemory = 0x00000010,
     JuneSType_AHardwareBufferSharedMemory = 0x00000011,
@@ -98,10 +98,10 @@ typedef struct JuneInstanceDescriptor
 } JuneInstanceDescriptor;
 
 // can be chained with JuneApiContextDescriptor
-typedef struct JuneCPUContextDescriptor
+typedef struct JuneNoApiContextDescriptor
 {
     JuneChainedStruct chain;
-} JuneCPUContextDescriptor;
+} JuneNoApiContextDescriptor;
 
 // can be chained with JuneApiContextDescriptor
 typedef struct JuneVulkanContextDescriptor

@@ -17,10 +17,10 @@ set(JUNE_COMMON_FILES
 )
 
 set(JUNE_NATIVE_FILES
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_context.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_context.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_fence.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/cpu/cpu_fence.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_context.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_context.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_fence.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_fence.h
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h

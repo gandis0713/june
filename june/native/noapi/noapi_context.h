@@ -13,17 +13,17 @@ namespace june
 {
 
 class Instance;
-class CPUContext : public ApiContext
+class NoApiContext : public ApiContext
 {
 public:
     static ApiContext* create(Instance* instance, JuneApiContextDescriptor const* descriptor);
 
 public:
-    CPUContext() = delete;
-    ~CPUContext() override;
+    NoApiContext() = delete;
+    ~NoApiContext() override;
 
-    CPUContext(const CPUContext&) = delete;
-    CPUContext& operator=(const CPUContext&) = delete;
+    NoApiContext(const NoApiContext&) = delete;
+    NoApiContext& operator=(const NoApiContext&) = delete;
 
 public: // June API
     void createResource(JuneResourceDescriptor const* descriptor) override;
@@ -35,7 +35,7 @@ public:
     JuneApiType getApiType() const override;
 
 private:
-    CPUContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
+    NoApiContext(Instance* instance, JuneApiContextDescriptor const* descriptor);
 };
 
 } // namespace june
