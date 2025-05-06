@@ -30,62 +30,14 @@ NoApiContext::~NoApiContext()
 {
 }
 
-void NoApiContext::createResource(JuneResourceDescriptor const* descriptor)
+void NoApiContext::createResource(JuneResourceCreateDescriptor const* descriptor)
 {
     // nothing do to
 }
 
-Fence* NoApiContext::createFence(JuneFenceDescriptor const* descriptor)
+Fence* NoApiContext::createFence(JuneFenceCreateDescriptor const* descriptor)
 {
     return NoApiFence::create(this, descriptor);
-}
-
-void NoApiContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
-{
-    reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->lock(this);
-
-    const auto fenceCount = descriptor->waitSyncInfo->fenceCount;
-    std::vector<int> fds(fenceCount);
-
-    for (auto i = 0; i < fenceCount; ++i)
-    {
-        auto fence = reinterpret_cast<Fence*>(descriptor->waitSyncInfo->fences[i]);
-        switch (fence->getType())
-        {
-        case FenceType::kFenceType_GLES:
-            fds[i] = static_cast<GLESFence*>(fence)->getFd();
-            break;
-        case FenceType::kFenceType_Vulkan:
-            fds[i] = static_cast<VulkanFence*>(fence)->getFd();
-            break;
-        default:
-            spdlog::error("Unknown fence type");
-            break;
-        }
-    }
-
-    JuneChainedStruct* current = descriptor->exportedSyncObject->nextInChain;
-    while (current)
-    {
-        switch (current->sType)
-        {
-        case JuneSType_SharedMemoryExportedFDSyncObject: {
-            auto fdSyncObject = reinterpret_cast<JuneSharedMemoryExportedFDSyncObject*>(current);
-            fdSyncObject->fdCount = static_cast<uint32_t>(fds.size());
-            fdSyncObject->fds = reinterpret_cast<void*>(fds.data());
-            break;
-        }
-        default:
-            break;
-        }
-
-        current = current->next;
-    }
-}
-
-void NoApiContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
-{
-    reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->unlock(this);
 }
 
 JuneApiType NoApiContext::getApiType() const

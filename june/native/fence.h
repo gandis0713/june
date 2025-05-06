@@ -13,9 +13,7 @@ namespace june
 enum class FenceType
 {
     kFenceType_None = 0,
-    kFenceType_GLES,
-    kFenceType_Vulkan,
-    kFenceType_FD,
+    kFenceType_SyncFD,
 };
 
 class ApiContext;
@@ -28,18 +26,23 @@ public:
     Fence(const Fence&) = delete;
     Fence& operator=(const Fence&) = delete;
 
+public: // June API
+    virtual void reset(JuneFenceResetDescriptor const* descriptor) = 0;
+    virtual void exportFence(JuneFenceExportDescriptor const* descriptor) = 0;
+
 public:
     virtual void refresh() = 0;
+    virtual int getFd() const = 0;
 
 public:
     FenceType getType() const;
 
 protected:
-    Fence(ApiContext* context, JuneFenceDescriptor const* descriptor);
+    Fence(ApiContext* context, JuneFenceCreateDescriptor const* descriptor);
 
 protected:
     ApiContext* m_context{ nullptr };
-    const JuneFenceDescriptor m_descriptor;
+    const JuneFenceCreateDescriptor m_descriptor;
 
     FenceType m_type{ FenceType::kFenceType_None };
 };

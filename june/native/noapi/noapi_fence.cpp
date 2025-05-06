@@ -8,17 +8,26 @@
 namespace june
 {
 
-NoApiFence* NoApiFence::create(NoApiContext* context, JuneFenceDescriptor const* descriptor)
+NoApiFence* NoApiFence::create(NoApiContext* context, JuneFenceCreateDescriptor const* descriptor)
 {
     return new NoApiFence(context, descriptor);
 }
 
-NoApiFence::NoApiFence(NoApiContext* context, JuneFenceDescriptor const* descriptor)
+NoApiFence::NoApiFence(NoApiContext* context, JuneFenceCreateDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
-    m_type = FenceType::kFenceType_FD;
+    m_type = FenceType::kFenceType_None;
 
     refresh();
+}
+
+void NoApiFence::reset(JuneFenceResetDescriptor const* descriptor)
+{
+    createFd();
+}
+
+void NoApiFence::exportFence(JuneFenceExportDescriptor const* descriptor)
+{
 }
 
 void NoApiFence::refresh()
@@ -39,4 +48,5 @@ void NoApiFence::createFd()
 
     // TODO
 }
+
 } // namespace june

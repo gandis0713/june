@@ -1,6 +1,7 @@
 #include "instance.h"
 #include "gles/gles_context.h"
 #include "june/native/shared_memory.h"
+#include "noapi/noapi_context.h"
 #include "vulkan/vulkan_context.h"
 
 namespace june
@@ -26,12 +27,14 @@ ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descripto
         case JuneSType_VulkanContext: {
             return VulkanContext::create(this, descriptor);
         }
-        break;
         case JuneSType_GLESContext: {
             return GLESContext::create(this, descriptor);
         }
+        case JuneSType_NoApiContext: {
+            return NoApiContext::create(this, descriptor);
+        }
         default:
-            throw std::runtime_error("Unsupported type");
+            throw std::runtime_error("Unsupported context type");
         }
 
         current = current->next;
@@ -40,7 +43,12 @@ ApiContext* Instance::createApiContext(JuneApiContextDescriptor const* descripto
     return nullptr;
 }
 
-SharedMemory* Instance::createSharedMemory(JuneSharedMemoryDescriptor const* descriptor)
+SharedMemory* Instance::importSharedMemory(JuneSharedMemoryImportDescriptor const* descriptor)
+{
+    return SharedMemory::import(this, descriptor);
+}
+
+SharedMemory* Instance::createSharedMemory(JuneSharedMemoryCreateDescriptor const* descriptor)
 {
     return SharedMemory::create(this, descriptor);
 }

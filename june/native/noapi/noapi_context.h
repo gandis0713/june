@@ -26,10 +26,8 @@ public:
     NoApiContext& operator=(const NoApiContext&) = delete;
 
 public: // June API
-    void createResource(JuneResourceDescriptor const* descriptor) override;
-    Fence* createFence(JuneFenceDescriptor const* descriptor) override;
-    void beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor) override;
-    void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) override;
+    void createResource(JuneResourceCreateDescriptor const* descriptor) override;
+    Fence* createFence(JuneFenceCreateDescriptor const* descriptor) override;
 
 public:
     JuneApiType getApiType() const override;

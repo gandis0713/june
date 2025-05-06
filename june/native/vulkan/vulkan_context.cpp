@@ -97,7 +97,7 @@ VulkanContext::~VulkanContext()
     }
 }
 
-void VulkanContext::createResource(JuneResourceDescriptor const* descriptor)
+void VulkanContext::createResource(JuneResourceCreateDescriptor const* descriptor)
 {
     auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
     auto rawMemory = sharedMemory->getRawMemory();
@@ -115,17 +115,9 @@ void VulkanContext::createResource(JuneResourceDescriptor const* descriptor)
     }
 }
 
-Fence* VulkanContext::createFence(JuneFenceDescriptor const* descriptor)
+Fence* VulkanContext::createFence(JuneFenceCreateDescriptor const* descriptor)
 {
     return VulkanFence::create(this, descriptor);
-}
-
-void VulkanContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
-{
-}
-
-void VulkanContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
-{
 }
 
 JuneApiType VulkanContext::getApiType() const

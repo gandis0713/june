@@ -13,21 +13,23 @@ class NoApiContext;
 class NoApiFence : public Fence
 {
 public:
-    static NoApiFence* create(NoApiContext* context, JuneFenceDescriptor const* descriptor);
+    static NoApiFence* create(NoApiContext* context, JuneFenceCreateDescriptor const* descriptor);
 
 public:
     NoApiFence() = delete;
-    NoApiFence(NoApiContext* context, JuneFenceDescriptor const* descriptor);
+    NoApiFence(NoApiContext* context, JuneFenceCreateDescriptor const* descriptor);
     ~NoApiFence() override = default;
 
     NoApiFence(const NoApiFence&) = delete;
     NoApiFence& operator=(const NoApiFence&) = delete;
 
-public:
-    void refresh() override;
+public: // June API
+    void reset(JuneFenceResetDescriptor const* descriptor) override;
+    void exportFence(JuneFenceExportDescriptor const* descriptor) override;
 
 public:
-    int getFd() const;
+    void refresh() override;
+    int getFd() const override;
 
 private:
     void createFd();

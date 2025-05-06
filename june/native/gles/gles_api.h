@@ -76,83 +76,83 @@ struct GLESAPI
     }
 
     // EGL 1.0
-    PFNEGLGETPROCADDRESSPROC GetProcAddress;
+    PFNEGLGETPROCADDRESSPROC GetProcAddress{ nullptr };
 
-    PFNEGLCHOOSECONFIGPROC ChooseConfig;
-    PFNEGLCOPYBUFFERSPROC CopyBuffers;
-    PFNEGLCREATECONTEXTPROC CreateContext;
-    PFNEGLCREATEPBUFFERSURFACEPROC CreatePbufferSurface;
-    PFNEGLCREATEPIXMAPSURFACEPROC CreatePixmapSurface;
-    PFNEGLCREATEWINDOWSURFACEPROC CreateWindowSurface;
-    PFNEGLDESTROYCONTEXTPROC DestroyContext;
-    PFNEGLDESTROYSURFACEPROC DestroySurface;
-    PFNEGLGETCONFIGATTRIBPROC GetConfigAttrib;
-    PFNEGLGETCONFIGSPROC GetConfigs;
-    PFNEGLGETCURRENTDISPLAYPROC GetCurrentDisplay;
-    PFNEGLGETCURRENTSURFACEPROC GetCurrentSurface;
-    PFNEGLGETDISPLAYPROC GetDisplay;
-    PFNEGLGETERRORPROC GetError;
-    PFNEGLINITIALIZEPROC Initialize;
-    PFNEGLMAKECURRENTPROC MakeCurrent;
-    PFNEGLQUERYCONTEXTPROC QueryContext;
-    PFNEGLQUERYSTRINGPROC QueryString;
-    PFNEGLQUERYSURFACEPROC QuerySurface;
-    PFNEGLSWAPBUFFERSPROC SwapBuffers;
-    PFNEGLTERMINATEPROC Terminate;
-    PFNEGLWAITGLPROC WaitGL;
-    PFNEGLWAITNATIVEPROC WaitNative;
+    PFNEGLCHOOSECONFIGPROC ChooseConfig{ nullptr };
+    PFNEGLCOPYBUFFERSPROC CopyBuffers{ nullptr };
+    PFNEGLCREATECONTEXTPROC CreateContext{ nullptr };
+    PFNEGLCREATEPBUFFERSURFACEPROC CreatePbufferSurface{ nullptr };
+    PFNEGLCREATEPIXMAPSURFACEPROC CreatePixmapSurface{ nullptr };
+    PFNEGLCREATEWINDOWSURFACEPROC CreateWindowSurface{ nullptr };
+    PFNEGLDESTROYCONTEXTPROC DestroyContext{ nullptr };
+    PFNEGLDESTROYSURFACEPROC DestroySurface{ nullptr };
+    PFNEGLGETCONFIGATTRIBPROC GetConfigAttrib{ nullptr };
+    PFNEGLGETCONFIGSPROC GetConfigs{ nullptr };
+    PFNEGLGETCURRENTDISPLAYPROC GetCurrentDisplay{ nullptr };
+    PFNEGLGETCURRENTSURFACEPROC GetCurrentSurface{ nullptr };
+    PFNEGLGETDISPLAYPROC GetDisplay{ nullptr };
+    PFNEGLGETERRORPROC GetError{ nullptr };
+    PFNEGLINITIALIZEPROC Initialize{ nullptr };
+    PFNEGLMAKECURRENTPROC MakeCurrent{ nullptr };
+    PFNEGLQUERYCONTEXTPROC QueryContext{ nullptr };
+    PFNEGLQUERYSTRINGPROC QueryString{ nullptr };
+    PFNEGLQUERYSURFACEPROC QuerySurface{ nullptr };
+    PFNEGLSWAPBUFFERSPROC SwapBuffers{ nullptr };
+    PFNEGLTERMINATEPROC Terminate{ nullptr };
+    PFNEGLWAITGLPROC WaitGL{ nullptr };
+    PFNEGLWAITNATIVEPROC WaitNative{ nullptr };
 
     // EGL 1.1
-    PFNEGLBINDTEXIMAGEPROC BindTexImage;
-    PFNEGLRELEASETEXIMAGEPROC ReleaseTexImage;
-    PFNEGLSURFACEATTRIBPROC SurfaceAttrib;
-    PFNEGLSWAPINTERVALPROC SwapInterval;
+    PFNEGLBINDTEXIMAGEPROC BindTexImage{ nullptr };
+    PFNEGLRELEASETEXIMAGEPROC ReleaseTexImage{ nullptr };
+    PFNEGLSURFACEATTRIBPROC SurfaceAttrib{ nullptr };
+    PFNEGLSWAPINTERVALPROC SwapInterval{ nullptr };
 
     // EGL 1.2
-    PFNEGLBINDAPIPROC BindAPI;
-    PFNEGLQUERYAPIPROC QueryAPI;
-    PFNEGLCREATEPBUFFERFROMCLIENTBUFFERPROC CreatePbufferFromClientBuffer;
-    PFNEGLRELEASETHREADPROC ReleaseThread;
-    PFNEGLWAITCLIENTPROC WaitClient;
+    PFNEGLBINDAPIPROC BindAPI{ nullptr };
+    PFNEGLQUERYAPIPROC QueryAPI{ nullptr };
+    PFNEGLCREATEPBUFFERFROMCLIENTBUFFERPROC CreatePbufferFromClientBuffer{ nullptr };
+    PFNEGLRELEASETHREADPROC ReleaseThread{ nullptr };
+    PFNEGLWAITCLIENTPROC WaitClient{ nullptr };
 
     // EGL 1.3 (no new procs)
 
     // EGL 1.4
-    PFNEGLGETCURRENTCONTEXTPROC GetCurrentContext;
+    PFNEGLGETCURRENTCONTEXTPROC GetCurrentContext{ nullptr };
 
     // EGL 1.5
-    PFNEGLCREATESYNCPROC CreateSync;
-    PFNEGLDESTROYSYNCPROC DestroySync;
-    PFNEGLCLIENTWAITSYNCPROC ClientWaitSync;
-    PFNEGLGETSYNCATTRIBPROC GetSyncAttrib;
-    PFNEGLCREATEIMAGEPROC CreateImage;
-    PFNEGLDESTROYIMAGEPROC DestroyImage;
-    PFNEGLGETPLATFORMDISPLAYPROC GetPlatformDisplay;
-    PFNEGLCREATEPLATFORMWINDOWSURFACEPROC CreatePlatformWindowSurface;
-    PFNEGLCREATEPLATFORMPIXMAPSURFACEPROC CreatePlatformPixmapSurface;
-    PFNEGLWAITSYNCPROC WaitSyncKHR;
+    PFNEGLCREATESYNCPROC CreateSync{ nullptr };
+    PFNEGLDESTROYSYNCPROC DestroySync{ nullptr };
+    PFNEGLCLIENTWAITSYNCPROC ClientWaitSync{ nullptr };
+    PFNEGLGETSYNCATTRIBPROC GetSyncAttrib{ nullptr };
+    PFNEGLCREATEIMAGEPROC CreateImage{ nullptr };
+    PFNEGLDESTROYIMAGEPROC DestroyImage{ nullptr };
+    PFNEGLGETPLATFORMDISPLAYPROC GetPlatformDisplay{ nullptr };
+    PFNEGLCREATEPLATFORMWINDOWSURFACEPROC CreatePlatformWindowSurface{ nullptr };
+    PFNEGLCREATEPLATFORMPIXMAPSURFACEPROC CreatePlatformPixmapSurface{ nullptr };
+    PFNEGLWAITSYNCPROC WaitSyncKHR{ nullptr };
 
     // ext
 
-    PFNEGLCREATEIMAGEKHRPROC CreateImageKHR;
-    PFNEGLDESTROYIMAGEKHRPROC DestroyImageKHR;
+    PFNEGLCREATEIMAGEKHRPROC CreateImageKHR{ nullptr };
+    PFNEGLDESTROYIMAGEKHRPROC DestroyImageKHR{ nullptr };
 
     // EGL_KHR_fence_sync
     // NOTE: These functions use attribute lists with EGLint but the core versions use EGLattrib.
     // They are not compatible.
-    PFNEGLCREATESYNCKHRPROC CreateSyncKHR;
-    PFNEGLDESTROYSYNCKHRPROC DestroySyncKHR;
-    PFNEGLCLIENTWAITSYNCKHRPROC ClientWaitSyncKHR;
-    PFNEGLGETSYNCATTRIBKHRPROC GetSyncAttribKHR;
+    PFNEGLCREATESYNCKHRPROC CreateSyncKHR{ nullptr };
+    PFNEGLDESTROYSYNCKHRPROC DestroySyncKHR{ nullptr };
+    PFNEGLCLIENTWAITSYNCKHRPROC ClientWaitSyncKHR{ nullptr };
+    PFNEGLGETSYNCATTRIBKHRPROC GetSyncAttribKHR{ nullptr };
 
     // EGL_KHR_reusable_sync
-    PFNEGLSIGNALSYNCKHRPROC SignalSyncKHR;
+    PFNEGLSIGNALSYNCKHRPROC SignalSyncKHR{ nullptr };
 
     // EGL_ANDROID_get_native_client_buffer
-    PFNEGLGETNATIVECLIENTBUFFERANDROIDPROC GetNativeClientBufferANDROID;
+    PFNEGLGETNATIVECLIENTBUFFERANDROIDPROC GetNativeClientBufferANDROID{ nullptr };
 
     // EGL_ANDROID_native_fence_sync
-    PFNEGLDUPNATIVEFENCEFDANDROIDPROC DupNativeFenceFDANDROID;
+    PFNEGLDUPNATIVEFENCEFDANDROIDPROC DupNativeFenceFDANDROID{ nullptr };
 
 private:
     uint32_t m_majorVersion{ 0 };

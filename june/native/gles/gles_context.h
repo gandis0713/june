@@ -28,10 +28,8 @@ public:
     GLESContext& operator=(const GLESContext&) = delete;
 
 public: // June API
-    void createResource(JuneResourceDescriptor const* descriptor) override;
-    Fence* createFence(JuneFenceDescriptor const* descriptor) override;
-    void beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor) override;
-    void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) override;
+    void createResource(JuneResourceCreateDescriptor const* descriptor) override;
+    Fence* createFence(JuneFenceCreateDescriptor const* descriptor) override;
 
 public:
     JuneApiType getApiType() const override;
@@ -39,14 +37,13 @@ public:
 public: // gles
     EGLContext getEGLContext() const;
     EGLDisplay getEGLDisplay() const;
-    EGLSyncKHR createEGLSyncKHR(const int fd);
 
 public:
     GLESAPI eglAPI{};
 
 private:
-    EGLContext m_context{ nullptr };
-    EGLDisplay m_display{ nullptr };
+    EGLContext m_eglContext{ nullptr };
+    EGLDisplay m_eglDisplay{ nullptr };
     DyLib m_glesLib{};
 
 private:

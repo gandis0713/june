@@ -28,8 +28,8 @@ GLESContext::GLESContext(Instance* instance, JuneApiContextDescriptor const* des
     // It assumes that the descriptor is valid and has been validated before this point.
     auto glesDescriptor = reinterpret_cast<JuneGLESContextDescriptor const*>(descriptor->nextInChain);
 
-    m_context = (static_cast<EGLContext>(glesDescriptor->context));
-    m_display = (static_cast<EGLDisplay>(glesDescriptor->display));
+    m_eglContext = (static_cast<EGLContext>(glesDescriptor->context));
+    m_eglDisplay = (static_cast<EGLDisplay>(glesDescriptor->display));
 
 #if defined(__ANDROID__) || defined(ANDROID) || defined(__linux__)
     const char glesLibraryName[] = "libEGL.so";
@@ -45,7 +45,7 @@ GLESContext::GLESContext(Instance* instance, JuneApiContextDescriptor const* des
         throw std::runtime_error(fmt::format("Failed to load GLES library: {}", glesLibraryName));
     }
 
-    if (!eglAPI.loadDisplayProcs(m_display))
+    if (!eglAPI.loadDisplayProcs(m_eglDisplay))
     {
         spdlog::warn("Failed to load GLES display procs");
     }
@@ -59,7 +59,7 @@ GLESContext::~GLESContext()
     }
 }
 
-void GLESContext::createResource(JuneResourceDescriptor const* descriptor)
+void GLESContext::createResource(JuneResourceCreateDescriptor const* descriptor)
 {
     auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
     auto rawMemory = sharedMemory->getRawMemory();
@@ -77,77 +77,9 @@ void GLESContext::createResource(JuneResourceDescriptor const* descriptor)
     }
 }
 
-Fence* GLESContext::createFence(JuneFenceDescriptor const* descriptor)
+Fence* GLESContext::createFence(JuneFenceCreateDescriptor const* descriptor)
 {
     return GLESFence::create(this, descriptor);
-}
-
-void GLESContext::beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor)
-{
-    reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->lock(this);
-
-    const auto fenceCount = descriptor->waitSyncInfo->fenceCount;
-    std::vector<EGLSyncKHR> eglSyncs(fenceCount);
-
-    for (auto i = 0; i < fenceCount; ++i)
-    {
-        auto fence = reinterpret_cast<Fence*>(descriptor->waitSyncInfo->fences[i]);
-        switch (fence->getType())
-        {
-        case FenceType::kFenceType_GLES:
-            eglSyncs[i] = static_cast<GLESFence*>(fence)->getEGLSyncKHR();
-            break;
-        case FenceType::kFenceType_Vulkan:
-            eglSyncs[i] = createEGLSyncKHR(static_cast<VulkanFence*>(fence)->getFd());
-            break;
-        default:
-            spdlog::error("Unknown fence type");
-            break;
-        }
-    }
-
-    JuneChainedStruct* current = descriptor->exportedSyncObject->nextInChain;
-    while (current)
-    {
-        switch (current->sType)
-        {
-        case JuneSType_SharedMemoryExportedEGLSyncKHRSyncObject: {
-            auto eglSyncObject = reinterpret_cast<JuneSharedMemoryExportedEGLSyncKHRSyncObject*>(current);
-            eglSyncObject->eglSyncCount = static_cast<uint32_t>(eglSyncs.size());
-            eglSyncObject->eglSyncs = reinterpret_cast<void*>(eglSyncs.data());
-            break;
-        }
-        default:
-            break;
-        }
-
-        current = current->next;
-    }
-}
-
-void GLESContext::endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor)
-{
-    const auto fenceCount = descriptor->signalSyncInfo->fenceCount;
-    std::vector<EGLSyncKHR> eglSyncs(fenceCount);
-
-    for (auto i = 0; i < fenceCount; ++i)
-    {
-        auto fence = reinterpret_cast<Fence*>(descriptor->signalSyncInfo->fences[i]);
-        switch (fence->getType())
-        {
-        case FenceType::kFenceType_GLES:
-            static_cast<GLESFence*>(fence)->refresh();
-            break;
-        case FenceType::kFenceType_Vulkan:
-            eglSyncs[i] = createEGLSyncKHR(static_cast<VulkanFence*>(fence)->getFd());
-            break;
-        default:
-            spdlog::error("Unknown fence type");
-            break;
-        }
-    }
-
-    reinterpret_cast<SharedMemory*>(descriptor->sharedMemory)->unlock(this);
 }
 
 JuneApiType GLESContext::getApiType() const
@@ -157,32 +89,12 @@ JuneApiType GLESContext::getApiType() const
 
 EGLContext GLESContext::getEGLContext() const
 {
-    return m_context;
+    return m_eglContext;
 }
 
 EGLDisplay GLESContext::getEGLDisplay() const
 {
-    return m_display;
-}
-
-EGLSyncKHR GLESContext::createEGLSyncKHR(const int fd)
-{
-    EGLint attribs[] = {
-        EGL_SYNC_NATIVE_FENCE_ANDROID, fd,
-        EGL_NONE
-    };
-
-    auto context = static_cast<GLESContext*>(m_context);
-    const auto& eglAPI = context->eglAPI;
-
-    auto eglSyncKHR = eglAPI.CreateSyncKHR(context->getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);
-    if (eglSyncKHR == EGL_NO_SYNC_KHR)
-    {
-        spdlog::error("Failed to create EGLSyncKHR");
-        return EGL_NO_SYNC_KHR;
-    }
-
-    return eglSyncKHR;
+    return m_eglDisplay;
 }
 
 } // namespace june

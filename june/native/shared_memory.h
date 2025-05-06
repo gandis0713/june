@@ -16,7 +16,8 @@ class ApiContext;
 class SharedMemory : public Object
 {
 public:
-    static SharedMemory* create(Instance* instance, JuneSharedMemoryDescriptor const* descriptor);
+    static SharedMemory* import(Instance* instance, JuneSharedMemoryImportDescriptor const* descriptor);
+    static SharedMemory* create(Instance* instance, JuneSharedMemoryCreateDescriptor const* descriptor);
 
 public:
     SharedMemory() = delete;
@@ -30,23 +31,14 @@ public:
     Instance* getInstance() const;
     size_t getSize() const;
     RawMemory* getRawMemory() const;
-    void lock(ApiContext* apiContext);
-    void unlock(ApiContext* apiContext);
-    void attach(ApiContext* apiContext);
-    void detach(ApiContext* apiContext);
 
 private:
-    SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor);
+    SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryImportDescriptor const* descriptor);
+    SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryCreateDescriptor const* descriptor);
 
 private:
     Instance* m_instance{ nullptr };
     std::unique_ptr<RawMemory> m_rawMemory{ nullptr };
-    const JuneSharedMemoryDescriptor m_descriptor;
-
-    std::unordered_set<ApiContext*> m_attachedApiContext{};
-
-    ApiContext* m_ownerApiContext{ nullptr };
-    mutable std::mutex m_mutex{};
 };
 
 } // namespace june

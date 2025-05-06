@@ -14,22 +14,26 @@ class VulkanContext;
 class VulkanFence : public Fence
 {
 public:
-    static VulkanFence* create(VulkanContext* context, JuneFenceDescriptor const* descriptor);
+    static VulkanFence* create(VulkanContext* context, JuneFenceCreateDescriptor const* descriptor);
 
 public:
     VulkanFence() = delete;
-    VulkanFence(VulkanContext* context, JuneFenceDescriptor const* descriptor);
+    VulkanFence(VulkanContext* context, JuneFenceCreateDescriptor const* descriptor);
     ~VulkanFence() override = default;
 
     VulkanFence(const VulkanFence&) = delete;
     VulkanFence& operator=(const VulkanFence&) = delete;
 
+public: // June API
+    void reset(JuneFenceResetDescriptor const* descriptor) override;
+    void exportFence(JuneFenceExportDescriptor const* descriptor) override;
+
 public:
     void refresh() override;
+    int getFd() const override;
 
 public:
     VkSemaphore getVkSemaphore() const;
-    int getFd() const;
 
 private:
     void createVkSemaphore();

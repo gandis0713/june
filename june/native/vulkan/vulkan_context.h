@@ -48,10 +48,8 @@ public:
     VulkanContext& operator=(const VulkanContext&) = delete;
 
 public: // June APi
-    void createResource(JuneResourceDescriptor const* descriptor) override;
-    Fence* createFence(JuneFenceDescriptor const* descriptor) override;
-    void beginMemoryAccess(JuneApiContextBeginMemoryAccessDescriptor const* descriptor) override;
-    void endMemoryAccess(JuneApiContextEndMemoryAccessDescriptor const* descriptor) override;
+    void createResource(JuneResourceCreateDescriptor const* descriptor) override;
+    Fence* createFence(JuneFenceCreateDescriptor const* descriptor) override;
 
 public:
     JuneApiType getApiType() const override;

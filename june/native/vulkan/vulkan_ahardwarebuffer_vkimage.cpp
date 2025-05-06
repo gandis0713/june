@@ -11,7 +11,7 @@
 namespace june
 {
 
-int VulkanAHardwareBufferVkImage::create(VulkanContext* context, JuneResourceDescriptor const* descriptor)
+int VulkanAHardwareBufferVkImage::create(VulkanContext* context, JuneResourceCreateDescriptor const* descriptor)
 {
     VkImage image = VK_NULL_HANDLE;
     VkDeviceMemory deviceMemory = VK_NULL_HANDLE;
@@ -21,7 +21,7 @@ int VulkanAHardwareBufferVkImage::create(VulkanContext* context, JuneResourceDes
     {
         switch (current->sType)
         {
-        case JuneSType_VkImageResourceDescriptor: {
+        case JuneSType_ResourceVkImageCreateDescriptor: {
             auto sharedMemory = reinterpret_cast<SharedMemory*>(descriptor->sharedMemory);
             auto ahbMemory = static_cast<AHardwareBufferMemory*>(sharedMemory->getRawMemory());
 
@@ -34,7 +34,7 @@ int VulkanAHardwareBufferVkImage::create(VulkanContext* context, JuneResourceDes
             externalMemoryImageCreateInfo.sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
             externalMemoryImageCreateInfo.handleTypes = VK_EXTERNAL_MEMORY_HANDLE_TYPE_ANDROID_HARDWARE_BUFFER_BIT_ANDROID;
 
-            const auto* imageDesc = reinterpret_cast<const JuneResourceVkImageDescriptor*>(current);
+            const auto* imageDesc = reinterpret_cast<const JuneResourceVkImageCreateDescriptor*>(current);
             VkImageCreateInfo imageInfo = *reinterpret_cast<const VkImageCreateInfo*>(imageDesc->createInfo->vkImageCreateInfo);
             imageInfo.pNext = &externalMemoryImageCreateInfo;
 

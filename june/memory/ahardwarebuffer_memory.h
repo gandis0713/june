@@ -10,10 +10,14 @@
 namespace june
 {
 
-struct AHardwareBufferMemoryDescriptor
+struct AHardwareBufferImportDescriptor
 {
     AHardwareBuffer* aHardwareBuffer{ nullptr };
-    AHardwareBuffer_Desc aHardwareBufferDesc{};
+};
+
+struct AHardwareBufferCreateDescriptor
+{
+    AHardwareBuffer_Desc* aHardwareBufferDesc{ nullptr };
 };
 
 class ApiContext;
@@ -21,8 +25,8 @@ class Buffer;
 class AHardwareBufferMemory : public RawMemory
 {
 public:
-    static std::unique_ptr<AHardwareBufferMemory> create(const RawMemoryDescriptor& descriptor,
-                                                         const AHardwareBufferMemoryDescriptor& ahbDescriptor);
+    static std::unique_ptr<AHardwareBufferMemory> import(const AHardwareBufferImportDescriptor& descriptor);
+    static std::unique_ptr<AHardwareBufferMemory> create(const AHardwareBufferCreateDescriptor& descriptor);
 
 public:
     AHardwareBufferMemory() = delete;
@@ -35,14 +39,12 @@ public:
     AHardwareBuffer* getAHardwareBuffer() const;
 
 private:
-    AHardwareBuffer* m_ahb{ nullptr };
-    AHardwareBuffer_Desc m_desc{};
+    AHardwareBuffer* m_aHardwareBuffer{ nullptr };
+    AHardwareBuffer_Desc m_aHardwareBufferDesc{};
 
 private:
-    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
-                          AHardwareBuffer* ahb);
-    AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
-                          const AHardwareBuffer_Desc& ahbDescriptor);
+    AHardwareBufferMemory(const AHardwareBufferImportDescriptor& descriptor);
+    AHardwareBufferMemory(const AHardwareBufferCreateDescriptor& descriptor);
 };
 
 } // namespace june

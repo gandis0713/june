@@ -11,7 +11,7 @@
 namespace june
 {
 
-SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescriptor const* descriptor)
+SharedMemory* SharedMemory::import(Instance* instance, JuneSharedMemoryImportDescriptor const* descriptor)
 {
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
@@ -19,20 +19,13 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
         switch (current->sType)
         {
 #if defined(__ANDROID__) || defined(ANDROID)
-        case JuneSType_AHardwareBufferSharedMemory: {
-            JuneSharedMemoryAHardwareBufferDescriptor const* ahbDescriptor = reinterpret_cast<JuneSharedMemoryAHardwareBufferDescriptor const*>(current);
+        case JuneSType_SharedMemoryAHardwareBufferImportDescriptor: {
+            JuneSharedMemoryAHardwareBufferImportDescriptor const* ahbDescriptor = reinterpret_cast<JuneSharedMemoryAHardwareBufferImportDescriptor const*>(current);
 
-            RawMemoryDescriptor rawMemoryDescriptor;
-            rawMemoryDescriptor.type = RawMemoryType::kAHardwareBuffer;
-            rawMemoryDescriptor.width = descriptor->width;
-            rawMemoryDescriptor.height = descriptor->height;
-            rawMemoryDescriptor.layers = descriptor->layers;
-
-            AHardwareBufferMemoryDescriptor ahbMemoryDescriptor;
+            AHardwareBufferImportDescriptor ahbMemoryDescriptor;
             ahbMemoryDescriptor.aHardwareBuffer = static_cast<AHardwareBuffer*>(ahbDescriptor->aHardwareBuffer);
-            ahbMemoryDescriptor.aHardwareBufferDesc = *static_cast<AHardwareBuffer_Desc*>(ahbDescriptor->aHardwareBufferDesc);
 
-            std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(rawMemoryDescriptor, ahbMemoryDescriptor);
+            std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::import(ahbMemoryDescriptor);
             return new SharedMemory(instance, std::move(rawMemory), descriptor);
         }
         break;
@@ -47,11 +40,46 @@ SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryDescripto
     return new SharedMemory(instance, nullptr, descriptor);
 }
 
-SharedMemory::SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryDescriptor const* descriptor)
+SharedMemory* SharedMemory::create(Instance* instance, JuneSharedMemoryCreateDescriptor const* descriptor)
+{
+    const JuneChainedStruct* current = descriptor->nextInChain;
+    while (current)
+    {
+        switch (current->sType)
+        {
+#if defined(__ANDROID__) || defined(ANDROID)
+        case JuneSType_SharedMemoryAHardwareBufferCreateDescriptor: {
+            JuneSharedMemoryAHardwareBufferCreateDescriptor const* ahbDescriptor = reinterpret_cast<JuneSharedMemoryAHardwareBufferCreateDescriptor const*>(current);
+
+            AHardwareBufferCreateDescriptor ahbMemoryDescriptor;
+            ahbMemoryDescriptor.aHardwareBufferDesc = static_cast<AHardwareBuffer_Desc*>(ahbDescriptor->aHardwareBufferDesc);
+
+            std::unique_ptr<RawMemory> rawMemory = AHardwareBufferMemory::create(ahbMemoryDescriptor);
+            return new SharedMemory(instance, std::move(rawMemory), descriptor);
+        }
+        break;
+#endif
+        default:
+            break;
+        }
+
+        current = current->next;
+    }
+
+    return new SharedMemory(instance, nullptr, descriptor);
+}
+
+SharedMemory::SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryImportDescriptor const* descriptor)
     : Object(std::string(descriptor->label.data, descriptor->label.length))
     , m_instance(instance)
     , m_rawMemory(std::move(rawMemory))
-    , m_descriptor(*descriptor)
+{
+}
+
+SharedMemory::SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryCreateDescriptor const* descriptor)
+    : Object(std::string(descriptor->label.data, descriptor->label.length))
+    , m_instance(instance)
+    , m_rawMemory(std::move(rawMemory))
 {
 }
 
@@ -62,36 +90,12 @@ Instance* SharedMemory::getInstance() const
 
 size_t SharedMemory::getSize() const
 {
-    return m_descriptor.width * m_descriptor.height * m_descriptor.layers;
+    return 0; // TODO: from raw memory
 }
 
 RawMemory* SharedMemory::getRawMemory() const
 {
     return m_rawMemory.get();
-}
-
-void SharedMemory::lock(ApiContext* apiContext)
-{
-    m_mutex.lock();
-    m_ownerApiContext = apiContext;
-}
-
-void SharedMemory::unlock(ApiContext* apiContext)
-{
-    if (m_ownerApiContext == apiContext)
-    {
-        m_mutex.unlock();
-    }
-}
-
-void SharedMemory::attach(ApiContext* apiContext)
-{
-    m_attachedApiContext.insert(apiContext);
-}
-
-void SharedMemory::detach(ApiContext* apiContext)
-{
-    m_attachedApiContext.erase(apiContext);
 }
 
 } // namespace june

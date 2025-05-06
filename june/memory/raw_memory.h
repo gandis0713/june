@@ -15,9 +15,6 @@ enum class RawMemoryType
 struct RawMemoryDescriptor
 {
     RawMemoryType type{ RawMemoryType::kNone };
-    uint32_t width{ 0 };
-    uint32_t height{ 0 };
-    uint32_t layers{ 0 };
     bool hasOwnership{ false };
 };
 
@@ -30,6 +27,7 @@ public:
 
 public:
     RawMemoryType getType() const;
+    bool hasOwnership() const;
 
 protected:
     RawMemory(const RawMemoryDescriptor& descriptor);

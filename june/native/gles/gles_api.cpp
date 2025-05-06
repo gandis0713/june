@@ -22,7 +22,7 @@ namespace june
     name = reinterpret_cast<decltype(name)>(GetProcAddress("egl" #name)); \
     if (name == nullptr)                                                  \
     {                                                                     \
-        spdlog::error("Couldn't get instance proc vk{}", #name);          \
+        spdlog::error("Couldn't get proc egl{}", #name);                  \
         return false;                                                     \
     }
 

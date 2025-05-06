@@ -15,33 +15,28 @@ class GLESContext;
 class GLESFence : public Fence
 {
 public:
-    static GLESFence* create(GLESContext* context, JuneFenceDescriptor const* descriptor);
+    static GLESFence* create(GLESContext* context, JuneFenceCreateDescriptor const* descriptor);
 
 public:
     GLESFence() = delete;
-    GLESFence(GLESContext* context, JuneFenceDescriptor const* descriptor);
+    GLESFence(GLESContext* context, JuneFenceCreateDescriptor const* descriptor);
     ~GLESFence() override = default;
 
     GLESFence(const GLESFence&) = delete;
     GLESFence& operator=(const GLESFence&) = delete;
 
+public: // June API
+    void reset(JuneFenceResetDescriptor const* descriptor) override;
+    void exportFence(JuneFenceExportDescriptor const* descriptor) override;
+
 public:
     void refresh() override;
-
-public:
-    EGLSyncKHR getEGLSyncKHR() const;
-    int getFd() const;
-
-private:
-    void waitEGLSyncKHR();
-    void createEGLSyncKHR();
-    void createFd();
+    int getFd() const override;
 
 private:
     mutable std::mutex m_mutex;
 
     EGLSyncKHR m_signalSync{ EGL_NO_SYNC_KHR };
-    int m_signalFd{ -1 };
 };
 
 } // namespace june

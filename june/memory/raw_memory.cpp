@@ -15,4 +15,9 @@ RawMemoryType RawMemory::getType() const
     return m_descriptor.type;
 }
 
+bool RawMemory::hasOwnership() const
+{
+    return m_descriptor.hasOwnership;
+}
+
 } // namespace june

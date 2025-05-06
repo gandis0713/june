@@ -10,7 +10,7 @@ class VulkanContext;
 class VulkanAHardwareBufferVkImage
 {
 public:
-    static int create(VulkanContext* context, JuneResourceDescriptor const* descriptor);
+    static int create(VulkanContext* context, JuneResourceCreateDescriptor const* descriptor);
 };
 
 } // namespace june

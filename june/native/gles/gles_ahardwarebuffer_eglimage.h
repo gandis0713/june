@@ -10,7 +10,7 @@ class GLESContext;
 class GLESAHardwareBufferEGLImage
 {
 public:
-    static int create(GLESContext* context, JuneResourceDescriptor const* descriptor);
+    static int create(GLESContext* context, JuneResourceCreateDescriptor const* descriptor);
 };
 
 } // namespace june

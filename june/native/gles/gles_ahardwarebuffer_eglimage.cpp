@@ -11,14 +11,14 @@
 namespace june
 {
 
-int GLESAHardwareBufferEGLImage::create(GLESContext* context, JuneResourceDescriptor const* descriptor)
+int GLESAHardwareBufferEGLImage::create(GLESContext* context, JuneResourceCreateDescriptor const* descriptor)
 {
     const JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {
         switch (current->sType)
         {
-        case JuneSType_EGLImageResourceDescriptor: {
+        case JuneSType_ResourceEGLImageCreateDescriptor: {
             EGLImageKHR eglImage = EGL_NO_IMAGE_KHR;
             EGLClientBuffer eglClientBuffer = nullptr;
 
@@ -77,7 +77,7 @@ int GLESAHardwareBufferEGLImage::create(GLESContext* context, JuneResourceDescri
                     return -1;
                 }
 
-                const auto* imageDesc = reinterpret_cast<const JuneResourceEGLImageDescriptor*>(current);
+                const auto* imageDesc = reinterpret_cast<const JuneResourceEGLImageCreateDescriptor*>(current);
                 imageDesc->eglImageResultInfo->eglClientBuffer = eglClientBuffer;
                 imageDesc->eglImageResultInfo->eglImage = eglImage;
 

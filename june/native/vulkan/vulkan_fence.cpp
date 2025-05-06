@@ -9,15 +9,26 @@
 namespace june
 {
 
-VulkanFence* VulkanFence::create(VulkanContext* context, JuneFenceDescriptor const* descriptor)
+VulkanFence* VulkanFence::create(VulkanContext* context, JuneFenceCreateDescriptor const* descriptor)
 {
     return new VulkanFence(context, descriptor);
 }
 
-VulkanFence::VulkanFence(VulkanContext* context, JuneFenceDescriptor const* descriptor)
+VulkanFence::VulkanFence(VulkanContext* context, JuneFenceCreateDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
-    m_type = FenceType::kFenceType_Vulkan;
+    m_type = FenceType::kFenceType_SyncFD;
+
+    refresh();
+}
+
+void VulkanFence::reset(JuneFenceResetDescriptor const* descriptor)
+{
+    refresh();
+}
+
+void VulkanFence::exportFence(JuneFenceExportDescriptor const* descriptor)
+{
 }
 
 void VulkanFence::refresh()
@@ -26,18 +37,18 @@ void VulkanFence::refresh()
     createFd();
 }
 
-VkSemaphore VulkanFence::getVkSemaphore() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-
-    return m_signalSemaphore;
-}
-
 int VulkanFence::getFd() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     return m_signalFd;
+}
+
+VkSemaphore VulkanFence::getVkSemaphore() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    return m_signalSemaphore;
 }
 
 void VulkanFence::createVkSemaphore()

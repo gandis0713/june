@@ -7,45 +7,49 @@
 namespace june
 {
 
-std::unique_ptr<AHardwareBufferMemory> AHardwareBufferMemory::create(const RawMemoryDescriptor& descriptor,
-                                                                     const AHardwareBufferMemoryDescriptor& ahbDescriptor)
+std::unique_ptr<AHardwareBufferMemory> AHardwareBufferMemory::import(const AHardwareBufferImportDescriptor& descriptor)
 {
-    if (ahbDescriptor.aHardwareBuffer)
-        return std::unique_ptr<AHardwareBufferMemory>(new AHardwareBufferMemory(descriptor, ahbDescriptor.aHardwareBuffer));
-    else
-        return std::unique_ptr<AHardwareBufferMemory>(new AHardwareBufferMemory(descriptor, ahbDescriptor.aHardwareBufferDesc));
+    return std::unique_ptr<AHardwareBufferMemory>(new AHardwareBufferMemory(descriptor));
 }
 
-AHardwareBufferMemory::AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
-                                             AHardwareBuffer* ahb)
-    : RawMemory(descriptor)
-    , m_ahb(ahb)
+std::unique_ptr<AHardwareBufferMemory> AHardwareBufferMemory::create(const AHardwareBufferCreateDescriptor& descriptor)
 {
-    AHardwareBuffer_describe(m_ahb, &m_desc);
+    return std::unique_ptr<AHardwareBufferMemory>(new AHardwareBufferMemory(descriptor));
 }
 
-AHardwareBufferMemory::AHardwareBufferMemory(const RawMemoryDescriptor& descriptor,
-                                             const AHardwareBuffer_Desc& ahbDescriptor)
-    : RawMemory(descriptor)
-    , m_desc(ahbDescriptor)
+AHardwareBufferMemory::AHardwareBufferMemory(const AHardwareBufferImportDescriptor& descriptor)
+    : RawMemory(RawMemoryDescriptor{
+          .type = RawMemoryType::kAHardwareBuffer,
+          .hasOwnership = false,
+      })
+    , m_aHardwareBuffer(descriptor.aHardwareBuffer)
 {
-    int result = AHardwareBuffer_allocate(&m_desc, &m_ahb);
+    AHardwareBuffer_describe(m_aHardwareBuffer, &m_aHardwareBufferDesc);
+}
+
+AHardwareBufferMemory::AHardwareBufferMemory(const AHardwareBufferCreateDescriptor& descriptor)
+    : RawMemory(RawMemoryDescriptor{
+          .type = RawMemoryType::kAHardwareBuffer,
+          .hasOwnership = true,
+      })
+    , m_aHardwareBufferDesc(*descriptor.aHardwareBufferDesc)
+{
+    int result = AHardwareBuffer_allocate(&m_aHardwareBufferDesc, &m_aHardwareBuffer);
     if (result != 0)
     {
         spdlog::error("Failed to allocate AHardwareBuffer: {}", result);
-        m_ahb = nullptr;
     }
 }
 
 AHardwareBufferMemory::~AHardwareBufferMemory()
 {
     if (m_descriptor.hasOwnership)
-        AHardwareBuffer_release(m_ahb);
+        AHardwareBuffer_release(m_aHardwareBuffer);
 }
 
 AHardwareBuffer* AHardwareBufferMemory::getAHardwareBuffer() const
 {
-    return m_ahb;
+    return m_aHardwareBuffer;
 }
 
 } // namespace june
