@@ -120,6 +120,10 @@ Fence* VulkanContext::createFence(JuneFenceCreateDescriptor const* descriptor)
     return VulkanFence::create(this, descriptor);
 }
 
+void VulkanContext::exportFence(JuneFenceExportDescriptor const* descriptor)
+{
+}
+
 JuneApiType VulkanContext::getApiType() const
 {
     return JuneApiType_Vulkan;

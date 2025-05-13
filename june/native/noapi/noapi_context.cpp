@@ -40,6 +40,36 @@ Fence* NoApiContext::createFence(JuneFenceCreateDescriptor const* descriptor)
     return NoApiFence::create(this, descriptor);
 }
 
+void NoApiContext::exportFence(JuneFenceExportDescriptor const* descriptor)
+{
+    JuneChainedStruct* current = descriptor->nextInChain;
+    Fence* fence = reinterpret_cast<Fence*>(descriptor->fence);
+
+    while (current)
+    {
+        switch (current->sType)
+        {
+        case JuneSType_FenceSyncFDExportDescriptor: {
+            int syncFD = fence->getSyncFD();
+
+            if (syncFD == -1)
+            {
+                return;
+            }
+            spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
+
+            auto syncFDExportDescriptor = reinterpret_cast<JuneFenceSyncFDExportDescriptor*>(current);
+            syncFDExportDescriptor->syncFD = syncFD;
+            break;
+        }
+        default:
+            break;
+        }
+
+        current = current->next;
+    }
+}
+
 JuneApiType NoApiContext::getApiType() const
 {
     return JuneApiType_GLES;

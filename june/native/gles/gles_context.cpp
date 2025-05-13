@@ -82,6 +82,74 @@ Fence* GLESContext::createFence(JuneFenceCreateDescriptor const* descriptor)
     return GLESFence::create(this, descriptor);
 }
 
+void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
+{
+    JuneChainedStruct* current = descriptor->nextInChain;
+    Fence* fence = reinterpret_cast<Fence*>(descriptor->fence);
+
+    while (current)
+    {
+        switch (current->sType)
+        {
+        case JuneSType_FenceEGLSyncExportDescriptor: {
+            int syncFD = fence->getSyncFD();
+
+            if (syncFD == -1)
+            {
+                // doesn't need to export
+                return;
+            }
+
+            spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
+
+            // create
+            EGLint attribs[] = {
+                EGL_SYNC_NATIVE_FENCE_FD_ANDROID, syncFD,
+                EGL_NONE
+            };
+
+            auto eglSync = eglAPI.CreateSyncKHR(getEGLDisplay(), EGL_SYNC_NATIVE_FENCE_ANDROID, attribs);
+            if (eglSync == EGL_NO_SYNC_KHR)
+            {
+                spdlog::error("Failed to create a EGLSync for exporting.");
+                return;
+            }
+
+            spdlog::trace("{} EGLSync {:p} by created sync FD: {}", getName(), eglSync, syncFD);
+
+            EGLint value;
+            eglAPI.GetSyncAttribKHR(getEGLDisplay(), eglSync, EGL_SYNC_STATUS_KHR, &value);
+            spdlog::trace("Current EGLSync status for exporting: {}", value);
+            // EGL_SIGNALED_KHR       12530
+            // EGL_UNSIGNALED_KHR     12531
+
+            auto eglSyncExportDescriptor = reinterpret_cast<JuneFenceEGLSyncExportDescriptor*>(current);
+            eglSyncExportDescriptor->eglSync = eglSync;
+            break;
+        }
+        case JuneSType_FenceSyncFDExportDescriptor: {
+            int syncFD = fence->getSyncFD();
+
+            if (syncFD == -1)
+            {
+                // doesn't need to export
+                return;
+            }
+
+            spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
+
+            auto syncFDExportDescriptor = reinterpret_cast<JuneFenceSyncFDExportDescriptor*>(current);
+            syncFDExportDescriptor->syncFD = syncFD;
+            break;
+        }
+        default:
+            break;
+        }
+
+        current = current->next;
+    }
+}
+
 JuneApiType GLESContext::getApiType() const
 {
     return JuneApiType_GLES;

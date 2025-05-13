@@ -20,6 +20,7 @@ public:
 public: // June API
     virtual void createResource(JuneResourceCreateDescriptor const* descriptor) = 0;
     virtual Fence* createFence(JuneFenceCreateDescriptor const* descriptor) = 0;
+    virtual void exportFence(JuneFenceExportDescriptor const* descriptor) = 0;
 
 public:
     virtual JuneApiType getApiType() const = 0;

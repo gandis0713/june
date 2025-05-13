@@ -69,6 +69,10 @@ typedef enum JuneSType
     JuneSType_FenceEGLSyncExportDescriptor = 0x000000040,
     JuneSType_FenceVkSemaphoreExportDescriptor = 0x000000041,
     JuneSType_FenceSyncFDExportDescriptor = 0x000000042,
+
+    JuneSType_FenceEGLSyncResetDescriptor = 0x000000050,
+    JuneSType_FenceVkSemaphoreResetDescriptor = 0x000000051,
+    JuneSType_FenceSyncFDResetDescriptor = 0x000000052,
 } JuneSType;
 
 typedef JuneFlags JuneSharedMemoryUsage;
@@ -290,6 +294,27 @@ typedef struct JuneResourceCreateDescriptor
     JuneSharedMemory sharedMemory;
 } JuneResourceCreateDescriptor;
 
+// can be chained with JuneFenceResetDescriptor
+typedef struct JuneFenceEGLSyncResetDescriptor
+{
+    JuneChainedStruct chain;
+    void* eglSync; // EGLSyncKHR
+} JuneFenceEGLSyncResetDescriptor;
+
+// can be chained with JuneFenceResetDescriptor
+typedef struct JuneFenceVkSemaphoreResetDescriptor
+{
+    JuneChainedStruct chain;
+    void* vkSemaphore; // VkSemaphore
+} JuneFenceVkSemaphoreResetDescriptor;
+
+// can be chained with JuneFenceResetDescriptor
+typedef struct JuneFenceSyncFDResetDescriptor
+{
+    JuneChainedStruct chain;
+    int syncFD;
+} JuneFenceSyncFDResetDescriptor;
+
 typedef struct JuneFenceResetDescriptor
 {
     JuneChainedStruct const* nextInChain;
@@ -319,12 +344,8 @@ typedef struct JuneFenceVkSemaphoreExportDescriptor
 typedef struct JuneFenceExportDescriptor
 {
     JuneChainedStruct* nextInChain;
+    JuneFence fence;
 } JuneFenceExportDescriptor;
-
-typedef struct JuneFenceWaitDescriptor
-{
-    JuneChainedStruct* nextInChain;
-} JuneFenceWaitDescriptor;
 
 typedef struct JuneFenceCreateDescriptor
 {
@@ -350,6 +371,7 @@ extern "C"
     // for Api Context
     typedef void (*JuneProcApiContextCreateResource)(JuneApiContext apiContext, JuneResourceCreateDescriptor const* descriptor);
     typedef JuneFence (*JuneProcApiContextCreateFence)(JuneApiContext apiContext, JuneFenceCreateDescriptor const* descriptor);
+    typedef void (*JuneProcApiContextExportFence)(JuneApiContext apiContext, JuneFenceExportDescriptor const* descriptor);
     typedef void (*JuneProcApiContextDestroy)(JuneApiContext apiContext);
 
     // for Shared Memory
@@ -357,7 +379,6 @@ extern "C"
 
     // for Fence
     typedef void (*JuneProcFenceReset)(JuneFence fence, JuneFenceResetDescriptor const* descriptor);
-    typedef void (*JuneProcFenceExport)(JuneFence fence, JuneFenceExportDescriptor const* descriptor);
     typedef void (*JuneProcFenceDestroy)(JuneFence fence);
 
 #if !defined(JUNE_SKIP_DECLARATIONS)
@@ -372,12 +393,12 @@ extern "C"
 
     JUNE_EXPORT void juneApiContextCreateResource(JuneApiContext apiContext, JuneResourceCreateDescriptor const* descriptor);
     JUNE_EXPORT JuneFence juneApiContextCreateFence(JuneApiContext apiContext, JuneFenceCreateDescriptor const* descriptor);
+    JUNE_EXPORT void juneApiContextExportFence(JuneApiContext apiContext, JuneFenceExportDescriptor const* descriptor);
     JUNE_EXPORT void juneApiContextDestroy(JuneApiContext apiContext);
 
     JUNE_EXPORT void juneSharedMemoryDestroy(JuneSharedMemory memory);
 
     JUNE_EXPORT void juneFenceReset(JuneFence fence, JuneFenceResetDescriptor const* descriptor);
-    JUNE_EXPORT void juneFenceExport(JuneFence fence, JuneFenceExportDescriptor const* descriptor);
     JUNE_EXPORT void juneFenceDestroy(JuneFence fence);
 
 #endif // !defined(JUNE_SKIP_DECLARATIONS)

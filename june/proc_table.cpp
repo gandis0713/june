@@ -47,6 +47,11 @@ JuneFence procApiContextCreateFence(JuneApiContext apiContext, JuneFenceCreateDe
     return reinterpret_cast<JuneFence>(reinterpret_cast<ApiContext*>(apiContext)->createFence(descriptor));
 }
 
+void procApiContextExportFence(JuneApiContext apiContext, JuneFenceExportDescriptor const* descriptor)
+{
+    return reinterpret_cast<ApiContext*>(apiContext)->exportFence(descriptor);
+}
+
 void procApiContextDestroy(JuneApiContext apiContext)
 {
     if (apiContext)
@@ -61,14 +66,7 @@ void procSharedMemoryDestroy(JuneSharedMemory sharedMemory)
 
 void procFenceReset(JuneFence fence, JuneFenceResetDescriptor const* descriptor)
 {
-    if (fence)
-        reinterpret_cast<Fence*>(fence)->reset(descriptor);
-}
-
-void procFenceExport(JuneFence fence, JuneFenceExportDescriptor const* descriptor)
-{
-    if (fence)
-        reinterpret_cast<Fence*>(fence)->exportFence(descriptor);
+    return reinterpret_cast<Fence*>(fence)->reset(descriptor);
 }
 
 void procFenceDestroy(JuneFence fence)
@@ -88,10 +86,10 @@ std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneInstanceDestroy", reinterpret_cast<JuneProc>(procInstanceDestroy) },
     { "juneApiContextCreateResource", reinterpret_cast<JuneProc>(procApiContextCreateResource) },
     { "juneApiContextCreateFence", reinterpret_cast<JuneProc>(procApiContextCreateFence) },
+    { "juneApiContextExportFence", reinterpret_cast<JuneProc>(procApiContextExportFence) },
     { "juneApiContextDestroy", reinterpret_cast<JuneProc>(procApiContextDestroy) },
     { "juneSharedMemoryDestroy", reinterpret_cast<JuneProc>(procSharedMemoryDestroy) },
     { "juneFenceReset", reinterpret_cast<JuneProc>(procFenceReset) },
-    { "juneFenceExport", reinterpret_cast<JuneProc>(procFenceExport) },
     { "juneFenceDestroy", reinterpret_cast<JuneProc>(procFenceDestroy) },
 };
 

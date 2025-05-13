@@ -18,26 +18,15 @@ VulkanFence::VulkanFence(VulkanContext* context, JuneFenceCreateDescriptor const
     : Fence(context, descriptor)
 {
     m_type = FenceType::kFenceType_SyncFD;
-
-    refresh();
 }
 
 void VulkanFence::reset(JuneFenceResetDescriptor const* descriptor)
-{
-    refresh();
-}
-
-void VulkanFence::exportFence(JuneFenceExportDescriptor const* descriptor)
-{
-}
-
-void VulkanFence::refresh()
 {
     createVkSemaphore();
     createFd();
 }
 
-int VulkanFence::getFd() const
+int VulkanFence::getSyncFD() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 

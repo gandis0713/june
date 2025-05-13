@@ -27,11 +27,9 @@ public:
 
 public: // June API
     void reset(JuneFenceResetDescriptor const* descriptor) override;
-    void exportFence(JuneFenceExportDescriptor const* descriptor) override;
 
 public:
-    void refresh() override;
-    int getFd() const override;
+    int getSyncFD() const override;
 
 private:
     mutable std::mutex m_mutex;

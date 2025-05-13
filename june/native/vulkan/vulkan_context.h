@@ -50,6 +50,7 @@ public:
 public: // June APi
     void createResource(JuneResourceCreateDescriptor const* descriptor) override;
     Fence* createFence(JuneFenceCreateDescriptor const* descriptor) override;
+    void exportFence(JuneFenceExportDescriptor const* descriptor) override;
 
 public:
     JuneApiType getApiType() const override;

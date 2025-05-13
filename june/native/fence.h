@@ -28,11 +28,9 @@ public:
 
 public: // June API
     virtual void reset(JuneFenceResetDescriptor const* descriptor) = 0;
-    virtual void exportFence(JuneFenceExportDescriptor const* descriptor) = 0;
 
 public:
-    virtual void refresh() = 0;
-    virtual int getFd() const = 0;
+    virtual int getSyncFD() const = 0;
 
 public:
     FenceType getType() const;

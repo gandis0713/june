@@ -16,37 +16,53 @@ NoApiFence* NoApiFence::create(NoApiContext* context, JuneFenceCreateDescriptor 
 NoApiFence::NoApiFence(NoApiContext* context, JuneFenceCreateDescriptor const* descriptor)
     : Fence(context, descriptor)
 {
-    m_type = FenceType::kFenceType_None;
-
-    refresh();
+    m_type = FenceType::kFenceType_SyncFD;
 }
 
 void NoApiFence::reset(JuneFenceResetDescriptor const* descriptor)
 {
-    createFd();
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    if (m_signalFd != -1)
+    {
+        close(m_signalFd);
+        m_signalFd = -1;
+    }
+
+    const JuneChainedStruct* current = descriptor->nextInChain;
+    while (current)
+    {
+        switch (current->sType)
+        {
+        case JuneSType_FenceSyncFDResetDescriptor: {
+            auto fenceSyncFDDescriptor = reinterpret_cast<JuneFenceSyncFDResetDescriptor const*>(current);
+            m_signalFd = fenceSyncFDDescriptor->syncFD;
+            break;
+        }
+        default:
+            break;
+        }
+
+        current = current->next;
+    }
 }
 
-void NoApiFence::exportFence(JuneFenceExportDescriptor const* descriptor)
-{
-}
-
-void NoApiFence::refresh()
-{
-    createFd();
-}
-
-int NoApiFence::getFd() const
+int NoApiFence::getSyncFD() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    return m_signalFd;
-}
+    if (m_signalFd == -1)
+    {
+        return m_signalFd;
+    }
 
-void NoApiFence::createFd()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
+    int dupFd = dup(m_signalFd);
+    if (dupFd == -1)
+    {
+        spdlog::error("Failed to duplicate sync FD: {}", m_signalFd);
+    }
 
-    // TODO
+    return dupFd;
 }
 
 } // namespace june
