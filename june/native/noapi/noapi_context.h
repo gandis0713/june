@@ -27,7 +27,6 @@ public:
 
 public: // June API
     void createResource(JuneResourceCreateDescriptor const* descriptor) override;
-    Fence* createFence(JuneFenceCreateDescriptor const* descriptor) override;
     void exportFence(JuneFenceExportDescriptor const* descriptor) override;
 
 public:

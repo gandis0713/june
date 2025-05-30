@@ -8,11 +8,12 @@ extern JuneInstance procCreateInstance(JuneInstanceDescriptor const* desc);
 
 extern JuneSharedMemory procInstanceImportSharedMemory(JuneInstance instance, JuneSharedMemoryImportDescriptor const* descriptor);
 extern JuneSharedMemory procInstanceCreateSharedMemory(JuneInstance instance, JuneSharedMemoryCreateDescriptor const* descriptor);
+extern JuneFence procInstanceImportFence(JuneInstance instance, JuneFenceImportDescriptor const* descriptor);
+extern JuneFence procInstanceCreateFence(JuneInstance instance, JuneFenceCreateDescriptor const* descriptor);
 extern JuneApiContext procInstanceCreateApiContext(JuneInstance instance, JuneApiContextDescriptor const* desc);
 extern void procInstanceDestroy(JuneInstance instance);
 
 extern void procApiContextCreateResource(JuneApiContext apiContext, JuneResourceCreateDescriptor const* descriptor);
-extern JuneFence procApiContextCreateFence(JuneApiContext apiContext, JuneFenceCreateDescriptor const* descriptor);
 extern void procApiContextExportFence(JuneApiContext apiContext, JuneFenceExportDescriptor const* descriptor);
 extern void procApiContextDestroy(JuneApiContext apiContext);
 
@@ -62,9 +63,14 @@ extern "C"
         return procApiContextCreateResource(apiContext, descriptor);
     }
 
-    JUNE_EXPORT JuneFence juneApiContextCreateFence(JuneApiContext apiContext, JuneFenceCreateDescriptor const* descriptor)
+    JUNE_EXPORT JuneFence juneInstanceImportFence(JuneInstance instance, JuneFenceImportDescriptor const* descriptor)
     {
-        return procApiContextCreateFence(apiContext, descriptor);
+        return procInstanceImportFence(instance, descriptor);
+    }
+
+    JUNE_EXPORT JuneFence juneInstanceCreateFence(JuneInstance instance, JuneFenceCreateDescriptor const* descriptor)
+    {
+        return procInstanceCreateFence(instance, descriptor);
     }
 
     JUNE_EXPORT void juneApiContextExportFence(JuneApiContext apiContext, JuneFenceExportDescriptor const* descriptor)

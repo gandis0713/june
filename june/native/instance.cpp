@@ -1,5 +1,6 @@
 #include "instance.h"
 #include "gles/gles_context.h"
+#include "june/native/fence.h"
 #include "june/native/shared_memory.h"
 #include "noapi/noapi_context.h"
 #include "vulkan/vulkan_context.h"
@@ -51,6 +52,16 @@ SharedMemory* Instance::importSharedMemory(JuneSharedMemoryImportDescriptor cons
 SharedMemory* Instance::createSharedMemory(JuneSharedMemoryCreateDescriptor const* descriptor)
 {
     return SharedMemory::create(this, descriptor);
+}
+
+Fence* Instance::importFence(JuneFenceImportDescriptor const* descriptor)
+{
+    return Fence::import(this, descriptor);
+}
+
+Fence* Instance::createFence(JuneFenceCreateDescriptor const* descriptor)
+{
+    return Fence::create(this, descriptor);
 }
 
 } // namespace june

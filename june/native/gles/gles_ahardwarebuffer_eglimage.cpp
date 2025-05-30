@@ -2,7 +2,6 @@
 
 #include "gles_api.h"
 #include "gles_context.h"
-#include "gles_fence.h"
 #include "june/memory/ahardwarebuffer_memory.h"
 #include "june/native/shared_memory.h"
 

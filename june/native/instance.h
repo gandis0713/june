@@ -8,6 +8,7 @@ namespace june
 
 class ApiContext;
 class SharedMemory;
+class Fence;
 class Instance final : public Object
 {
 public:
@@ -24,6 +25,8 @@ public:
     ApiContext* createApiContext(JuneApiContextDescriptor const* descriptor);
     SharedMemory* importSharedMemory(JuneSharedMemoryImportDescriptor const* descriptor);
     SharedMemory* createSharedMemory(JuneSharedMemoryCreateDescriptor const* descriptor);
+    Fence* importFence(JuneFenceImportDescriptor const* descriptor);
+    Fence* createFence(JuneFenceCreateDescriptor const* descriptor);
 
 private:
     Instance(JuneInstanceDescriptor const* descriptor);

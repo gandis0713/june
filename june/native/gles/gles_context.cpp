@@ -1,9 +1,8 @@
 #include "gles_context.h"
 
-#include "gles_fence.h"
 #include "june/common/assert.h"
-#include "june/native/vulkan/vulkan_fence.h"
 
+#include "june/native/fence.h"
 #include "june/native/shared_memory.h"
 
 #if __has_include("gles_ahardwarebuffer_eglimage.h")
@@ -77,11 +76,6 @@ void GLESContext::createResource(JuneResourceCreateDescriptor const* descriptor)
     }
 }
 
-Fence* GLESContext::createFence(JuneFenceCreateDescriptor const* descriptor)
-{
-    return GLESFence::create(this, descriptor);
-}
-
 void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
 {
     JuneChainedStruct* current = descriptor->nextInChain;
@@ -92,8 +86,10 @@ void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
         switch (current->sType)
         {
         case JuneSType_FenceEGLSyncExportDescriptor: {
-            int syncFD = fence->getSyncFD();
+            auto& handle = fence->getHandle();
+            auto dupHandle = handle.duplicate();
 
+            int syncFD = dupHandle.getHandle();
             if (syncFD == -1)
             {
                 // doesn't need to export
@@ -128,8 +124,10 @@ void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
             break;
         }
         case JuneSType_FenceSyncFDExportDescriptor: {
-            int syncFD = fence->getSyncFD();
+            auto& handle = fence->getHandle();
+            auto dupHandle = handle.duplicate();
 
+            int syncFD = dupHandle.getHandle();
             if (syncFD == -1)
             {
                 // doesn't need to export

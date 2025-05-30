@@ -1,12 +1,11 @@
 #include "vulkan_context.h"
 
 #include "june/common/assert.h"
+#include "june/native/fence.h"
 #include "june/native/shared_memory.h"
 #if __has_include("vulkan_ahardwarebuffer_vkimage.h")
 #include "vulkan_ahardwarebuffer_vkimage.h"
 #endif
-
-#include "vulkan_fence.h"
 
 #include <fmt/format.h>
 #include <spdlog/spdlog.h>
@@ -115,13 +114,62 @@ void VulkanContext::createResource(JuneResourceCreateDescriptor const* descripto
     }
 }
 
-Fence* VulkanContext::createFence(JuneFenceCreateDescriptor const* descriptor)
-{
-    return VulkanFence::create(this, descriptor);
-}
-
 void VulkanContext::exportFence(JuneFenceExportDescriptor const* descriptor)
 {
+    JuneChainedStruct* current = descriptor->nextInChain;
+    Fence* fence = reinterpret_cast<Fence*>(descriptor->fence);
+
+    while (current)
+    {
+        switch (current->sType)
+        {
+        case JuneSType_FenceVkSemaphoreExportDescriptor: {
+            auto& handle = fence->getHandle();
+            auto dupHandle = handle.duplicate();
+
+            int syncFD = dupHandle.getHandle();
+            if (syncFD == -1)
+            {
+                // doesn't need to export
+                return;
+            }
+            VkSemaphoreCreateInfo semaphoreCreateInfo{
+                .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+                .pNext = nullptr
+            };
+            VkSemaphore semaphore;
+            VkResult result = vkAPI.CreateSemaphore(getVkDevice(), &semaphoreCreateInfo, nullptr, &semaphore);
+            if (result != VK_SUCCESS)
+            {
+                spdlog::error("Failed to create a semaphore for exporting. {}", static_cast<int32_t>(result));
+                return;
+            }
+
+            VkImportSemaphoreFdInfoKHR importInfo{
+                .sType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR,
+                .semaphore = semaphore,
+                .flags = VK_SEMAPHORE_IMPORT_TEMPORARY_BIT,
+                .handleType = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT,
+                .fd = syncFD
+            };
+            result = vkAPI.ImportSemaphoreFdKHR(getVkDevice(), &importInfo);
+            if (result != VK_SUCCESS)
+            {
+                spdlog::error("Failed to import semaphore fd. {}", static_cast<int32_t>(result));
+                vkAPI.DestroySemaphore(getVkDevice(), semaphore, nullptr);
+                return;
+            }
+
+            auto semaphoreExportDescriptor = reinterpret_cast<JuneFenceVkSemaphoreExportDescriptor*>(current);
+            semaphoreExportDescriptor->vkSemaphore = semaphore;
+
+            return;
+        }
+        default:
+            break;
+        }
+        current = current->next;
+    }
 }
 
 JuneApiType VulkanContext::getApiType() const

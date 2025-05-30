@@ -1,10 +1,10 @@
 #include "vulkan_ahardwarebuffer_vkimage.h"
 
 #include "june/memory/ahardwarebuffer_memory.h"
+#include "june/native/fence.h"
 #include "june/native/shared_memory.h"
 #include "vulkan_api.h"
 #include "vulkan_context.h"
-#include "vulkan_fence.h"
 
 #include <spdlog/spdlog.h>
 

@@ -14,27 +14,23 @@ find_package(PalSigslot CONFIG REQUIRED)
 set(JUNE_COMMON_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/common/dylib.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/sync_handle.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/common/sync_handle.h
 )
 
 set(JUNE_NATIVE_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_context.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_context.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_fence.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/noapi/noapi_fence.h
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_api.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/vulkan/vulkan_fence.h
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_context.h
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_api.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/native/gles/gles_fence.h
 
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/native/instance.h

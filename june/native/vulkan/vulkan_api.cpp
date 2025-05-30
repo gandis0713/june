@@ -361,8 +361,8 @@ bool VulkanAPI::loadDeviceProcs(VkDevice device, const VulkanDeviceKnobs& device
 
     // if (deviceKnobs.externalSemaphoreFD)
     // {
-    //     GET_DEVICE_PROC(ImportSemaphoreFdKHR);
-    //     GET_DEVICE_PROC(GetSemaphoreFdKHR);
+    GET_DEVICE_PROC(ImportSemaphoreFdKHR);
+    GET_DEVICE_PROC(GetSemaphoreFdKHR);
     // }
 
     // #if VK_USE_PLATFORM_FUCHSIA

@@ -1,10 +1,7 @@
 #include "noapi_context.h"
 
 #include "june/common/assert.h"
-#include "june/native/gles/gles_fence.h"
-#include "june/native/vulkan/vulkan_fence.h"
-#include "noapi_fence.h"
-
+#include "june/native/fence.h"
 #include "june/native/shared_memory.h"
 
 #include <fmt/format.h>
@@ -35,11 +32,6 @@ void NoApiContext::createResource(JuneResourceCreateDescriptor const* descriptor
     // nothing do to
 }
 
-Fence* NoApiContext::createFence(JuneFenceCreateDescriptor const* descriptor)
-{
-    return NoApiFence::create(this, descriptor);
-}
-
 void NoApiContext::exportFence(JuneFenceExportDescriptor const* descriptor)
 {
     JuneChainedStruct* current = descriptor->nextInChain;
@@ -50,10 +42,13 @@ void NoApiContext::exportFence(JuneFenceExportDescriptor const* descriptor)
         switch (current->sType)
         {
         case JuneSType_FenceSyncFDExportDescriptor: {
-            int syncFD = fence->getSyncFD();
+            auto& handle = fence->getHandle();
+            auto dupHandle = handle.duplicate();
 
+            int syncFD = dupHandle.getHandle();
             if (syncFD == -1)
             {
+                // doesn't need to export
                 return;
             }
             spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
