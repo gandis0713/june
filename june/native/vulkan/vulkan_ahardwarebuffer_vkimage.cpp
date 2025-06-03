@@ -93,16 +93,40 @@ int VulkanAHardwareBufferVkImage::create(VulkanContext* context, JuneResourceCre
             }
             spdlog::trace("Memory type index: {}", memoryTypeIndex);
 
-            VkMemoryDedicatedAllocateInfo dedicatedAllocateInfo;
-            dedicatedAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
-            dedicatedAllocateInfo.pNext = nullptr;
-            dedicatedAllocateInfo.buffer = VK_NULL_HANDLE;
-            dedicatedAllocateInfo.image = image;
+            auto isNeedDedicatedAllocation = [&]() -> bool {
+                VkMemoryDedicatedRequirements dedicatedRequirements;
+                dedicatedRequirements.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS;
+                dedicatedRequirements.pNext = nullptr;
+
+                VkMemoryRequirements2 baseRequirements;
+                baseRequirements.sType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2;
+                baseRequirements.pNext = &dedicatedRequirements;
+
+                VkImageMemoryRequirementsInfo2 imageMemoryRequirementsInfo2;
+                imageMemoryRequirementsInfo2.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2;
+                imageMemoryRequirementsInfo2.pNext = nullptr;
+                imageMemoryRequirementsInfo2.image = image;
+
+                vkAPI.GetImageMemoryRequirements2(device, &imageMemoryRequirementsInfo2,
+                                                  &baseRequirements);
+
+                return dedicatedRequirements.prefersDedicatedAllocation != 0u;
+            };
 
             VkImportAndroidHardwareBufferInfoANDROID importAHBInfo = {};
             importAHBInfo.sType = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
             importAHBInfo.buffer = hardwareBuffer;
-            importAHBInfo.pNext = &dedicatedAllocateInfo;
+
+            VkMemoryDedicatedAllocateInfo dedicatedAllocateInfo;
+            if (true /* isNeedDedicatedAllocation() */)
+            {
+                dedicatedAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO;
+                dedicatedAllocateInfo.pNext = nullptr;
+                dedicatedAllocateInfo.buffer = VK_NULL_HANDLE;
+                dedicatedAllocateInfo.image = image;
+
+                importAHBInfo.pNext = &dedicatedAllocateInfo;
+            }
 
             VkMemoryAllocateInfo allocInfo{};
             allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
