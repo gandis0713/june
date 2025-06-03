@@ -39,7 +39,7 @@ SyncHandle SyncHandle::duplicate(Handle handle)
 #if defined(_WIN32)
     // TODO
 #else
-    if (newSyncHandle.m_handle != -1)
+    if (handle != -1)
     {
         newSyncHandle.m_handle = duplicateHandle(handle);
     }
