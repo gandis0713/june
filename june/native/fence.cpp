@@ -40,6 +40,8 @@ void Fence::reset(JuneFenceResetDescriptor const* descriptor)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
+    m_handle.close();
+
     JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {
@@ -52,6 +54,7 @@ void Fence::reset(JuneFenceResetDescriptor const* descriptor)
                 spdlog::error("Invalid sync FD for resetting.");
                 return;
             }
+            spdlog::trace("{} Resetting sync FD: {}", getName(), syncFDResetDescriptor->syncFD);
             m_handle = SyncHandle::duplicate(static_cast<SyncHandle::Handle>(syncFDResetDescriptor->syncFD));
             break;
         }
