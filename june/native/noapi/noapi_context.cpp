@@ -51,7 +51,7 @@ void NoApiContext::exportFence(JuneFenceExportDescriptor const* descriptor)
                 // doesn't need to export
                 return;
             }
-            spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
+            spdlog::trace("Duplicated sync FD for NoApiContext name as {}, {}", getName(), syncFD);
 
             auto syncFDExportDescriptor = reinterpret_cast<JuneFenceSyncFDExportDescriptor*>(current);
             syncFDExportDescriptor->syncFD = syncFD;

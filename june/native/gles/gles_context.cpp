@@ -96,7 +96,7 @@ void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
                 return;
             }
 
-            spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
+            spdlog::trace("Duplicated sync FD for GLES name as {}, {}", getName(), syncFD);
 
             // create
             EGLint attribs[] = {
@@ -134,7 +134,7 @@ void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
                 return;
             }
 
-            spdlog::trace("{} Duplicated sync FD: {}", getName(), syncFD);
+            spdlog::trace("{} GLES 1Duplicated sync FD: {}", getName(), syncFD);
 
             auto syncFDExportDescriptor = reinterpret_cast<JuneFenceSyncFDExportDescriptor*>(current);
             syncFDExportDescriptor->syncFD = syncFD;
