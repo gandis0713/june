@@ -11,8 +11,13 @@
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 
-// memory
-const char kExtensionNameKhrExternalMemory[] = "VK_KHR_external_memory";
+namespace
+{
+// VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME
+const char kExtensionNameKhrExternalSemaphoreFd[] = "VK_KHR_external_semaphore_fd";
+// VK_ANDROID_EXTERNAL_MEMORY_ANDROID_HARDWARE_BUFFER_EXTENSION_NAME
+const char kExtensionNameAndroidExternalMemoryAndroidHardwareBuffer[] = "VK_ANDROID_external_memory_android_hardware_buffer";
+} // namespace
 
 namespace june
 {
@@ -376,6 +381,16 @@ void VulkanContext::gatherPhysicalDeviceInfo()
             if (strncmp(extensionProperty.extensionName, "VK_KHR_portability_subset", VK_MAX_EXTENSION_NAME_SIZE) == 0)
             {
                 m_physicalDeviceInfo.portabilitySubset = true;
+            }
+
+            if (strncmp(extensionProperty.extensionName, kExtensionNameKhrExternalSemaphoreFd, VK_MAX_EXTENSION_NAME_SIZE) == 0)
+            {
+                m_physicalDeviceInfo.externalSemaphoreFD = true;
+            }
+
+            if (strncmp(extensionProperty.extensionName, kExtensionNameAndroidExternalMemoryAndroidHardwareBuffer, VK_MAX_EXTENSION_NAME_SIZE) == 0)
+            {
+                m_physicalDeviceInfo.ahardwareBuffer = true;
             }
         }
     }

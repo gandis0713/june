@@ -40,6 +40,8 @@ struct VulkanInstanceKnobs
 struct VulkanDeviceKnobs
 {
     bool portabilitySubset = false;
+    bool ahardwareBuffer = false;
+    bool externalSemaphoreFD = false;
 };
 
 struct VulkanAPI
