@@ -298,7 +298,7 @@ void VulkanContext::gatherPhysicalDeviceInfo()
     spdlog::info("Physical Device Id: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.deviceID));
     spdlog::info("Physical Device Name: {}", m_physicalDeviceInfo.physicalDeviceProperties.deviceName);
     spdlog::info("Physical Device Type: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.deviceType));
-    spdlog::info("Physical Device Vender ID: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.vendorID));
+    spdlog::info("Physical Device Vendor ID: {}", static_cast<uint32_t>(m_physicalDeviceInfo.physicalDeviceProperties.vendorID));
 
     vkAPI.GetPhysicalDeviceFeatures(m_vkPhysicalDevice, &m_physicalDeviceInfo.physicalDeviceFeatures);
 
