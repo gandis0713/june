@@ -134,7 +134,7 @@ void GLESContext::exportFence(JuneFenceExportDescriptor const* descriptor)
                 return;
             }
 
-            spdlog::trace("{} GLES 1Duplicated sync FD: {}", getName(), syncFD);
+            spdlog::trace("{} GLES Duplicated sync FD: {}", getName(), syncFD);
 
             auto syncFDExportDescriptor = reinterpret_cast<JuneFenceSyncFDExportDescriptor*>(current);
             syncFDExportDescriptor->syncFD = syncFD;
