@@ -1,3 +1,11 @@
+/*
+ * June is a cross-platform library that unifies external GPU memory and
+ * fence synchronization across Vulkan, D3D11, D3D12, OpenGL and GLES.
+ * It exposes a minimal C API. Shared memory handles can only be
+ * imported or exported, while fence objects support creation, reset and
+ * export. Using June, applications can share resources between APIs or
+ * devices without dealing with platform specific extensions.
+ */
 #ifndef JUNE_H_
 #define JUNE_H_
 
