@@ -6,13 +6,6 @@
 namespace june
 {
 
-Fence* Fence::import(Instance* instance, JuneFenceImportDescriptor const* descriptor)
-{
-    auto fence = new Fence(instance, { .label = std::string(descriptor->label.data, descriptor->label.length) });
-    fence->import(descriptor);
-    return fence;
-}
-
 Fence* Fence::create(Instance* instance, JuneFenceCreateDescriptor const* descriptor)
 {
     auto fence = new Fence(instance, { .label = std::string(descriptor->label.data, descriptor->label.length) });
@@ -55,7 +48,7 @@ void Fence::reset(JuneFenceResetDescriptor const* descriptor)
                 return;
             }
             spdlog::trace("{} Resetting sync FD: {}", getName(), syncFDResetDescriptor->syncFD);
-            m_handle = SyncHandle::duplicate(static_cast<SyncHandle::Handle>(syncFDResetDescriptor->syncFD));
+            m_handle = SyncHandle::duplicate(syncFDResetDescriptor->syncFD);
             break;
         }
         default:
@@ -67,48 +60,65 @@ void Fence::reset(JuneFenceResetDescriptor const* descriptor)
     }
 }
 
-void Fence::import(JuneFenceImportDescriptor const* descriptor)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
 
+void Fence::create(JuneFenceCreateDescriptor const* descriptor)
+{
+    bool imported = false;
     JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {
         switch (current->sType)
         {
         case JuneSType_FenceSyncFDImportDescriptor: {
-            auto syncFDImportDescriptor = reinterpret_cast<JuneFenceSyncFDImportDescriptor*>(current);
-            if (syncFDImportDescriptor->syncFD == -1)
+            auto importDesc = reinterpret_cast<JuneFenceSyncFDImportDescriptor*>(current);
+            if (importDesc->syncFD == -1)
             {
-                spdlog::error("No valid sync FD found in the import descriptor.");
+                spdlog::error("Invalid sync FD for fence creation.");
                 return;
             }
-            m_handle = SyncHandle::duplicate(static_cast<SyncHandle::Handle>(syncFDImportDescriptor->syncFD));
+            m_handle = SyncHandle::duplicate(importDesc->syncFD);
             m_type = FenceType::kFenceType_SyncFD;
+            imported = true;
+            break;
+        }
+        case JuneSType_FenceEGLSyncImportDescriptor: {
+            auto eglDesc = reinterpret_cast<JuneFenceEGLSyncImportDescriptor*>(current);
+            if (!eglDesc->eglSync)
+            {
+                spdlog::error("Invalid EGLSync handle for fence creation.");
+                return;
+            }
+            m_handle = SyncHandle::duplicate(reinterpret_cast<SyncHandle::Handle>(eglDesc->eglSync));
+            m_type = FenceType::kFenceType_EGLSync;
+            imported = true;
             break;
         }
         default:
-            spdlog::warn("Unknown fence import descriptor type: {}", static_cast<uint32_t>(current->sType));
+            spdlog::warn("Unknown fence create descriptor type: {}", static_cast<uint32_t>(current->sType));
             break;
         }
 
         current = current->next;
     }
-}
 
-void Fence::create(JuneFenceCreateDescriptor const* descriptor)
-{
-    switch (descriptor->type)
+    if (!imported)
     {
-    case JuneFenceType_SyncFD:
-        m_type = FenceType::kFenceType_SyncFD;
-        m_handle = std::move(SyncHandle(-1)); // Initialize with an invalid handle
-        break;
-    default:
-        spdlog::error("Unsupported fence type: {}", static_cast<uint32_t>(descriptor->type));
-        m_type = FenceType::kFenceType_None;
-        m_handle = -1; // Set to an invalid handle
-        break;
+        switch (descriptor->type)
+        {
+        case JuneFenceType_SyncFD:
+            m_type = FenceType::kFenceType_SyncFD;
+            m_handle = SyncHandle(-1);
+            break;
+        case JuneFenceType_EGLSync:
+            m_type = FenceType::kFenceType_EGLSync;
+            m_handle = SyncHandle(-1);
+            break;
+        default:
+            spdlog::error("Unsupported fence type: {}", static_cast<uint32_t>(descriptor->type));
+            m_type = FenceType::kFenceType_None;
+            m_handle = SyncHandle(-1);
+            break;
+        }
     }
 }
 
