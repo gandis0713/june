@@ -17,7 +17,6 @@ class SharedMemory : public Object
 {
 public:
     static SharedMemory* import(Instance* instance, JuneSharedMemoryImportDescriptor const* descriptor);
-    static SharedMemory* create(Instance* instance, JuneSharedMemoryCreateDescriptor const* descriptor);
 
 public:
     SharedMemory() = delete;
@@ -34,7 +33,6 @@ public:
 
 private:
     SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryImportDescriptor const* descriptor);
-    SharedMemory(Instance* instance, std::unique_ptr<RawMemory> rawMemory, JuneSharedMemoryCreateDescriptor const* descriptor);
 
 private:
     Instance* m_instance{ nullptr };

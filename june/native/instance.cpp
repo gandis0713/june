@@ -49,15 +49,6 @@ SharedMemory* Instance::importSharedMemory(JuneSharedMemoryImportDescriptor cons
     return SharedMemory::import(this, descriptor);
 }
 
-SharedMemory* Instance::createSharedMemory(JuneSharedMemoryCreateDescriptor const* descriptor)
-{
-    return SharedMemory::create(this, descriptor);
-}
-
-Fence* Instance::importFence(JuneFenceImportDescriptor const* descriptor)
-{
-    return Fence::import(this, descriptor);
-}
 
 Fence* Instance::createFence(JuneFenceCreateDescriptor const* descriptor)
 {
