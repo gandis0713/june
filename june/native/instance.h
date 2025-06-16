@@ -24,8 +24,6 @@ public:
 public:
     ApiContext* createApiContext(JuneApiContextDescriptor const* descriptor);
     SharedMemory* importSharedMemory(JuneSharedMemoryImportDescriptor const* descriptor);
-    SharedMemory* createSharedMemory(JuneSharedMemoryCreateDescriptor const* descriptor);
-    Fence* importFence(JuneFenceImportDescriptor const* descriptor);
     Fence* createFence(JuneFenceCreateDescriptor const* descriptor);
 
 private:
