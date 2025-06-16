@@ -26,15 +26,6 @@ JuneSharedMemory procInstanceImportSharedMemory(JuneInstance instance, JuneShare
     return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<Instance*>(instance)->importSharedMemory(descriptor));
 }
 
-JuneSharedMemory procInstanceCreateSharedMemory(JuneInstance instance, JuneSharedMemoryCreateDescriptor const* descriptor)
-{
-    return reinterpret_cast<JuneSharedMemory>(reinterpret_cast<Instance*>(instance)->createSharedMemory(descriptor));
-}
-
-JuneFence procInstanceImportFence(JuneInstance instance, JuneFenceImportDescriptor const* descriptor)
-{
-    return reinterpret_cast<JuneFence>(reinterpret_cast<Instance*>(instance)->importFence(descriptor));
-}
 
 JuneFence procInstanceCreateFence(JuneInstance instance, JuneFenceCreateDescriptor const* descriptor)
 {
@@ -86,8 +77,6 @@ namespace
 std::unordered_map<std::string, JuneProc> sProcMap{
     { "juneCreateInstance", reinterpret_cast<JuneProc>(procCreateInstance) },
     { "juneInstanceImportSharedMemory", reinterpret_cast<JuneProc>(procInstanceImportSharedMemory) },
-    { "juneInstanceCreateSharedMemory", reinterpret_cast<JuneProc>(procInstanceCreateSharedMemory) },
-    { "juneInstanceImportFence", reinterpret_cast<JuneProc>(procInstanceImportFence) },
     { "juneInstanceCreateFence", reinterpret_cast<JuneProc>(procInstanceCreateFence) },
     { "juneInstanceCreateApiContext", reinterpret_cast<JuneProc>(procInstanceCreateApiContext) },
     { "juneInstanceDestroy", reinterpret_cast<JuneProc>(procInstanceDestroy) },
