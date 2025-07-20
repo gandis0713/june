@@ -67,7 +67,7 @@ void NoApiContext::exportFence(JuneFenceExportDescriptor const* descriptor)
 
 JuneApiType NoApiContext::getApiType() const
 {
-    return JuneApiType_GLES;
+    return JuneApiType_NoApi;
 }
 
 } // namespace june

@@ -18,6 +18,8 @@ enum class FenceType
     kFenceType_None = 0,
     kFenceType_SyncFD,
     kFenceType_VkSemaphoreOpaqueFD,
+    kFenceType_EGLSync,
+    kFenceType_MTLSharedFence,
 };
 
 struct FenceDescriptor
@@ -29,7 +31,6 @@ class Instance;
 class Fence : public Object
 {
 public:
-    static Fence* import(Instance* instance, JuneFenceImportDescriptor const* descriptor);
     static Fence* create(Instance* instance, JuneFenceCreateDescriptor const* descriptor);
 
 public:
@@ -48,7 +49,6 @@ public:
 
 protected:
     Fence(Instance* instance, const FenceDescriptor& descriptor);
-    void import(JuneFenceImportDescriptor const* descriptor);
     void create(JuneFenceCreateDescriptor const* descriptor);
 
 protected:
