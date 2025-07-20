@@ -62,7 +62,6 @@ void Fence::reset(JuneFenceResetDescriptor const* descriptor)
 
 void Fence::create(JuneFenceCreateDescriptor const* descriptor)
 {
-    bool imported = false;
     JuneChainedStruct* current = descriptor->nextInChain;
     while (current)
     {
@@ -78,19 +77,11 @@ void Fence::create(JuneFenceCreateDescriptor const* descriptor)
             }
             m_handle = SyncHandle::duplicate(importDesc->syncFD);
             m_type = FenceType::kFenceType_SyncFD;
-            imported = true;
             break;
         }
         case JuneSType_FenceEGLSyncImportDescriptor: {
-            auto eglDesc = reinterpret_cast<JuneFenceEGLSyncImportDescriptor*>(current);
-            if (!eglDesc->eglSync)
-            {
-                spdlog::error("Invalid EGLSync handle for fence creation.");
-                return;
-            }
-            m_handle = SyncHandle::duplicate(reinterpret_cast<SyncHandle::Handle>(eglDesc->eglSync));
-            m_type = FenceType::kFenceType_EGLSync;
-            imported = true;
+            // TODO: Implement EGL sync import
+            spdlog::error("EGL sync import not implemented yet.");
             break;
         }
 #endif
@@ -100,26 +91,6 @@ void Fence::create(JuneFenceCreateDescriptor const* descriptor)
         }
 
         current = current->next;
-    }
-
-    if (!imported)
-    {
-        switch (descriptor->type)
-        {
-        case JuneFenceType_SyncFD:
-            m_type = FenceType::kFenceType_SyncFD;
-            m_handle = SyncHandle(-1);
-            break;
-        case JuneFenceType_EGLSync:
-            m_type = FenceType::kFenceType_EGLSync;
-            m_handle = SyncHandle(-1);
-            break;
-        default:
-            spdlog::error("Unsupported fence type: {}", static_cast<uint32_t>(descriptor->type));
-            m_type = FenceType::kFenceType_None;
-            m_handle = SyncHandle(-1);
-            break;
-        }
     }
 }
 
