@@ -100,7 +100,7 @@ if(ANDROID)
 elseif(APPLE)
   find_package(unofficial-angle REQUIRED CONFIG)
   target_link_libraries(june
-    PRIVATE
+    PUBLIC
     unofficial::angle::libGLESv2
     unofficial::angle::libEGL
   )
