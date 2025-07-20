@@ -60,7 +60,6 @@ void Fence::reset(JuneFenceResetDescriptor const* descriptor)
     }
 }
 
-
 void Fence::create(JuneFenceCreateDescriptor const* descriptor)
 {
     bool imported = false;
@@ -69,6 +68,7 @@ void Fence::create(JuneFenceCreateDescriptor const* descriptor)
     {
         switch (current->sType)
         {
+#if defined(__ANDROID__) || defined(ANDROID)
         case JuneSType_FenceSyncFDImportDescriptor: {
             auto importDesc = reinterpret_cast<JuneFenceSyncFDImportDescriptor*>(current);
             if (importDesc->syncFD == -1)
@@ -93,6 +93,7 @@ void Fence::create(JuneFenceCreateDescriptor const* descriptor)
             imported = true;
             break;
         }
+#endif
         default:
             spdlog::warn("Unknown fence create descriptor type: {}", static_cast<uint32_t>(current->sType));
             break;
